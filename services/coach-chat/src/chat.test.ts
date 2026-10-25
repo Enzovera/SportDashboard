@@ -46,6 +46,22 @@ describe('runChatTurn', () => {
     assert.equal((await store.listMessages(id)).at(-1)!.status, 'error')
   })
 
+  it('reports a failed turn once when the SDK throws after an error result', async () => {
+    const store = new MemoryStore()
+    const { id } = await store.createSession()
+    let n = 0
+    const runner = async function* () {
+      n++
+      yield fake.resultApiError('API Error: 401 OAuth access token is invalid.')
+      throw new Error('Claude Code process exited with code 1')
+    }
+    const events: ChatEvent[] = []
+    await runChatTurn({ store, runner }, { sessionId: id, text: 'Hej', screen: null }, (e) => events.push(e), new AbortController().signal)
+
+    assert.equal(n, 1)
+    assert.deepEqual(events, [{ type: 'error', message: 'Brak dostępu do Claude: token jest nieprawidłowy albo wygasł.' }])
+  })
+
   it('marks an aborted turn without emitting an error', async () => {
     const store = new MemoryStore()
     const { id } = await store.createSession()

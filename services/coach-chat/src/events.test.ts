@@ -40,6 +40,16 @@ describe('consume', () => {
     assert.deepEqual(run(fake.delta('inner', 'tool-1')).events, [])
   })
 
+  for (const [raw, want] of [
+    ['Failed to authenticate. API Error: 401 OAuth access token is invalid.', 'Brak dostępu do Claude: token jest nieprawidłowy albo wygasł.'],
+    ["You've hit your session limit · resets 10:30pm", 'Trener nie odpowiedział. Spróbuj ponownie.'],
+    ['API Error: 429 rate_limit_error', 'Limit użycia Claude wyczerpany. Spróbuj później.'],
+  ] as const) {
+    it(`maps API error "${raw.slice(0, 30)}…" to Polish`, () => {
+      assert.deepEqual(run(fake.resultApiError(raw)).events, [{ type: 'error', message: want }])
+    })
+  }
+
   it('turns error results into a Polish error event', () => {
     const { st, events } = run(fake.resultError('error_max_turns'))
     assert.deepEqual(events, [{ type: 'error', message: 'Trener przekroczył limit kroków na jedną wiadomość.' }])

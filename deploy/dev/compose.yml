@@ -115,6 +115,16 @@ services:
       - web_node_modules:/src/web/node_modules
       - npmcache:/root/.npm
 
+  # Static mockups from design/ on http://localhost:8082 (index.html, screens/*.html).
+  design:
+    image: python:3.13-slim
+    command: ["python", "-m", "http.server", "8082", "--directory", "/design"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8082:8082"
+    volumes:
+      - ../../design:/design:ro
+
   # Toolchains for services/*, run on demand (profile "tools"), so nothing has to be installed on the host.
   go:
     image: golang:1.25

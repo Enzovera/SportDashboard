@@ -62,8 +62,16 @@ export function consume(msg: SDKMessage, st: TurnState): ChatEvent[] {
         return []
       }
       st.failed = true
+      const raw = msg.subtype === 'success' ? msg.result : ''
+      // Raw API errors are English and technical; log them, show the user a Polish reason.
+      if (raw) console.error('coach-chat: error result:', raw)
       const message =
-        ERRORS[msg.subtype] ?? (msg.subtype === 'success' && msg.result ? msg.result : 'Trener nie odpowiedział. Spróbuj ponownie.')
+        ERRORS[msg.subtype] ??
+        (/401|authenticat/i.test(raw)
+          ? 'Brak dostępu do Claude: token jest nieprawidłowy albo wygasł.'
+          : /429|rate.?limit|usage limit/i.test(raw)
+            ? 'Limit użycia Claude wyczerpany. Spróbuj później.'
+            : 'Trener nie odpowiedział. Spróbuj ponownie.')
       return [{ type: 'error', message }]
     }
     default:

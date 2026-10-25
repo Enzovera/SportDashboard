@@ -42,10 +42,12 @@ export async function runChatTurn(
       for (const event of consume(msg, st)) emit(event)
     }
   } catch (err) {
+    // The SDK throws after an error result too; report each failed turn to the user only once.
+    const alreadyReported = st.failed
     st.failed = true
     if (!signal.aborted) {
       console.error('coach-chat: turn failed', err)
-      emit({ type: 'error', message: 'Trener nie odpowiedział. Spróbuj ponownie.' })
+      if (!alreadyReported) emit({ type: 'error', message: 'Trener nie odpowiedział. Spróbuj ponownie.' })
     }
   }
 

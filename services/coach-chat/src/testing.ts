@@ -17,6 +17,9 @@ export const fake = {
     msg({ type: 'result', subtype: 'success', is_error: false, result: text, total_cost_usd: cost, session_id: 's1' }),
   resultError: (subtype: string) =>
     msg({ type: 'result', subtype, is_error: true, total_cost_usd: 0.3, session_id: 's1' }),
+  /** API failures arrive as a "success" result with is_error, e.g. an invalid OAuth token. */
+  resultApiError: (text: string) =>
+    msg({ type: 'result', subtype: 'success', is_error: true, result: text, total_cost_usd: 0, session_id: 's1' }),
 }
 
 export class MemoryStore implements ChatStore {
