@@ -32,8 +32,7 @@ const cells = computed(() => (data.value && layout.value === 'desktop' ? desktop
           v-for="cell in cells"
           :key="cell.keys.join()"
           class="stack"
-          :class="{ stretch: cell.stretch }"
-          :style="{ gridColumn: `span ${cell.span}` }"
+          :class="[`s-${cell.span}`, { stretch: cell.stretch }]"
         >
           <TodaySection v-for="key in cell.keys" :key="key" :name="key" :data="data" :layout="layout" />
         </div>
