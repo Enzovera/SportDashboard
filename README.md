@@ -43,6 +43,16 @@ $C run --rm --entrypoint pytest ingest -q
 
 Każdy run zapisuje się w `ingest_run` (status `ok | partial | error`, liczba nowych i niezmienionych payloadów, błędy).
 
+### Dashboard i czat
+
+- Dashboard: http://localhost:5173 (Vite, HMR). Dane: `?mock=full` (wartości z makiet), `?mock=stage1` (tylko Garmin + Hevy), `?mock=off` (prawdziwe `/api`, gdy powstanie API w Go).
+- Czat z trenerem: `coach-chat` na :8090, z dashboardu pod `/api/chat`. Wymaga `CLAUDE_CODE_OAUTH_TOKEN` (z `claude setup-token`) albo `ANTHROPIC_API_KEY` w `.env`; bez serwera MCP (`FORMA_MCP_URL`) trener nie ma dostępu do danych.
+
+```bash
+docker compose -f deploy/dev/compose.yml --env-file .env run --rm --no-deps web npm test
+docker compose -f deploy/dev/compose.yml --env-file .env run --rm --no-deps coach-chat npm test
+```
+
 ### Toolchainy
 
 Go i Node w kontenerach, bez instalacji na hoście:
@@ -55,7 +65,9 @@ docker compose -f deploy/dev/compose.yml --profile tools run --rm go go version
 
 | Ścieżka | Co |
 | --- | --- |
-| `services/ingest` | workery Python: Garmin, Hevy → `raw_payload` |
+| `services/ingest` | workery Python: Garmin, Hevy → `raw_payload`, scheduler |
+| `services/coach-chat` | czat z trenerem: Claude Agent SDK → SSE |
+| `web` | dashboard: Vue 3 + ECharts |
 | `migrations` | migracje SQL (golang-migrate) |
 | `deploy/dev` | compose dla dev |
 | `docs`, `design` | projekt i makiety |

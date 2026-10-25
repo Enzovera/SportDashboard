@@ -2,7 +2,7 @@
 
 Osobista aplikacja jednego użytkownika (Patryk). Zbiera dane z Garmina, Hevy, Fitatu i wagi Xiaomi do jednej bazy, pokazuje je na dashboardzie zoptymalizowanym pod Galaxy Z Fold6 i daje AI trenera (Claude), który codziennie podsumowuje dzień, pilnuje planu do maratonu i układa żywienie pod trening.
 
-Stan: **etap 1 w toku.** Jest środowisko dev (`deploy/dev/compose.yml`), migracje (`raw_payload`, `sync_state`, `ingest_run`, projekcje) i ingest Garmina i Hevy (`services/ingest`). Dalej: projektory i API w Go, widoki Dziś i Trening. Komendy dev w `README.md`.
+Stan: **etap 1 w toku, czat z etapu 3 równolegle.** Jest środowisko dev (`deploy/dev/compose.yml`), migracje, ingest Garmina i Hevy ze schedulerem (`services/ingest`), front w Vue 3 + ECharts z widokami Dziś i Trening na mockach (`web/`, kontrakt API w `web/src/api/types.ts`) i backend czatu na Agent SDK (`services/coach-chat`). Brakuje: projektorów i API w Go (front jeszcze nie czyta prawdziwych danych) oraz serwera MCP (czat działa bez narzędzi). Komendy dev w `README.md`.
 
 ## Gdzie co jest
 
@@ -21,7 +21,7 @@ Stan: **etap 1 w toku.** Jest środowisko dev (`deploy/dev/compose.yml`), migrac
 | `api` | Go | API dashboardu, projekcje, akceptacja zmian planu, SSE dla czatu |
 | `mcp` | Go | serwer MCP — **jedyna droga AI do danych** |
 | `coach-chat` | TypeScript | czat z trenerem przez Claude Agent SDK (`query()` z `resume`) |
-| `web` | do ustalenia (propozycja: Vue + ECharts) | dashboard, PWA pod Fold6 |
+| `web` | Vue 3 + TypeScript + ECharts (Vite) | dashboard, PWA pod Fold6 |
 | baza | PostgreSQL (własny kontener) | `raw_payload` + projekcje + zdarzenia planu |
 | deploy | docker compose na Mikrus 3.0 | Cloudflare Tunnel + Cloudflare Access, nocny `pg_dump` poza serwer |
 
@@ -61,7 +61,6 @@ Fold6: ekran wewnętrzny 707 × 823 CSS px, dwie kolumny po obu stronach zgięci
 
 ## Otwarte decyzje
 
-- Framework frontendu (Vue + ECharts to tylko propozycja).
 - Telefon i model wagi — czy Mi Scale Exporter zadziała.
 - Plan Claude: Pro czy Max (limity vs kredyty API dla runów).
 - Mikrus 3.0 czy 3.5 — zależy od realnego zużycia RAM przez czat.

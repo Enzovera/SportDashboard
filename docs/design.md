@@ -203,13 +203,17 @@ Czat w dashboardzie działa przez Claude Agent SDK zalogowany twoją subskrypcj�
 | --- | --- | --- |
 | `mcpServers` | `forma`: HTTP, wewnętrzny URL + token w nagłówku | dostęp tylko do twoich danych |
 | `strictMcpConfig` | `true` | ignoruje inne serwery MCP i connectory |
-| `allowedTools` | `mcp__forma__*` | narzędzia MCP bez pytania o zgodę |
-| `disallowedTools` | wbudowane narzędzia (Bash, Write, Edit, WebFetch) + `mcp__forma__save_coach_note` | czat nie dotyka plików ani sieci i nie zaśmieca dziennika |
-| `permissionPrompts` | `none` | wszystko, co wymagałoby zgody, jest odrzucane |
+| `tools` | `[]` | żadnych wbudowanych narzędzi (Bash, Read, Write, Edit, WebFetch…): czat nie dotyka plików ani sieci |
+| `allowedTools` | `mcp__forma` | narzędzia MCP bez pytania o zgodę |
+| `disallowedTools` | `mcp__forma__save_coach_note` | luźne pytania nie zaśmiecają dziennika |
+| `permissionMode` | `dontAsk` | wszystko, co nie jest wstępnie dozwolone, jest odrzucane |
 | `settingSources` | `[]` | bez lokalnych ustawień i CLAUDE.md |
 | `includePartialMessages` | `true` | streaming tokenów do UI |
 | `maxTurns` | 8 | limit pętli narzędzi na jedną wiadomość |
-| `systemPrompt` | prompt trenera + kontekst ekranu | ten sam głos co run dzienny |
+| `systemPrompt` | prompt trenera (stały) | ten sam głos co run dzienny; kontekst ekranu idzie na początek wiadomości użytkownika, żeby system prompt był stałym prefiksem cache |
+| `model`, `effort` | `claude-opus-5-5`, `medium` (env `COACH_MODEL`, `COACH_EFFORT`) | czat ma odpowiadać szybko; effort do strojenia |
+
+Implementacja: `services/coach-chat` (Node 24, TypeScript uruchamiany bez kompilacji, `@anthropic-ai/claude-agent-sdk` przypięty do wersji). Endpointy pod `/api/chat/sessions` (tworzenie sesji, historia, wiadomość jako strumień SSE ze zdarzeniami `delta`, `tool`, `done`, `error`); jedna wiadomość naraz na rozmowę. Historia do UI leży w `chat_session` / `chat_message`, transkrypt modelu w `CLAUDE_CONFIG_DIR` (wolumen), z którego korzysta `resume`. `total_cost_usd` z SDK jest skumulowany dla sesji, więc koszt trzymamy przy `chat_session`. Na dev Vite proxuje `/api/chat` wprost do `coach-chat`; docelowo robi to API w Go.
 
 Logowanie: `claude setup-token` generuje roczny token OAuth subskrypcji (Pro lub Max), trzymany jako sekret `CLAUDE_CODE_OAUTH_TOKEN` w kontenerze `coach-chat`. Ustawiony `ANTHROPIC_API_KEY` ma pierwszeństwo przed tokenem, więc przejście na API to jedna zmienna. Czat jest tylko do twojego użytku; subskrypcja nie może obsługiwać innych osób.
 
