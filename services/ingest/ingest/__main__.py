@@ -1,4 +1,4 @@
-"""CLI: python -m ingest {hevy [--full] | garmin [--days N] | garmin-login}"""
+"""CLI: python -m ingest {hevy [--full] | garmin [--days N] | garmin-login | schedule}"""
 
 import argparse
 import logging
@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 import psycopg
 
-from . import TZ, garmin, hevy
+from . import TZ, garmin, hevy, scheduler
 from .store import PgStore
 
 log = logging.getLogger("ingest")
@@ -48,6 +48,7 @@ def main() -> int:
     p_garmin = sub.add_parser("garmin", help="sync Garmin days and activities")
     p_garmin.add_argument("--days", type=int, default=2, help="days back including today (nightly backfill: 7)")
     sub.add_parser("garmin-login", help="first Garmin login with password and MFA")
+    sub.add_parser("schedule", help="run hourly sync and nightly backfill forever")
     args = parser.parse_args()
 
     now = datetime.now(timezone.utc)
@@ -69,6 +70,9 @@ def main() -> int:
             return run("garmin", {"days": args.days}, work)
         case "garmin-login":
             garmin.interactive_login(os.environ.get("GARMIN_EMAIL"), env("GARMINTOKENS"))
+            return 0
+        case "schedule":
+            scheduler.loop()
             return 0
     return 2
 

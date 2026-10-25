@@ -47,7 +47,7 @@ services:
         condition: service_healthy
 
   # Ingest workers, run on demand: `run --rm ingest {hevy|garmin|garmin-login}`.
-  ingest:
+  ingest: &ingest
     build:
       context: ../../services/ingest
       target: dev
@@ -64,6 +64,13 @@ services:
     depends_on:
       migrate:
         condition: service_completed_successfully
+
+  # Hourly Garmin + Hevy sync and 3:00 backfill (schedule in services/ingest/ingest/scheduler.py).
+  scheduler:
+    <<: *ingest
+    profiles: []
+    command: ["schedule"]
+    restart: unless-stopped
 
   # Toolchains for services/*, run on demand (profile "tools"), so nothing has to be installed on the host.
   go:

@@ -276,6 +276,8 @@ Bezpieczeństwo:
 
 Dev stoi lokalnie w Docker Desktop (`deploy/dev/compose.yml`: Postgres 17, migracje, adminer, ingest, toolchainy Go i Node); produkcja to Mikrus.
 
+Harmonogram ingestu nie zależy od crona hosta: kontener `scheduler` (`python -m ingest schedule`) budzi się co minutę i odpala każde zadanie jako osobny proces, więc awaria jednego workera nie zatrzymuje pozostałych. Ten sam kontener pójdzie na Mikrusa.
+
 Całość stoi na jednym Mikrusie w docker compose. Rekomendacja to Mikrus 3.0 (2 GB RAM, 25 GB, 130 zł/rok): Mikrus nie pozwala dodać swapu, więc 1 GB z planu 2.1 nie wystarczy na Postgresa, czat i workery naraz ([oferta](https://mikr.us/), [ograniczenia](https://wiki.mikr.us/ograniczenia_techniczne_mikrusa/)).
 
 | Kontener | Rola | RAM (szacunek) |

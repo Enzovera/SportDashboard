@@ -21,3 +21,4 @@ packages = ["ingest"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+pythonpath = ["."]  # test the mounted source, not the copy installed in the image

@@ -11,7 +11,21 @@ cp .env.example .env          # uzupełnij HEVY_API_KEY, GARMIN_EMAIL
 docker compose -f deploy/dev/compose.yml --env-file .env up -d
 ```
 
-`up` startuje Postgresa (127.0.0.1:5432), adminera (http://localhost:8081) i uruchamia migracje z `migrations/`.
+`up` startuje Postgresa (127.0.0.1:5432), adminera (http://localhost:8081), uruchamia migracje z `migrations/` i startuje `scheduler`: Hevy co godzinę o :05, Garmin (2 dni) o :10, backfill Garmina 7 dni o 3:00. Harmonogram jest w [scheduler.py](services/ingest/ingest/scheduler.py), logi: `docker compose -f deploy/dev/compose.yml logs -f scheduler`.
+
+Na dev sync działa tylko, gdy komputer nie śpi i Docker Desktop jest uruchomiony (warto włączyć „Start Docker Desktop when you sign in”). Przerwy do 7 dni nadrabia nocny backfill.
+
+### Bramka „2 tygodnie stabilnego syncu”
+
+```sql
+select source, date(started_at) as day, count(*) as runs,
+       count(*) filter (where status = 'ok') as ok,
+       count(*) filter (where status <> 'ok') as not_ok,
+       sum(inserted) as inserted
+from ingest_run
+where started_at > now() - interval '14 days'
+group by 1, 2 order by 2 desc, 1;
+```
 
 ### Ingest
 
