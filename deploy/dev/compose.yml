@@ -72,6 +72,32 @@ services:
     command: ["schedule"]
     restart: unless-stopped
 
+  # Coach chat over Claude Agent SDK (docs/design.md, "Czat z trenerem"). Source is mounted, node --watch reloads.
+  coach-chat:
+    image: node:24-alpine
+    working_dir: /src/services/coach-chat
+    command: ["sh", "-c", "npm install --no-audit --no-fund && npm run dev"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8090:8090"
+    environment:
+      DATABASE_URL: *database-url
+      CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
+      ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      COACH_MODEL: ${COACH_MODEL:-claude-opus-5-5}
+      COACH_EFFORT: ${COACH_EFFORT:-medium}
+      FORMA_MCP_URL: ${FORMA_MCP_URL:-}
+      FORMA_MCP_TOKEN: ${FORMA_MCP_TOKEN:-}
+      CLAUDE_CONFIG_DIR: /data/claude
+    volumes:
+      - ../../services/coach-chat:/src/services/coach-chat
+      - coach_node_modules:/src/services/coach-chat/node_modules
+      - claude_config:/data/claude
+      - npmcache:/root/.npm
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
   # Dashboard (Vue + Vite) on http://localhost:5173. One-off: `run --rm web npm run build`.
   web:
     image: node:24-alpine
@@ -83,6 +109,7 @@ services:
     environment:
       VITE_POLL: "1"
       VITE_API_PROXY: http://api:8080
+      VITE_CHAT_PROXY: http://coach-chat:8090
     volumes:
       - ../../web:/src/web
       - web_node_modules:/src/web/node_modules
@@ -115,3 +142,5 @@ volumes:
   gomod:
   npmcache:
   web_node_modules:
+  coach_node_modules:
+  claude_config:
