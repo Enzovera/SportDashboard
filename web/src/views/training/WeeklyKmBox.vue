@@ -8,7 +8,7 @@ import { weeklyKmOption } from './chartOptions'
 import { useChartPalette } from './palette'
 import { weeklyKmAriaLabel } from './trainingData'
 
-const props = defineProps<{ weeks: WeeklyKm[]; todayPlannedKm: number | null }>()
+const props = defineProps<{ weeks: WeeklyKm[]; todayPlannedKm: number | null; height?: number }>()
 const palette = useChartPalette()
 
 const option = computed(() => weeklyKmOption(props.weeks, props.todayPlannedKm, palette.value))
@@ -24,7 +24,7 @@ const legend = computed(() => {
 
 <template>
   <BoxSection v-if="weeks.length" title="Kilometraż tygodniowy" class="chart-box">
-    <EChart :option="option" :label="label" />
+    <EChart :option="option" :label="label" :height="height" />
     <ChartLegend :items="legend" />
   </BoxSection>
 </template>

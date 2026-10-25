@@ -8,7 +8,7 @@ import { loadOption } from './chartOptions'
 import { useChartPalette } from './palette'
 import { loadAriaLabel } from './trainingData'
 
-const props = defineProps<{ points: LoadPoint[] }>()
+const props = defineProps<{ points: LoadPoint[]; height?: number }>()
 const palette = useChartPalette()
 
 const option = computed(() => loadOption(props.points, palette.value))
@@ -21,7 +21,7 @@ const legend: LegendItem[] = [
 
 <template>
   <BoxSection v-if="points.length" title="Fitness i zmęczenie" class="chart-box">
-    <EChart :option="option" :label="label" />
+    <EChart :option="option" :label="label" :height="height" />
     <ChartLegend :items="legend" />
   </BoxSection>
 </template>

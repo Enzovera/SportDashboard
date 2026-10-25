@@ -58,6 +58,22 @@ const hevyProblem = computed(() => problemOf('hevy'))
       <section class="box" role="alert">{{ error }}</section>
     </div>
 
+    <!-- design/screens/DesktopTrening.html: load strip and wide charts left (8), lists right (4). -->
+    <div v-else-if="data && layout === 'desktop'" class="d-grid">
+      <div class="stack" style="grid-column: span 8">
+        <section v-if="error" class="box" role="alert">{{ error }}</section>
+        <LoadSummaryBox :load="data.load" :weeks="weeks" wide />
+        <WeeklyKmBox :weeks="data.weeklyKm" :today-planned-km="data.todayPlannedKm" :height="260" />
+        <LoadChartBox :points="data.loadSeries" :height="240" />
+        <CoachNoteBox v-if="data.coachNote" :note="data.coachNote" />
+      </div>
+      <div class="stack" style="grid-column: span 4">
+        <RecentRunsBox :runs="data.recentRuns" :sync-problem="garminProblem" />
+        <MuscleSetsBox :items="data.setsPerMuscle.items" />
+        <StrengthBox :sessions="data.strengthSessions" :sync-problem="hevyProblem" />
+      </div>
+    </div>
+
     <div v-else-if="data" class="page">
       <template v-if="layout === 'fold'">
         <div class="col">

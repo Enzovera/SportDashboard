@@ -13,29 +13,28 @@ import SupplementsSection from './SupplementsSection.vue'
 import ProposalsRow from './ProposalsRow.vue'
 import WeightRow from './WeightRow.vue'
 
-const props = defineProps<{ name: SectionKey; data: TodayResponse; layout: Layout }>()
-const cover = props.layout === 'cover'
+defineProps<{ name: SectionKey; data: TodayResponse; layout: Layout }>()
 </script>
 
 <template>
-  <CoachSection v-if="name === 'coach' && data.coach" :coach="data.coach" :compact="cover" />
-  <SessionHero v-else-if="name === 'session' && data.session" :session="data.session" :week="data.week" :compact="cover" />
+  <CoachSection v-if="name === 'coach' && data.coach" :coach="data.coach" :compact="layout === 'cover'" />
+  <SessionHero v-else-if="name === 'session' && data.session" :session="data.session" :week="data.week" :compact="layout === 'cover'" />
   <WeekSection
     v-else-if="name === 'week'"
     :week="data.week"
     :today="data.date"
-    :compact="cover"
-    :totals="!cover || !data.session"
+    :compact="layout === 'cover'"
+    :totals="layout !== 'cover' || !data.session"
   />
   <TomorrowRow v-else-if="name === 'tomorrow' && data.tomorrow" :tomorrow="data.tomorrow" />
-  <ReadinessSection v-else-if="name === 'readiness'" :readiness="data.readiness" :compact="cover" />
+  <ReadinessSection v-else-if="name === 'readiness'" :readiness="data.readiness" :compact="layout === 'cover'" />
   <NutritionSection
     v-else-if="name === 'nutrition' && data.nutrition"
     :nutrition="data.nutrition"
     :supplements="layout === 'fold' ? data.supplements : null"
-    :compact="cover"
+    :compact="layout === 'cover'"
   />
   <SupplementsSection v-else-if="name === 'supplements' && data.supplements" :supplements="data.supplements" />
-  <ProposalsRow v-else-if="name === 'proposals' && data.proposalsPending" :count="data.proposalsPending" :compact="cover" />
+  <ProposalsRow v-else-if="name === 'proposals' && data.proposalsPending" :count="data.proposalsPending" :compact="layout === 'cover'" />
   <WeightRow v-else-if="name === 'weight' && data.weight" :weight="data.weight" />
 </template>

@@ -20,12 +20,19 @@ export function useLayout() {
   const desktop = window.matchMedia(`(min-width: ${DESKTOP_MIN_WIDTH}px)`)
   const current = (): Layout => (cover.matches ? 'cover' : desktop.matches ? 'desktop' : 'fold')
   const layout = ref<Layout>(current())
-  const update = () => (layout.value = current())
+  const update = () => {
+    const next = current()
+    if (next !== layout.value) layout.value = next
+  }
+  // Media-query `change` is the precise signal; `resize` backs it up where it does not fire
+  // (e.g. emulated viewports), so unfolding the Fold or resizing a window always switches the layout.
   cover.addEventListener('change', update)
   desktop.addEventListener('change', update)
+  window.addEventListener('resize', update, { passive: true })
   onScopeDispose(() => {
     cover.removeEventListener('change', update)
     desktop.removeEventListener('change', update)
+    window.removeEventListener('resize', update)
   })
   return layout
 }
