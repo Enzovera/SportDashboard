@@ -101,6 +101,27 @@ services:
       migrate:
         condition: service_completed_successfully
 
+  # Dashboard API (Go): /api/today, /api/training; rebuilds projections from raw_payload every 5 min.
+  # Dev runs from source (`go run`); restart the container after Go changes.
+  api:
+    image: golang:1.25
+    working_dir: /src/services/api
+    command: ["go", "run", "./cmd/api", "serve"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080"
+    environment:
+      DATABASE_URL: *database-url
+      PROJECT_INTERVAL: 5m
+      TZ: Europe/Warsaw
+    volumes:
+      - ../../services/api:/src/services/api
+      - gomod:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
   # Dashboard (Vue + Vite) on http://localhost:5173. One-off: `run --rm web npm run build`.
   web:
     image: node:24-alpine
@@ -154,6 +175,7 @@ volumes:
   garmin_tokens:
   fitatu_session:
   gomod:
+  gobuild:
   npmcache:
   web_node_modules:
   coach_node_modules:

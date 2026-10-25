@@ -72,6 +72,8 @@ Obok `raw_payload` są dwie tabele techniczne ingestu: `sync_state` (kursor przy
 
 Projekcje buduje kod w Go (`api project`), nie workery: Python tylko zbiera, a parsowanie i metryki są w jednym języku z serwerem MCP.
 
+Każda projekcja to pełna przebudowa w jednej transakcji z najnowszej wersji każdego rekordu (`max(id)` per źródło, endpoint, `external_id`). `api serve` robi ją przy starcie i co `PROJECT_INTERVAL` (domyślnie 5 min), więc nowe runy ingestu trafiają na dashboard bez sprzężenia workerów z API. Payload, którego nie da się sparsować, jest pomijany i logowany, nie blokuje reszty. Trening usunięty w Hevy znika, gdy zdarzenie usunięcia jest nowsze niż ostatnia wersja treningu.
+
 ```sql
 create table raw_payload (
   id          bigserial primary key,
@@ -128,6 +130,20 @@ Model dostaje gotowe agregaty i je interpretuje; sam niczego nie przelicza, wię
 | Realizacja planu | % zaplanowanych sesji wykonanych w tygodniu | plan + Garmin + Hevy |
 
 Pojedyncze ważenie i pojedynczy odczyt HRV są zbyt zaszumione, dlatego trener widzi tylko średnie i odchylenia od bazy.
+
+Definicje w kodzie (`services/api/internal/metrics`, `internal/dashboard`), wartości startowe do strojenia:
+
+| Metryka | Implementacja |
+| --- | --- |
+| ATL / CTL | średnie wykładnicze dziennej sumy `activityTrainingLoad` z Garmina, α = 1 − e^(−1/7) i 1 − e^(−1/42); historia 180 dni, dni bez aktywności = 0 |
+| TSB dnia | CTL − ATL z **poprzedniego** dnia: forma „na rano”, dzisiejszy trening jej nie psuje |
+| Forma (etykieta TSB) | ≥ 0 świeży, −10…0 neutralnie, −30…−10 zmęczony, < −30 przeciążony |
+| HRV | średnia 7 dni (min. 3 noce) vs baza 60 dni (min. 14 nocy); „w normie” od 95% bazy, niżej „poniżej bazy” |
+| Tętno spoczynkowe | dziś vs średnia 7 poprzednich dni |
+| Waga | średnia 7 dni od 3 ważeń, zmiana vs 7 dni wcześniej (też od 3 ważeń) |
+| Kilometraż | suma dystansu aktywności, których typ zawiera `running` (bieg, bieżnia, trail), w tygodniu ISO |
+| Serie robocze | serie Hevy bez rozgrzewek i z powtórzeniami, po głównej partii z szablonu ćwiczenia; bez `cardio` |
+| Status syncu | ostatni run źródła z `ingest_run`: `error`/`partial` wprost, `stale` bez udanego runu od 3 h |
 
 ## Rytmy AI
 

@@ -52,7 +52,8 @@ Każdy run zapisuje się w `ingest_run` (status `ok | partial | error`, liczba n
 
 ### Dashboard i czat
 
-- Dashboard: http://localhost:5173 (Vite, HMR). Dane: `?mock=full` (wartości z makiet), `?mock=stage1` (tylko Garmin + Hevy), `?mock=off` (prawdziwe `/api`, gdy powstanie API w Go).
+- Dashboard: http://localhost:5173 (Vite, HMR). Dane: `?mock=full` (wartości z makiet), `?mock=stage1` (tylko Garmin + Hevy), `?mock=off` (prawdziwe dane z API w Go; dziś Dziś i Trening).
+- API: `api` na :8080 (`/api/today`, `/api/training?range=4w|12w|block`, `/health`), przebudowuje projekcje z `raw_payload` co 5 min. Ręcznie: `docker compose -f deploy/dev/compose.yml --env-file .env exec api go run ./cmd/api project`. Testy: `docker compose -f deploy/dev/compose.yml --profile tools run --rm -w /src/services/api go go test ./...` (w Git Bash poprzedź `MSYS_NO_PATHCONV=1`).
 - Czat z trenerem: `coach-chat` na :8090, z dashboardu pod `/api/chat`. Wymaga `CLAUDE_CODE_OAUTH_TOKEN` (z `claude setup-token`) albo `ANTHROPIC_API_KEY` w `.env`; bez serwera MCP (`FORMA_MCP_URL`) trener nie ma dostępu do danych.
 
 ```bash
