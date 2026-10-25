@@ -5,7 +5,7 @@ COPY pyproject.toml ./
 COPY ingest ./ingest
 RUN pip install . \
  && useradd --uid 10001 --create-home ingest \
- && mkdir -p /data/garmin && chown ingest /data/garmin && chmod 700 /data/garmin
+ && mkdir -p /data/garmin /data/fitatu && chown ingest /data/garmin /data/fitatu && chmod 700 /data/garmin /data/fitatu
 USER ingest
 ENTRYPOINT ["python", "-m", "ingest"]
 

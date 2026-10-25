@@ -22,6 +22,8 @@ Tylko Hevy ma oficjalne API; Garmin i Fitatu idą przez nieoficjalne biblioteki,
 | [Fitatu](https://pypi.org/project/fitatu-api/) | fitatu-api, nieoficjalne, reverse-engineered | posiłki, kcal, makro, woda | może się zepsuć bez ostrzeżenia; makra dzień po dniu wymagają Premium | 3 razy dziennie + nocny backfill 7 dni (posiłki dopisuje się z opóźnieniem) |
 | [Waga Xiaomi](https://forums.garmin.com/apps-software/mobile-apps-web/f/garmin-connect-web/118678/xiaomi-mi-smart-scale-with-garmin-connect/1698565) | Mi Scale Exporter → Garmin jako plik .fit ze składem ciała | waga, % tłuszczu, masa mięśniowa, woda | zależy od telefonu i modelu wagi | razem z Garminem |
 
+Fitatu w ingeście (`services/ingest/ingest/fitatu.py`, `fitatu-api` 0.6.0): na każdy dzień trzy surowe odpowiedzi — `diet_day` (`/diet-and-activity-plan/{user}/day/{date}`: posiłki z pozycjami, flaga zjedzone, kcal i makro), `settings` (`/users/{user}/settings-new/{date}`: cele kcal i makro, BMR/TMR) i `water`. Worker używa wyłącznie odczytów biblioteki (ma też metody zapisu: posiłki, produkty, waga — nie wolno ich wołać). Logowanie raz przez `ingest fitatu-login`; sesja z tokenami w wolumenie, biblioteka sama ją odświeża. Harmonogram: 10:15, 16:15, 22:15 po 2 dni + backfill 7 dni o 3:20.
+
 Plan B dla Fitatu i wagi: Health Connect / Apple Zdrowie, z którymi Fitatu synchronizuje się w obie strony.
 
 Otwarte pytanie: jaki telefon i model wagi — to rozstrzyga, czy Mi Scale Exporter zadziała.

@@ -57,10 +57,13 @@ services:
       HEVY_API_KEY: ${HEVY_API_KEY:-}
       GARMIN_EMAIL: ${GARMIN_EMAIL:-}
       GARMINTOKENS: /data/garmin
+      FITATU_EMAIL: ${FITATU_EMAIL:-}
+      FITATU_SESSION: /data/fitatu/session.json
       TZ: Europe/Warsaw
     volumes:
       - ../../services/ingest:/app
       - garmin_tokens:/data/garmin
+      - fitatu_session:/data/fitatu
     depends_on:
       migrate:
         condition: service_completed_successfully
@@ -149,6 +152,7 @@ services:
 volumes:
   pgdata:
   garmin_tokens:
+  fitatu_session:
   gomod:
   npmcache:
   web_node_modules:

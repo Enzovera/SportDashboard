@@ -38,6 +38,9 @@ $C run --rm ingest garmin            # dziś i wczoraj (co godzinę)
 $C run --rm ingest garmin --days 7   # nocny backfill
 $C run --rm ingest hevy              # pierwszy raz pełny sync, potem zdarzenia od kursora
 $C run --rm ingest hevy --full       # pełny resync
+$C run --rm ingest fitatu-login     # raz: e-mail + hasło, sesja ląduje w wolumenie fitatu_session
+$C run --rm ingest fitatu           # dziś i wczoraj (3× dziennie: 10:15, 16:15, 22:15)
+$C run --rm ingest fitatu --days 7  # nocny backfill (3:20)
 $C run --rm --entrypoint pytest ingest -q
 ```
 

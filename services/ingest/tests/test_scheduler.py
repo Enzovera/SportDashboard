@@ -18,6 +18,11 @@ def at(hour, minute):
         (at(14, 5), ["hevy"]),
         (at(14, 0), []),
         (at(14, 30), []),
+        (at(3, 20), ["fitatu-backfill"]),
+        (at(10, 15), ["fitatu-morning"]),
+        (at(16, 15), ["fitatu-afternoon"]),
+        (at(22, 15), ["fitatu-evening"]),
+        (at(22, 10), ["garmin"]),
     ],
 )
 def test_due_jobs(t, expected):

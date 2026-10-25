@@ -1,4 +1,4 @@
-"""CLI: python -m ingest {hevy [--full] | garmin [--days N] | garmin-login | schedule}"""
+"""CLI: python -m ingest {hevy [--full] | garmin [--days N] | garmin-login | fitatu [--days N] | fitatu-login | schedule}"""
 
 import argparse
 import logging
@@ -8,7 +8,7 @@ from datetime import datetime, timezone
 
 import psycopg
 
-from . import TZ, garmin, hevy, scheduler
+from . import TZ, fitatu, garmin, hevy, scheduler
 from .store import PgStore
 
 log = logging.getLogger("ingest")
@@ -48,6 +48,9 @@ def main() -> int:
     p_garmin = sub.add_parser("garmin", help="sync Garmin days and activities")
     p_garmin.add_argument("--days", type=int, default=2, help="days back including today (nightly backfill: 7)")
     sub.add_parser("garmin-login", help="first Garmin login with password and MFA")
+    p_fitatu = sub.add_parser("fitatu", help="sync Fitatu meals, targets and water")
+    p_fitatu.add_argument("--days", type=int, default=2, help="days back including today (nightly backfill: 7)")
+    sub.add_parser("fitatu-login", help="first Fitatu login with e-mail and password")
     sub.add_parser("schedule", help="run hourly sync and nightly backfill forever")
     args = parser.parse_args()
 
@@ -70,6 +73,17 @@ def main() -> int:
             return run("garmin", {"days": args.days}, work)
         case "garmin-login":
             garmin.interactive_login(os.environ.get("GARMIN_EMAIL"), env("GARMINTOKENS"))
+            return 0
+        case "fitatu":
+            session = env("FITATU_SESSION")
+
+            def work_fitatu(store):
+                # Login inside the run, so an expired session is recorded in ingest_run too.
+                return fitatu.sync(fitatu.connect(session), store, now.astimezone(TZ).date(), args.days)
+
+            return run("fitatu", {"days": args.days}, work_fitatu)
+        case "fitatu-login":
+            fitatu.interactive_login(os.environ.get("FITATU_EMAIL"), env("FITATU_SESSION"))
             return 0
         case "schedule":
             scheduler.loop()

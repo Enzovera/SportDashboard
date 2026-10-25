@@ -5,9 +5,10 @@ build-backend = "setuptools.build_meta"
 [project]
 name = "forma-ingest"
 version = "0.1.0"
-description = "Ingest workers: Garmin, Hevy -> raw_payload"
+description = "Ingest workers: Garmin, Hevy, Fitatu -> raw_payload"
 requires-python = ">=3.13"
 dependencies = [
+  "fitatu-api==0.6.0",
   "garminconnect==0.3.20",
   "psycopg[binary]>=3.3,<4",
   "requests>=2.32,<3",
