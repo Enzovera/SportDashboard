@@ -39,6 +39,10 @@ $C run --rm ingest garmin --days 7   # nocny backfill
 $C run --rm ingest hevy              # pierwszy raz pełny sync, potem zdarzenia od kursora
 $C run --rm ingest hevy --full       # pełny resync
 $C run --rm ingest fitatu-login     # raz: e-mail + hasło, sesja ląduje w wolumenie fitatu_session
+# konto bez hasła (logowanie Google/Apple/Facebook): w https://www.fitatu.com/app/ w konsoli przeglądarki
+#   copy(JSON.stringify((u => ({token: u.token, refresh_token: u.refresh_token, id: u.id}))(JSON.parse(localStorage.user))))
+# potem w PowerShellu (schowek -> sesja w wolumenie):
+#   Get-Clipboard | docker compose -f deploy/dev/compose.yml --env-file .env --profile jobs run --rm -T --entrypoint fitatu-api ingest import-session
 $C run --rm ingest fitatu           # dziś i wczoraj (3× dziennie: 10:15, 16:15, 22:15)
 $C run --rm ingest fitatu --days 7  # nocny backfill (3:20)
 $C run --rm --entrypoint pytest ingest -q
