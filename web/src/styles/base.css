@@ -89,3 +89,38 @@ button { font: inherit; color: inherit; }
 /* ---- red count badge: "requires a decision" ---- */
 .count { min-width: 18px; height: 18px; padding: 0 4px; display: inline-flex; align-items: center; justify-content: center;
   background: var(--signal); color: var(--signal-ink); font-size: 11.5px; font-weight: 800; }
+
+/* ---- desktop (>= 1024 px, design/desktop.md): 12-column grid and a slightly larger scale ---- */
+.d-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 16px; align-items: start; }
+.s-3 { grid-column: span 3; } .s-4 { grid-column: span 4; } .s-5 { grid-column: span 5; } .s-6 { grid-column: span 6; }
+.s-7 { grid-column: span 7; } .s-8 { grid-column: span 8; } .s-9 { grid-column: span 9; } .s-12 { grid-column: span 12; }
+.stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+/* With the chat panel open (or a narrow window) the content column shrinks: every grid item takes half the row. */
+.d-content { container-type: inline-size; container-name: main; }
+@container main (max-width: 1100px) { .d-grid > * { grid-column: span 6; } }
+.stack.stretch { align-self: stretch; }
+.stack.stretch > :only-child { flex: 1; }
+.metric-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.metric-grid.four > :nth-child(n) { border-top: 0; }
+.metric-grid.four > * + * { border-left: 1px solid var(--rule); padding-left: 20px; }
+
+@media (min-width: 1024px) {
+  .box { padding: 16px 18px; gap: 10px; }
+  .box-head { gap: 12px; }
+  .box-head h2 { font-size: 15px; }
+  .box--hero .box-head h2 { font-size: 17px; }
+  .meta { font-size: 13px; }
+  .metric-grid { column-gap: 20px; }
+  .metric-grid > * { padding: 10px 0; }
+  .metric-label { font-size: 13px; }
+  .metric-value { font-size: 40px; }
+  .metric-unit { font-size: 16px; }
+  .metric-sub { font-size: 13px; }
+  .table { font-size: 14px; }
+  .table thead tr { font-size: 12.5px; }
+  .table th, .table td { padding: 8px 0; }
+  .link-row { min-height: 56px; padding: 0 18px; }
+  .btn { padding: 0 16px; }
+  .segmented button { padding: 0 14px; font-size: 13.5px; }
+  .status { font-size: 13.5px; }
+}

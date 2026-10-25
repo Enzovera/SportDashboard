@@ -35,7 +35,7 @@ function present(key: SectionKey, d: TodayResponse, layout: Layout): boolean {
       return d.nutrition !== null
     case 'supplements':
       // On the fold screen supplements are a row inside the nutrition box; standalone only without it.
-      return d.supplements !== null && (layout === 'cover' || d.nutrition === null)
+      return d.supplements !== null && (layout !== 'fold' || d.nutrition === null)
     case 'proposals':
       // Zero pending proposals means nothing to decide: no red badge.
       return d.proposalsPending !== null && d.proposalsPending > 0
@@ -47,10 +47,40 @@ function present(key: SectionKey, d: TodayResponse, layout: Layout): boolean {
   }
 }
 
-/** Columns of section keys for the layout, without sections that have no data. */
+/** Columns of section keys for fold/cover, without sections that have no data. */
 export function sectionColumns(d: TodayResponse, layout: Layout): SectionKey[][] {
   const order = layout === 'fold' ? FOLD : COVER
   return order.map((col) => col.filter((key) => present(key, d, layout)))
+}
+
+export interface DesktopCell {
+  keys: SectionKey[]
+  /** Columns of the 12-column grid. */
+  span: number
+  /** Stretch to the row height (equal-height boxes side by side). */
+  stretch: boolean
+}
+
+// design/screens/DesktopDzis.html: today's decision first (hero + coach), then eat / take / readiness,
+// then the week with the small link rows. Cells flow in the grid, so missing sections close the gaps.
+const DESKTOP: DesktopCell[] = [
+  { keys: ['session'], span: 6, stretch: true },
+  { keys: ['coach'], span: 6, stretch: true },
+  { keys: ['nutrition'], span: 4, stretch: true },
+  { keys: ['supplements'], span: 4, stretch: true },
+  { keys: ['readiness'], span: 4, stretch: true },
+  { keys: ['week'], span: 8, stretch: false },
+  { keys: ['tomorrow', 'proposals', 'weight'], span: 4, stretch: false },
+]
+
+/** Desktop grid cells without sections that have no data; a lone half of a 6 | 6 pair takes the row. */
+export function desktopCells(d: TodayResponse): DesktopCell[] {
+  const cells = DESKTOP.map((c) => ({ ...c, keys: c.keys.filter((k) => present(k, d, 'desktop')) })).filter(
+    (c) => c.keys.length > 0,
+  )
+  const pair = cells.filter((c) => c.keys[0] === 'session' || c.keys[0] === 'coach')
+  if (pair.length === 1) pair[0]!.span = 12
+  return cells
 }
 
 /** Header meta: "Nd 25.10 · 20 tyg. do maratonu". */

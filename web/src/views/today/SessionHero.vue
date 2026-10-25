@@ -44,6 +44,10 @@ const hasDetails = computed(
   color: var(--hero-signal);
 }
 .unit { font-size: 22px; font-weight: 700; font-stretch: 80%; line-height: 1; }
+@media (min-width: 1024px) {
+  .distance { font-size: 96px; }
+  .unit { font-size: 26px; }
+}
 .details {
   margin-left: auto; display: flex; flex-direction: column; align-items: flex-end;
   font-size: 13px; line-height: 1.45; color: var(--hero-ink2); text-align: right;

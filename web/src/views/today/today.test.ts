@@ -6,6 +6,7 @@ import {
   pluralPl,
   proposalsText,
   sectionColumns,
+  desktopCells,
   sessionMeta,
   weekKm,
   weekTable,
@@ -127,4 +128,34 @@ describe('proposalsText', () => {
     [5, false, 'propozycji zmian czeka'],
     [2, true, 'propozycje zmian'],
   ] as const)('%s compact=%s -> %s', (n, compact, want) => expect(proposalsText(n, compact)).toBe(want))
+})
+
+describe('desktopCells', () => {
+  const shape = (d: Parameters<typeof desktopCells>[0]) => desktopCells(d).map((c) => [c.keys.join('+'), c.span])
+
+  it('full: hero and coach, then nutrition / supplements / readiness, then week and link rows', () => {
+    expect(shape(todayFull)).toEqual([
+      ['session', 6],
+      ['coach', 6],
+      ['nutrition', 4],
+      ['supplements', 4],
+      ['readiness', 4],
+      ['week', 8],
+      ['tomorrow+proposals+weight', 4],
+    ])
+  })
+
+  it('stage1: readiness and week share one row', () => {
+    expect(shape(todayStage1)).toEqual([
+      ['readiness', 4],
+      ['week', 8],
+    ])
+  })
+
+  it('a lone hero takes the whole row', () => {
+    expect(shape({ ...todayFull, coach: null }).slice(0, 2)).toEqual([
+      ['session', 12],
+      ['nutrition', 4],
+    ])
+  })
 })

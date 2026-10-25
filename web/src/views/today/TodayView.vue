@@ -26,7 +26,7 @@ const columns = computed(() => (data.value ? sectionColumns(data.value, layout.v
 
 <template>
   <PageLayout title="Dziś" :meta="meta">
-    <template #actions>
+    <template #global>
       <template v-if="data">
         <SyncStatus :sync="data.sync" :compact="cover" />
         <RouterLink v-if="data.coach" to="/plan" class="btn trainer">Trener</RouterLink>

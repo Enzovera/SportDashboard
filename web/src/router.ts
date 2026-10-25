@@ -1,20 +1,17 @@
 import { createRouter, createWebHistory } from 'vue-router'
 
-const placeholder = (title: string) => ({
-  component: () => import('@/views/PlaceholderView.vue'),
-  props: { title },
-})
-
 export const router = createRouter({
   history: createWebHistory(),
   routes: [
     { path: '/', name: 'today', component: () => import('@/views/today/TodayView.vue') },
     { path: '/trening', name: 'training', component: () => import('@/views/training/TrainingView.vue') },
-    // Later stages (docs/design.md roadmap): nutrition and body (2), plan and proposals (4).
-    { path: '/zywienie', name: 'nutrition', ...placeholder('Żywienie') },
-    { path: '/cialo', name: 'body', ...placeholder('Ciało') },
-    { path: '/plan', name: 'plan', ...placeholder('Plan') },
-    { path: '/propozycje', name: 'proposals', ...placeholder('Propozycje') },
+    { path: '/zywienie', name: 'nutrition', component: () => import('@/views/nutrition/NutritionView.vue') },
+    { path: '/zywienie/suplementy', name: 'supplements', component: () => import('@/views/nutrition/SupplementsView.vue') },
+    { path: '/cialo', name: 'body', component: () => import('@/views/body/BodyView.vue') },
+    { path: '/plan', name: 'plan', component: () => import('@/views/plan/PlanView.vue') },
+    { path: '/propozycje', name: 'proposals', component: () => import('@/views/proposals/ProposalsView.vue') },
+    // Full-screen chat on the cover screen; on fold/desktop the chat is a panel next to the current view.
+    { path: '/czat', name: 'chat', component: () => import('@/views/chat/ChatView.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
 })
