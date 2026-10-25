@@ -1,0 +1,213 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Żywienie, desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+<style>
+/* Screen-specific: Żywienie (desktop). */
+
+/* Jedzenie | Suplementy switch as links (desktop.css styles only buttons). */
+.segmented a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; font-size: 13.5px; color: var(--ink2); text-decoration: none; white-space: nowrap; }
+.segmented a + a { border-left: 1px solid var(--border); }
+.segmented a[aria-current='page'] { background: var(--ink); color: var(--surface); font-weight: 700; }
+
+
+/* Hero: today's intake */
+.hero-num { display: flex; align-items: baseline; gap: 10px; }
+.hero-num .big { font-size: 96px; font-weight: 800; font-stretch: 70%; line-height: .82; }
+.hero-num .of { font-size: 22px; font-weight: 700; font-stretch: 78%; color: var(--hero-ink2); }
+.box--hero .table { color: var(--hero-ink); }
+.box--hero .table thead tr { color: var(--hero-ink2); }
+.box--hero .table tbody tr { border-top-color: var(--hero-rule); }
+.box--hero .table .dim { color: var(--hero-ink2); }
+.box--hero .table .unit { color: var(--hero-ink2); font-size: 12.5px; }
+
+/* Proposal link inside a box */
+.box-link { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 44px; border-top: 1px solid var(--rule); text-decoration: none; color: var(--ink); font-size: 14px; }
+.box-link .mark { flex: none; width: 8px; height: 8px; background: var(--signal); }
+
+/* Meal */
+.meal { display: flex; flex-direction: column; gap: 3px; padding: 10px 0; border-top: 1px solid var(--rule); }
+.meal-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink3); }
+.meal-name { font-size: 15.5px; font-weight: 600; }
+.meal-macro { font-size: 13.5px; color: var(--ink2); }
+.coach { padding-top: 10px; border-top: 1px solid var(--rule); }
+
+/* Charts: colors only via tokens */
+.chart { display: block; width: 100%; height: auto; font-family: var(--font); }
+.chart .gridl line { stroke: var(--grid); stroke-width: 1; }
+.chart .axisl { stroke: var(--axis); stroke-width: 1; }
+.chart .lbl { fill: var(--ink3); font-size: 12px; }
+.chart .lbl-y { text-anchor: end; }
+.chart .lbl-x { text-anchor: middle; }
+.chart .lbl-key { fill: var(--ink); font-weight: 800; }
+.chart .lbl-today { fill: var(--signal); font-weight: 800; }
+.chart .c-mid { fill: var(--chart-mid); }
+.chart .c-ink { fill: var(--chart); }
+.chart .target line { stroke: var(--chart); stroke-width: 2.5; }
+.chart .today-bar { fill: none; stroke: var(--signal); stroke-width: 1.5; stroke-dasharray: 3 2; }
+.chart .warn-txt { fill: var(--warn); font-size: 12.5px; font-weight: 700; }
+.chart .good-txt { fill: var(--good); font-size: 12.5px; font-weight: 700; }
+.chart .goal { stroke: var(--good); stroke-width: 1.5; }
+.chart .min { stroke: var(--warn); stroke-width: 1.5; stroke-dasharray: 5 4; }
+.chart .series { fill: none; stroke: var(--chart); stroke-width: 2; stroke-linejoin: round; }
+.chart .pt { fill: var(--chart); }
+.chart .pt-low { fill: var(--surface); stroke: var(--warn); stroke-width: 2.25; }
+.key-bar { width: 10px; height: 10px; background: var(--chart-mid); }
+.key-line { width: 14px; height: 2.5px; background: var(--chart); }
+.key-pt { width: 7px; height: 7px; background: var(--chart); }
+.key-low { width: 10px; height: 10px; border: 2px solid var(--warn); }
+.legend .muted { color: var(--ink3); }
+
+/* Day-by-day table: days as columns */
+.days { table-layout: fixed; }
+.days th:first-child { width: 120px; }
+.days thead th { text-align: right; }
+.days thead th.today { color: var(--signal); font-weight: 800; }
+.days td { text-align: right; }
+.days td.today { color: var(--signal); font-weight: 700; }
+.days .key { font-weight: 700; }
+.days td.warn { color: var(--warn); font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis.html">Dziś</a>
+    <a href="DesktopTrening.html">Trening</a>
+    <a href="DesktopZywienie.html" aria-current="page">Żywienie</a>
+    <a href="DesktopCialo.html">Ciało</a>
+    <a href="DesktopPlan.html">Plan</a>
+    <a href="DesktopPropozycje.html">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Żywienie</h1><span class="page-meta">Fitatu 08:15 · 12–25.10</span></div>
+        <nav class="segmented" aria-label="Widok żywienia"><a href="DesktopZywienie.html" aria-current="page">Jedzenie</a><a href="DesktopSuplementy.html">Suplementy 2/7</a></nav>
+      </div>
+
+      <div class="d-grid">
+
+        <!-- Left column: today (hero) + targets per day type -->
+        <div class="stack s-4">
+          <section class="box box--hero" aria-label="Dziś">
+            <div class="box-head"><h2>Dziś · długie wybieganie</h2><span class="meta">cel dnia długiego</span></div>
+            <div class="hero-num"><span class="big">820</span><span class="of">/ 2 950 kcal</span></div>
+            <table class="table">
+              <thead><tr><th scope="col"><span class="sr-only">Składnik</span></th><th scope="col" class="r">zjedzone</th><th scope="col" class="r">cel</th><th scope="col" class="r">zostało</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Kalorie <span class="unit">kcal</span></th><td class="r strong">820</td><td class="r dim">2 950</td><td class="r strong">2 130</td></tr>
+                <tr><th scope="row">Białko <span class="unit">g</span></th><td class="r strong">38</td><td class="r dim">145</td><td class="r strong">107</td></tr>
+                <tr><th scope="row">Węglowodany <span class="unit">g</span></th><td class="r strong">112</td><td class="r dim">412</td><td class="r strong">300</td></tr>
+                <tr><th scope="row">Tłuszcz <span class="unit">g</span></th><td class="r strong">24</td><td class="r dim">80</td><td class="r strong">56</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="box" aria-label="Cele per typ dnia">
+            <div class="box-head"><h2>Cele per typ dnia</h2><span class="meta">makro w g</span></div>
+            <table class="table">
+              <thead><tr><th scope="col"><span class="sr-only">Typ dnia</span></th><th scope="col" class="r">kcal</th><th scope="col" class="r">B</th><th scope="col" class="r">W</th><th scope="col" class="r">T</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Odpoczynek</th><td class="r strong">2 300</td><td class="r">145</td><td class="r">255</td><td class="r">80</td></tr>
+                <tr><th scope="row">Siłowy</th><td class="r strong">2 600</td><td class="r">145</td><td class="r">330</td><td class="r">80</td></tr>
+                <tr><th scope="row">Bieg</th><td class="r strong">2 700</td><td class="r">145</td><td class="r">355</td><td class="r">80</td></tr>
+                <tr><th scope="row">Siłowy + bieg</th><td class="r strong">2 750</td><td class="r">145</td><td class="r">370</td><td class="r">80</td></tr>
+                <tr><th scope="row" class="strong">Długie wybieganie</th><td class="r strong">2 950</td><td class="r">145</td><td class="r">412</td><td class="r">80</td></tr>
+              </tbody>
+            </table>
+            <a class="box-link" href="DesktopPropozycje.html"><span style="display:flex;align-items:center;gap:10px"><span class="mark"></span><span>Propozycja: <b>W 460 g</b> w dniu długiego</span></span><span aria-hidden="true" style="font-weight:700">→</span></a>
+          </section>
+
+          <section class="box" aria-label="Posiłki dziś">
+            <div class="box-head"><h2>Posiłki dziś</h2><span class="meta">Fitatu 08:15</span></div>
+            <div class="meal">
+              <div class="meal-top"><span style="font-weight:600">Śniadanie</span><span>07:40</span></div>
+              <div class="meal-name">Owsianka z bananem i odżywką białkową</div>
+              <div class="meal-macro">820 kcal · B 38 · W 112 · T 24</div>
+            </div>
+            <p class="prose coach"><b>Trener:</b> przed długim wybieganiem jeszcze ok. 60 g węglowodanów, po biegu posiłek z 40 g białka.</p>
+          </section>
+        </div>
+
+        <!-- Right column: balance, calories, protein, meals -->
+        <div class="stack s-8">
+          <section class="box" aria-label="Bilans">
+            <div class="box-head"><h2>Bilans</h2><span class="meta">12–24.10</span></div>
+            <div class="metric-grid four">
+              <div><div class="metric-label">kcal vs cel</div><div class="metric-value">−5%</div><div class="metric-sub">śr. 2 528 z 2 658</div></div>
+              <div><div class="metric-label">Białko · średnio</div><div class="metric-value">1,73<span class="metric-unit">g/kg</span></div><div class="metric-sub">cel 1,9 · min 1,6</div></div>
+              <div><div class="metric-label">Dni ≥ min. białka</div><div class="metric-value">10<span class="metric-unit">/ 13</span></div><div class="metric-sub tone-warn">3 dni poniżej 1,6</div></div>
+              <div><div class="metric-label">Węgle · długie 18.10</div><div class="metric-value">4,8<span class="metric-unit">g/kg</span></div><div class="metric-sub tone-warn">cel 5,4 g/kg</div></div>
+            </div>
+          </section>
+
+          <section class="box" aria-label="Kalorie dzień po dniu">
+            <div class="box-head"><h2>Największy niedobór w dni długiego wybiegania</h2><span class="meta">kcal · 14 dni</span></div>
+            <svg class="chart" viewBox="0 0 840 250" role="img" aria-label="Kalorie zjedzone w 14 dni na tle celu dnia; 18.10, dzień długiego wybiegania, zjedzone 2 610 przy celu 2 950 kcal, 340 poniżej; dziś 820 kcal w toku">
+              <g class="gridl"><line x1="44" y1="32" x2="836" y2="32"/><line x1="44" y1="88" x2="836" y2="88"/><line x1="44" y1="144" x2="836" y2="144"/></g>
+              <line class="axisl" x1="44" y1="200" x2="836" y2="200"/>
+              <g class="lbl lbl-y"><text x="36" y="204">0</text><text x="36" y="148">1000</text><text x="36" y="92">2000</text><text x="36" y="36">3000</text></g>
+              <g><rect class="c-mid" x="59.3" y="53.3" width="26" height="146.7"/><rect class="c-mid" x="115.9" y="61.1" width="26" height="138.9"/><rect class="c-mid" x="172.4" y="66.2" width="26" height="133.8"/><rect class="c-mid" x="229.0" y="76.2" width="26" height="123.8"/><rect class="c-mid" x="285.6" y="48.8" width="26" height="151.2"/><rect class="c-mid" x="342.1" y="57.2" width="26" height="142.8"/><rect class="c-ink" x="398.7" y="53.8" width="26" height="146.2"/><rect class="c-mid" x="455.3" y="55.5" width="26" height="144.5"/><rect class="c-mid" x="511.9" y="47.7" width="26" height="152.3"/><rect class="c-mid" x="568.4" y="62.8" width="26" height="137.2"/><rect class="c-mid" x="625.0" y="72.3" width="26" height="127.7"/><rect class="c-mid" x="681.6" y="51.0" width="26" height="149.0"/><rect class="c-mid" x="738.1" y="53.8" width="26" height="146.2"/></g>
+              <rect class="today-bar" x="795.2" y="154.1" width="25" height="45.4"/>
+              <g class="target"><line x1="52.3" y1="46.0" x2="92.3" y2="46.0"/><line x1="108.9" y1="48.8" x2="148.9" y2="48.8"/><line x1="165.4" y1="54.4" x2="205.4" y2="54.4"/><line x1="222.0" y1="71.2" x2="262.0" y2="71.2"/><line x1="278.6" y1="46.0" x2="318.6" y2="46.0"/><line x1="335.1" y1="48.8" x2="375.1" y2="48.8"/><line x1="391.7" y1="34.8" x2="431.7" y2="34.8"/><line x1="448.3" y1="46.0" x2="488.3" y2="46.0"/><line x1="504.9" y1="48.8" x2="544.9" y2="48.8"/><line x1="561.4" y1="54.4" x2="601.4" y2="54.4"/><line x1="618.0" y1="71.2" x2="658.0" y2="71.2"/><line x1="674.6" y1="46.0" x2="714.6" y2="46.0"/><line x1="731.1" y1="48.8" x2="771.1" y2="48.8"/><line x1="787.7" y1="34.8" x2="827.7" y2="34.8"/></g>
+              <text class="warn-txt" x="411.7" y="24" text-anchor="middle">−340</text>
+              <g class="lbl lbl-x"><text x="72.3" y="222">12</text><text x="128.9" y="222">13</text><text x="185.4" y="222">14</text><text x="242.0" y="222">15</text><text x="298.6" y="222">16</text><text x="355.1" y="222">17</text><text x="411.7" y="222" class="lbl-key">18</text><text x="468.3" y="222">19</text><text x="524.9" y="222">20</text><text x="581.4" y="222">21</text><text x="638.0" y="222">22</text><text x="694.6" y="222">23</text><text x="751.1" y="222">24</text><text x="807.7" y="222" class="lbl-today">25</text></g>
+              <g class="lbl lbl-x"><text x="72.3" y="240">SB</text><text x="128.9" y="240">B</text><text x="185.4" y="240">S</text><text x="242.0" y="240">O</text><text x="298.6" y="240">SB</text><text x="355.1" y="240">B</text><text x="411.7" y="240" class="lbl-key">D</text><text x="468.3" y="240">SB</text><text x="524.9" y="240">B</text><text x="581.4" y="240">S</text><text x="638.0" y="240">O</text><text x="694.6" y="240">SB</text><text x="751.1" y="240">B</text><text x="807.7" y="240" class="lbl-today">D</text></g>
+            </svg>
+            <div class="legend"><span><span class="key-bar"></span>zjedzone</span><span><span class="key-line"></span>cel dnia</span><span class="muted">S siłowy · B bieg · D długie · O wolne</span></div>
+          </section>
+
+          <section class="box" aria-label="Białko na kilogram">
+            <div class="box-head"><h2>Białko rzadko dobija do celu</h2><span class="meta">g/kg · 13 dni</span></div>
+            <svg class="chart" viewBox="0 0 840 212" role="img" aria-label="Białko w g na kg od 1,53 do 1,95; cel 1,9 osiągnięty w 2 z 13 dni, 3 dni poniżej minimum 1,6">
+              <g class="gridl"><line x1="44" y1="20" x2="836" y2="20"/><line x1="44" y1="73.3" x2="836" y2="73.3"/></g>
+              <line class="axisl" x1="44" y1="180" x2="836" y2="180"/>
+              <line class="goal" x1="44" y1="46.7" x2="836" y2="46.7"/>
+              <line class="min" x1="44" y1="126.7" x2="836" y2="126.7"/>
+              <g class="lbl lbl-y"><text x="36" y="184">1,4</text><text x="36" y="130.7">1,6</text><text x="36" y="77.3">1,8</text><text x="36" y="24">2,0</text></g>
+              <text class="good-txt" x="836" y="40" text-anchor="end">cel 1,9</text>
+              <text class="warn-txt" x="52" y="146">minimum 1,6</text>
+              <polyline class="series" points="72.3,121.3 128.9,97.3 185.4,60.0 242.0,132.0 298.6,41.3 355.1,89.3 411.7,110.7 468.3,73.3 524.9,33.3 581.4,100.0 638.0,140.0 694.6,52.0 751.1,145.3"/>
+              <rect class="pt" x="68.8" y="117.8" width="7" height="7"/><rect class="pt" x="125.4" y="93.8" width="7" height="7"/><rect class="pt" x="181.9" y="56.5" width="7" height="7"/><rect class="pt-low" x="237.5" y="127.5" width="9" height="9"/><rect class="pt" x="295.1" y="37.8" width="7" height="7"/><rect class="pt" x="351.6" y="85.8" width="7" height="7"/><rect class="pt" x="408.2" y="107.2" width="7" height="7"/><rect class="pt" x="464.8" y="69.8" width="7" height="7"/><rect class="pt" x="521.4" y="29.8" width="7" height="7"/><rect class="pt" x="577.9" y="96.5" width="7" height="7"/><rect class="pt-low" x="633.5" y="135.5" width="9" height="9"/><rect class="pt" x="691.1" y="48.5" width="7" height="7"/><rect class="pt-low" x="746.6" y="140.8" width="9" height="9"/>
+              <g class="lbl lbl-x"><text x="72.3" y="202">12</text><text x="128.9" y="202">13</text><text x="185.4" y="202">14</text><text x="242.0" y="202">15</text><text x="298.6" y="202">16</text><text x="355.1" y="202">17</text><text x="411.7" y="202" class="lbl-key">18</text><text x="468.3" y="202">19</text><text x="524.9" y="202">20</text><text x="581.4" y="202">21</text><text x="638.0" y="202">22</text><text x="694.6" y="202">23</text><text x="751.1" y="202">24</text><text x="807.7" y="202" class="lbl-today">25</text></g>
+            </svg>
+            <div class="legend"><span><span class="key-pt"></span>g/kg dziennie</span><span><span class="key-low"></span>poniżej minimum</span></div>
+          </section>
+        </div>
+
+        <!-- Full width: day by day -->
+        <section class="box s-12" aria-label="Dzień po dniu">
+          <div class="box-head"><h2>Dzień po dniu</h2><span class="meta">12–25.10</span></div>
+          <table class="table days">
+            <thead><tr><th scope="col"><span class="sr-only">Wskaźnik</span></th><th scope="col">12.10</th><th scope="col">13.10</th><th scope="col">14.10</th><th scope="col">15.10</th><th scope="col">16.10</th><th scope="col">17.10</th><th scope="col">18.10</th><th scope="col">19.10</th><th scope="col">20.10</th><th scope="col">21.10</th><th scope="col">22.10</th><th scope="col">23.10</th><th scope="col">24.10</th><th scope="col" class="today">25.10</th></tr></thead>
+            <tbody>
+              <tr><th scope="row" class="dim">Typ dnia</th><td class="dim">SB</td><td class="dim">B</td><td class="dim">S</td><td class="dim">O</td><td class="dim">SB</td><td class="dim">B</td><td class="key">D</td><td class="dim">SB</td><td class="dim">B</td><td class="dim">S</td><td class="dim">O</td><td class="dim">SB</td><td class="dim">B</td><td class="today">D</td></tr>
+              <tr><th scope="row">Zjedzone kcal</th><td class="strong">2 620</td><td class="strong">2 480</td><td class="strong">2 390</td><td class="strong">2 210</td><td class="strong">2 700</td><td class="strong">2 550</td><td class="strong">2 610</td><td class="strong">2 580</td><td class="strong">2 720</td><td class="strong">2 450</td><td class="strong">2 280</td><td class="strong">2 660</td><td class="strong">2 610</td><td class="today">820</td></tr>
+              <tr><th scope="row">Cel kcal</th><td class="dim">2 750</td><td class="dim">2 700</td><td class="dim">2 600</td><td class="dim">2 300</td><td class="dim">2 750</td><td class="dim">2 700</td><td class="dim">2 950</td><td class="dim">2 750</td><td class="dim">2 700</td><td class="dim">2 600</td><td class="dim">2 300</td><td class="dim">2 750</td><td class="dim">2 700</td><td class="dim">2 950</td></tr>
+              <tr><th scope="row">vs cel</th><td>−5%</td><td>−8%</td><td>−8%</td><td>−4%</td><td>−2%</td><td>−6%</td><td class="warn">−12%</td><td>−6%</td><td>+1%</td><td>−6%</td><td>−1%</td><td>−3%</td><td>−3%</td><td class="muted">w toku</td></tr>
+              <tr><th scope="row">Białko g/kg</th><td>1,62</td><td>1,71</td><td>1,85</td><td class="warn">1,58</td><td>1,92</td><td>1,74</td><td>1,66</td><td>1,80</td><td>1,95</td><td>1,70</td><td class="warn">1,55</td><td>1,88</td><td class="warn">1,53</td><td class="muted">w toku</td></tr>
+            </tbody>
+          </table>
+        </section>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

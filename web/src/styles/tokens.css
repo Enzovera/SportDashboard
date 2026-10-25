@@ -15,6 +15,8 @@
   --hero-ink2: #ABA99F;
   --hero-rule: #34332D;
   --hero-signal: #FF4A3D;
+  --hero-good: #62CF8F;
+  --hero-warn: #E8B24A;
   --signal: #D92B21;
   --signal-ink: #FFFFFF;
   --signal-tint: #FBE9E7;
@@ -52,6 +54,8 @@
     --hero-ink2: #A3A197;
     --hero-rule: #36352F;
     --hero-signal: #FF5A4D;
+    --hero-good: #62CF8F;
+    --hero-warn: #E8B24A;
     --signal: #D92B21;
     --signal-ink: #FFFFFF;
     --signal-tint: #3A1A16;
@@ -85,6 +89,8 @@
   --hero-ink2: #A3A197;
   --hero-rule: #36352F;
   --hero-signal: #FF5A4D;
+  --hero-good: #62CF8F;
+  --hero-warn: #E8B24A;
   --signal: #D92B21;
   --signal-ink: #FFFFFF;
   --signal-tint: #3A1A16;

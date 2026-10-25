@@ -1,0 +1,152 @@
+/* Desktop (>= 1024 px) mockups: shell + primitives. Class names mirror web/src/styles/base.css. See design/desktop.md. */
+@import url('../tokens.css');
+
+*, *::before, *::after { box-sizing: border-box; }
+html, body { margin: 0; }
+body { min-width: 1024px; background: var(--bg); color: var(--ink); font-family: var(--font); font-variant-numeric: tabular-nums; font-size: 14px; -webkit-font-smoothing: antialiased; }
+h1, h2, h3, p { margin: 0; }
+a { color: inherit; }
+button, input, textarea { font: inherit; color: inherit; }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+
+/* ---------- shell ---------- */
+.d-header {
+  position: sticky; top: 0; z-index: 10; height: 64px; padding: 0 32px;
+  display: flex; align-items: stretch; gap: 40px;
+  background: var(--surface); border-bottom: 1px solid var(--border);
+}
+.d-brand { display: flex; align-items: center; font-size: 22px; font-weight: 800; font-stretch: 78%; text-decoration: none; letter-spacing: -0.01em; }
+.d-nav { display: flex; align-items: stretch; gap: 4px; }
+.d-nav a {
+  display: flex; align-items: center; gap: 6px; padding: 0 14px;
+  text-decoration: none; font-size: 15px; font-weight: 500; color: var(--ink2);
+}
+.d-nav a[aria-current='page'] { font-weight: 800; color: var(--ink); box-shadow: inset 0 -3px 0 var(--ink); }
+.d-actions { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+
+.d-body { display: flex; align-items: flex-start; }
+.d-main { flex: 1; min-width: 0; }
+.d-content { max-width: 1392px; margin: 0 auto; padding: 24px 32px 40px; }
+.d-pagehead { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+.d-pagehead .title { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
+.d-pagehead h1 { font-size: 32px; font-weight: 800; font-stretch: 78%; line-height: 1; }
+.d-pagehead .page-meta { font-size: 14px; color: var(--ink3); }
+
+/* Chat panel slot (content narrows, never overlaid). */
+.d-aside {
+  flex: none; width: 420px; position: sticky; top: 64px; height: calc(100vh - 64px);
+  background: var(--surface); border-left: 1px solid var(--border); display: flex; flex-direction: column;
+}
+
+/* 12-column grid */
+.d-grid { display: grid; grid-template-columns: repeat(12, minmax(0, 1fr)); column-gap: 24px; row-gap: 16px; align-items: start; }
+.s-3 { grid-column: span 3; } .s-4 { grid-column: span 4; } .s-5 { grid-column: span 5; } .s-6 { grid-column: span 6; }
+.s-7 { grid-column: span 7; } .s-8 { grid-column: span 8; } .s-9 { grid-column: span 9; } .s-12 { grid-column: span 12; }
+.stack { display: flex; flex-direction: column; gap: 16px; min-width: 0; }
+
+/* ---------- primitives (desktop scale) ---------- */
+.box { background: var(--surface); border: 1px solid var(--border); padding: 16px 18px; display: flex; flex-direction: column; gap: 10px; min-width: 0; }
+.box--hero { background: var(--hero); border-color: var(--hero-border); color: var(--hero-ink); }
+.box-head { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+.box-head h2 { font-size: 15px; font-weight: 700; }
+.box--hero .box-head h2 { font-size: 17px; }
+.meta { font-size: 13px; color: var(--ink3); }
+.box--hero .meta { color: var(--hero-ink2); }
+.prose { font-size: 16px; line-height: 1.55; }
+
+.metric-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+.metric-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
+.metric-grid > * { padding: 10px 0; }
+.metric-grid:not(.four) > :nth-child(n + 3) { border-top: 1px solid var(--rule); }
+.metric-grid.four > * + * { border-left: 1px solid var(--rule); padding-left: 20px; }
+.metric-label { font-size: 13px; color: var(--ink3); }
+.metric-value { font-size: 40px; font-weight: 750; font-stretch: 75%; line-height: 1.05; }
+.metric-unit { font-size: 16px; font-weight: 600; color: var(--ink2); margin-left: 3px; }
+.metric-sub { font-size: 13px; color: var(--ink2); }
+
+.tone-good { color: var(--good); font-weight: 600; }
+.tone-warn { color: var(--warn); font-weight: 600; }
+.tone-signal { color: var(--signal); }
+
+.table { width: 100%; border-collapse: collapse; font-size: 14px; color: var(--ink); }
+.table thead tr { font-size: 12.5px; color: var(--ink3); }
+.table th, .table td { padding: 8px 0; font-weight: 500; text-align: left; }
+.table thead th { padding: 4px 0 6px; }
+.table tbody tr { border-top: 1px solid var(--rule); }
+.table .r { text-align: right; }
+.table .strong { font-weight: 700; }
+.table .dim { color: var(--ink2); }
+.table .muted { color: var(--ink3); }
+
+.link-row { display: flex; align-items: center; gap: 12px; min-height: 56px; padding: 0 18px; background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: var(--ink); }
+
+.btn { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; padding: 0 16px; cursor: pointer; border: 1px solid var(--border-strong); background: transparent; color: var(--ink); font-size: 14px; font-weight: 700; text-decoration: none; }
+.btn--primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+.segmented { display: inline-flex; border: 1px solid var(--border-strong); }
+.segmented button { min-height: 44px; padding: 0 14px; border: 0; background: transparent; cursor: pointer; font-size: 13.5px; color: var(--ink2); white-space: nowrap; }
+.segmented button + button { border-left: 1px solid var(--border); }
+.segmented button[aria-pressed='true'] { background: var(--ink); color: var(--surface); font-weight: 700; }
+
+.status { display: inline-flex; align-items: center; gap: 6px; font-size: 13.5px; font-weight: 600; color: var(--warn); white-space: nowrap; }
+.status::before { content: ''; width: 7px; height: 7px; background: currentColor; flex: none; }
+.count { min-width: 20px; height: 20px; padding: 0 5px; display: inline-flex; align-items: center; justify-content: center; background: var(--signal); color: var(--signal-ink); font-size: 12px; font-weight: 800; }
+
+.legend { display: flex; flex-wrap: wrap; gap: 6px 16px; font-size: 13px; color: var(--ink2); }
+.legend > span { display: inline-flex; align-items: center; gap: 6px; }
+.field { width: 100%; min-height: 48px; padding: 0 14px; border: 1px solid var(--border-strong); background: var(--surface); font-size: 15px; }
+
+/* ---------- shared patterns found across screens (desktop mockups, 2026-10-25) ---------- */
+/* View switch made of links, e.g. Jedzenie | Suplementy. */
+.segmented a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; font-size: 13.5px; color: var(--ink2); text-decoration: none; white-space: nowrap; }
+.segmented a + a { border-left: 1px solid var(--border); }
+.segmented a[aria-current='page'] { background: var(--ink); color: var(--surface); font-weight: 700; }
+
+/* Square checkbox (no rounding anywhere). */
+.sq { -webkit-appearance: none; appearance: none; flex: none; width: 24px; height: 24px; margin: 0; border: 1.5px solid var(--ink); background: transparent; display: grid; place-content: center; cursor: pointer; }
+.sq:checked { background: var(--ink); }
+.sq:checked::after { content: ''; width: 11px; height: 5px; border: 2px solid var(--surface); border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+.sq:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
+.box--hero .sq { border-color: var(--hero-ink); }
+.box--hero .sq:checked { background: var(--hero-ink); }
+.box--hero .sq:checked::after { border-color: var(--hero); }
+
+/* Inline SVG charts: colors via classes so light/dark both work. */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font); font-size: 12px; fill: var(--ink3); }
+.chart .grid { stroke: var(--grid); }
+.chart .axis { stroke: var(--axis); }
+.chart .bar { fill: var(--chart-mid); }
+.chart .bar-soft { fill: var(--chart-soft); }
+.chart .line-main { fill: none; stroke: var(--chart); stroke-width: 2.5; stroke-linejoin: round; }
+.chart .line-mid { fill: none; stroke: var(--chart-mid); stroke-width: 2; stroke-dasharray: 6 4; }
+.chart .pt-main { fill: var(--chart); }
+.chart .pt-today { fill: var(--signal); }
+.chart .today { fill: none; stroke: var(--signal); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.chart .val-today { fill: var(--signal); font-weight: 800; }
+
+/* Tables: two-line row headers, edge-to-edge tint. */
+.table .row-title { display: block; font-weight: 700; }
+.table .row-sub { display: block; font-size: 12.5px; color: var(--ink3); }
+.table .unit { color: var(--ink3); font-weight: 400; }
+.table.bleed { margin: 0 -18px; width: calc(100% + 36px); }
+.table.bleed th:first-child, .table.bleed td:first-child { padding-left: 18px; }
+.table.bleed th:last-child, .table.bleed td:last-child { padding-right: 18px; }
+
+/* Needs a decision: same meaning on Plan, Propozycje and in chat. */
+tr.row-decide { background: var(--signal-tint); }
+tr.row-decide > :first-child { box-shadow: inset 3px 0 0 var(--signal); }
+tr.row-decide .day { color: var(--signal-tint-ink); }
+
+/* Proposal cards. */
+.tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 8px; border: 1px solid var(--ink); font-size: 12.5px; font-weight: 700; }
+.checks { margin: 0; padding: 10px 12px; list-style: none; display: flex; flex-direction: column; gap: 6px; background: var(--surface2); border: 1px solid var(--rule); font-size: 14px; }
+.checks li { display: flex; gap: 10px; }
+.checks .ok { color: var(--good); font-weight: 800; }
+.checks.blocked { padding: 0; background: none; border: 0; color: var(--warn); }
+
+.count.lg { min-width: 28px; height: 28px; padding: 0 6px; font-size: 15px; }
+.fill { align-self: stretch; }
+
+/* Grid follows the content column: with the chat open (or a narrow window) every box takes half the row. */
+.d-main { container-type: inline-size; container-name: main; }
+@container main (max-width: 1100px) { .d-grid > * { grid-column: span 6; } }

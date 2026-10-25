@@ -1,0 +1,211 @@
+<!doctype html>
+<html lang="pl" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Trening, desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+<style>
+/* Screen-specific: charts, two-line row headers, sets-per-muscle bars. */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font); font-size: 12px; fill: var(--ink3); }
+.chart .grid { stroke: var(--grid); stroke-width: 1; }
+.chart .axis { stroke: var(--axis); stroke-width: 1; }
+.chart .bar { fill: var(--chart-mid); }
+.chart .bar-soft { fill: var(--chart-soft); }
+.chart .tick { stroke: var(--chart); stroke-width: 2.5; }
+.chart .today { fill: none; stroke: var(--signal); stroke-width: 1.5; stroke-dasharray: 4 3; }
+.chart .val { fill: var(--ink2); font-size: 12.5px; font-weight: 600; }
+.chart .val-today { fill: var(--signal); font-size: 14px; font-weight: 800; }
+.chart .line-main { fill: none; stroke: var(--chart); stroke-width: 2.5; stroke-linejoin: round; }
+.chart .line-mid { fill: none; stroke: var(--chart-mid); stroke-width: 2; stroke-dasharray: 6 4; stroke-linejoin: round; }
+.chart .pt-main { fill: var(--chart); }
+.chart .pt-mid { fill: var(--chart-mid); }
+.chart .end-main { fill: var(--ink); font-size: 14px; font-weight: 800; }
+.chart .end-mid { fill: var(--ink2); font-size: 14px; font-weight: 700; }
+
+.sw { display: inline-block; flex: none; }
+.sw-bar { width: 10px; height: 10px; background: var(--chart-mid); }
+.sw-soft { width: 10px; height: 10px; background: var(--chart-soft); }
+.sw-tick { width: 14px; height: 2.5px; background: var(--chart); }
+.sw-today { width: 10px; height: 10px; border: 1.5px dashed var(--signal); }
+.sw-line { width: 16px; height: 3px; background: var(--chart); }
+.sw-dash { width: 16px; height: 0; border-top: 2px dashed var(--chart-mid); }
+
+.box--table { padding-bottom: 8px; gap: 4px; }
+.table { table-layout: fixed; }
+.table .row-title { display: block; font-weight: 700; }
+.table .row-sub { display: block; font-size: 12.5px; color: var(--ink3); }
+.table tbody th { padding: 9px 0; }
+
+.sets { display: flex; flex-direction: column; }
+.sets > div { display: grid; grid-template-columns: 112px minmax(0, 1fr) 28px; align-items: center; gap: 12px; min-height: 30px; font-size: 14px; }
+.sets .bar { height: 10px; background: var(--chart-mid); }
+.sets .n { text-align: right; font-weight: 700; }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis-dark.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis-dark.html">Dziś</a>
+    <a href="DesktopTrening-dark.html" aria-current="page">Trening</a>
+    <a href="DesktopZywienie-dark.html">Żywienie</a>
+    <a href="DesktopCialo-dark.html">Ciało</a>
+    <a href="DesktopPlan-dark.html">Plan</a>
+    <a href="DesktopPropozycje-dark.html">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat-dark.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Trening</h1><span class="page-meta">Garmin + Hevy · 03.08–25.10</span></div>
+        <div class="segmented" role="group" aria-label="Zakres czasu"><button type="button" aria-pressed="false">4 tyg.</button><button type="button" aria-pressed="true">12 tyg.</button><button type="button" aria-pressed="false">Blok</button></div>
+      </div>
+
+      <div class="d-grid">
+        <!-- Left: running load (8 columns) -->
+        <div class="stack s-8">
+          <section class="box" aria-label="Obciążenie" style="padding-bottom: 8px; gap: 2px">
+            <div class="box-head"><h2>Obciążenie</h2><span class="meta">Garmin · tydzień 19–25.10</span></div>
+            <div class="metric-grid four">
+              <div><div class="metric-label">Kilometraż</div><div class="metric-value">46<span class="metric-unit">km</span></div><div class="metric-sub">+7% vs 43 km</div></div>
+              <div><div class="metric-label">Fitness · CTL</div><div class="metric-value">41</div><div class="metric-sub">+11 w 12 tyg.</div></div>
+              <div><div class="metric-label">Zmęczenie · ATL</div><div class="metric-value">37</div><div class="metric-sub">−5 vs poprz. tydz.</div></div>
+              <div><div class="metric-label">Forma · TSB</div><div class="metric-value">+4</div><div class="metric-sub tone-good">świeży</div></div>
+            </div>
+          </section>
+
+          <section class="box" aria-label="Kilometraż tygodniowy">
+            <div class="box-head"><h2>Kilometraż rośnie zgodnie z planem</h2><span class="meta">km / tydzień</span></div>
+            <svg class="chart" viewBox="0 0 840 252" role="img" aria-label="Kilometraż tygodniowy od 31 do 43 km w 12 tygodni, blisko planu; odciążenie w tygodniach 24.08 i 21.09; w bieżącym tygodniu 30 km wykonane i dziś planowane 16 km, razem 46 km">
+              <g class="grid"><line x1="36" y1="24" x2="836" y2="24"/><line x1="36" y1="64" x2="836" y2="64"/><line x1="36" y1="104" x2="836" y2="104"/><line x1="36" y1="144" x2="836" y2="144"/><line x1="36" y1="184" x2="836" y2="184"/></g>
+              <line class="axis" x1="36" y1="224" x2="836" y2="224"/>
+              <g text-anchor="end"><text x="28" y="228">0</text><text x="28" y="188">10</text><text x="28" y="148">20</text><text x="28" y="108">30</text><text x="28" y="68">40</text><text x="28" y="28">50</text></g>
+              <!-- done km: 4 px per km, baseline y=224 -->
+              <g class="bar">
+                <rect x="55.3" y="100" width="28" height="124"/>
+                <rect x="122" y="88" width="28" height="136"/>
+                <rect x="188.7" y="80" width="28" height="144"/>
+                <rect x="322" y="76" width="28" height="148"/>
+                <rect x="388.7" y="68" width="28" height="156"/>
+                <rect x="455.3" y="60" width="28" height="164"/>
+                <rect x="588.7" y="64" width="28" height="160"/>
+                <rect x="655.3" y="56" width="28" height="168"/>
+                <rect x="722" y="52" width="28" height="172"/>
+                <rect x="788.7" y="104" width="28" height="120"/>
+              </g>
+              <g class="bar-soft"><rect x="255.3" y="92" width="28" height="132"/><rect x="522" y="80" width="28" height="144"/></g>
+              <!-- today: planned 16 km stacked on 30 km done -->
+              <rect class="today" x="790.2" y="40.75" width="25" height="62.5"/>
+              <!-- plan ticks -->
+              <g class="tick">
+                <line x1="51.3" y1="96" x2="87.3" y2="96"/><line x1="118" y1="88" x2="154" y2="88"/><line x1="184.7" y1="76" x2="220.7" y2="76"/><line x1="251.3" y1="96" x2="287.3" y2="96"/>
+                <line x1="318" y1="72" x2="354" y2="72"/><line x1="384.7" y1="64" x2="420.7" y2="64"/><line x1="451.3" y1="56" x2="487.3" y2="56"/><line x1="518" y1="80" x2="554" y2="80"/>
+                <line x1="584.7" y1="64" x2="620.7" y2="64"/><line x1="651.3" y1="56" x2="687.3" y2="56"/><line x1="718" y1="48" x2="754" y2="48"/><line x1="784.7" y1="40" x2="820.7" y2="40"/>
+              </g>
+              <!-- done values -->
+              <g class="val" text-anchor="middle">
+                <text x="69.3" y="88">31</text><text x="136" y="80">34</text><text x="202.7" y="68">36</text><text x="269.3" y="84">33</text>
+                <text x="336" y="64">37</text><text x="402.7" y="56">39</text><text x="469.3" y="48">41</text><text x="536" y="72">36</text>
+                <text x="602.7" y="56">40</text><text x="669.3" y="48">42</text><text x="736" y="40">43</text>
+              </g>
+              <text class="val-today" x="802.7" y="31" text-anchor="middle">16</text>
+              <g text-anchor="middle">
+                <text x="69.3" y="246">03.08</text><text x="136" y="246">10.08</text><text x="202.7" y="246">17.08</text><text x="269.3" y="246">24.08</text>
+                <text x="336" y="246">31.08</text><text x="402.7" y="246">07.09</text><text x="469.3" y="246">14.09</text><text x="536" y="246">21.09</text>
+                <text x="602.7" y="246">28.09</text><text x="669.3" y="246">05.10</text><text x="736" y="246">12.10</text><text x="802.7" y="246">19.10</text>
+              </g>
+            </svg>
+            <div class="legend"><span><span class="sw sw-bar"></span>wykonanie</span><span><span class="sw sw-soft"></span>odciążenie</span><span><span class="sw sw-tick"></span>plan</span><span><span class="sw sw-today"></span>dziś</span></div>
+          </section>
+
+          <section class="box" aria-label="Obciążenie treningowe">
+            <div class="box-head"><h2>Fitness rośnie szybciej niż zmęczenie</h2><span class="meta">Garmin</span></div>
+            <svg class="chart" viewBox="0 0 840 232" role="img" aria-label="CTL rośnie z 30 do 41, ATL waha się od 29 do 43 i kończy na 37">
+              <!-- y = 200 - (v - 25) * 9 -->
+              <g class="grid"><line x1="36" y1="20" x2="836" y2="20"/><line x1="36" y1="65" x2="836" y2="65"/><line x1="36" y1="110" x2="836" y2="110"/><line x1="36" y1="155" x2="836" y2="155"/></g>
+              <line class="axis" x1="36" y1="200" x2="836" y2="200"/>
+              <g text-anchor="end"><text x="28" y="204">25</text><text x="28" y="159">30</text><text x="28" y="114">35</text><text x="28" y="69">40</text><text x="28" y="24">45</text></g>
+              <polyline class="line-mid" points="48,128 114,101 180,92 246,164 312,83 378,65 444,47 510,146 576,65 642,38 708,47 774,92"/>
+              <polyline class="line-main" points="48,155 114,146 180,137 246,137 312,128 378,119 444,110 510,110 576,101 642,83 708,74 774,56"/>
+              <g class="pt-main">
+                <rect x="45" y="152" width="6" height="6"/><rect x="111" y="143" width="6" height="6"/><rect x="177" y="134" width="6" height="6"/><rect x="243" y="134" width="6" height="6"/>
+                <rect x="309" y="125" width="6" height="6"/><rect x="375" y="116" width="6" height="6"/><rect x="441" y="107" width="6" height="6"/><rect x="507" y="107" width="6" height="6"/>
+                <rect x="573" y="98" width="6" height="6"/><rect x="639" y="80" width="6" height="6"/><rect x="705" y="71" width="6" height="6"/><rect x="769" y="51" width="10" height="10"/>
+              </g>
+              <rect class="pt-mid" x="769" y="87" width="10" height="10"/>
+              <text class="end-main" x="788" y="61">CTL 41</text>
+              <text class="end-mid" x="788" y="97">ATL 37</text>
+              <g text-anchor="middle">
+                <text x="48" y="224">03.08</text><text x="114" y="224">10.08</text><text x="180" y="224">17.08</text><text x="246" y="224">24.08</text>
+                <text x="312" y="224">31.08</text><text x="378" y="224">07.09</text><text x="444" y="224">14.09</text><text x="510" y="224">21.09</text>
+                <text x="576" y="224">28.09</text><text x="642" y="224">05.10</text><text x="708" y="224">12.10</text><text x="774" y="224">19.10</text>
+              </g>
+            </svg>
+            <div class="legend"><span><span class="sw sw-line"></span>CTL · 42 dni</span><span><span class="sw sw-dash"></span>ATL · 7 dni</span></div>
+          </section>
+
+          <section class="box" aria-label="Uwaga trenera">
+            <div class="box-head"><h2>Trener</h2><span class="meta">18.10</span></div>
+            <p class="prose">Legs w środę daje 4 dni regeneracji przed długim wybieganiem. Zostaw ten układ na cały blok Baza.</p>
+          </section>
+        </div>
+
+        <!-- Right: runs and strength (4 columns) -->
+        <div class="stack s-4">
+          <section class="box box--table" aria-label="Ostatnie biegi">
+            <div class="box-head"><h2>Ostatnie biegi</h2><span class="meta">Garmin</span></div>
+            <table class="table">
+              <thead><tr><th scope="col"><span class="sr-only">Trening</span></th><th scope="col" class="r" style="width: 52px">km</th><th scope="col" class="r" style="width: 52px">/km</th><th scope="col" class="r" style="width: 44px">bpm</th><th scope="col" class="r" style="width: 48px">obc.</th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><span class="row-title">Tempo</span><span class="row-sub">Sb 24.10</span></th><td class="r strong">8,0</td><td class="r">4:58</td><td class="r">162</td><td class="r dim">118</td></tr>
+                <tr><th scope="row"><span class="row-title">Bieg łatwy</span><span class="row-sub">Pt 23.10</span></th><td class="r strong">6,1</td><td class="r">6:02</td><td class="r">138</td><td class="r dim">52</td></tr>
+                <tr><th scope="row"><span class="row-title">Interwały 6×800</span><span class="row-sub">Wt 20.10</span></th><td class="r strong">10,2</td><td class="r">5:12</td><td class="r">155</td><td class="r dim">131</td></tr>
+                <tr><th scope="row"><span class="row-title">Bieg łatwy</span><span class="row-sub">Pn 19.10</span></th><td class="r strong">6,0</td><td class="r">6:05</td><td class="r">136</td><td class="r dim">50</td></tr>
+                <tr><th scope="row"><span class="row-title">Długie</span><span class="row-sub">Nd 18.10</span></th><td class="r strong">15,0</td><td class="r">5:58</td><td class="r">145</td><td class="r dim">142</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="box" aria-label="Serie robocze na partię">
+            <div class="box-head"><h2>Serie robocze · tydzień</h2><span class="meta">Hevy · 19–25.10</span></div>
+            <div class="sets">
+              <div><span>Plecy</span><span class="bar" style="width: 100%"></span><span class="n">12</span></div>
+              <div><span>Klatka</span><span class="bar" style="width: 75%"></span><span class="n">9</span></div>
+              <div><span>Czworogłowe</span><span class="bar" style="width: 58.3%"></span><span class="n">7</span></div>
+              <div><span>Barki</span><span class="bar" style="width: 50%"></span><span class="n">6</span></div>
+              <div><span>Biceps</span><span class="bar" style="width: 41.7%"></span><span class="n">5</span></div>
+              <div><span>Dwugłowe uda</span><span class="bar" style="width: 41.7%"></span><span class="n">5</span></div>
+              <div><span>Pośladki</span><span class="bar" style="width: 33.3%"></span><span class="n">4</span></div>
+              <div><span>Triceps</span><span class="bar" style="width: 25%"></span><span class="n">3</span></div>
+            </div>
+          </section>
+
+          <section class="box box--table" aria-label="Treningi siłowe">
+            <div class="box-head"><h2>Push / Pull / Legs</h2><span class="status">sync: wcz. 18:02</span></div>
+            <table class="table">
+              <thead><tr><th scope="col"><span class="sr-only">Sesja</span></th><th scope="col" class="r" style="width: 52px">min</th><th scope="col" class="r" style="width: 56px">serie</th><th scope="col" class="r" style="width: 84px">tonaż kg</th></tr></thead>
+              <tbody>
+                <tr><th scope="row"><span class="row-title">Push</span><span class="row-sub">Pn 19.10</span></th><td class="r">58</td><td class="r">18</td><td class="r strong">8 420</td></tr>
+                <tr><th scope="row"><span class="row-title">Legs</span><span class="row-sub">Śr 21.10</span></th><td class="r">64</td><td class="r">16</td><td class="r strong">11 950</td></tr>
+                <tr><th scope="row"><span class="row-title">Pull</span><span class="row-sub">Pt 23.10</span></th><td class="r">52</td><td class="r">17</td><td class="r strong">7 380</td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

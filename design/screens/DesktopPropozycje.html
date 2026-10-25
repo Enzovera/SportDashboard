@@ -1,0 +1,198 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Propozycje, desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+<style>
+/* Screen-specific: Propozycje */
+.pair { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; align-items: start; }
+.card { gap: 14px; }
+.card-meta { display: flex; flex-wrap: wrap; align-items: center; gap: 6px 10px; }
+.tag { display: inline-flex; align-items: center; min-height: 24px; padding: 0 8px; border: 1px solid var(--ink); font-size: 12.5px; font-weight: 700; }
+.card h2 { font-size: 20px; font-weight: 800; line-height: 1.3; }
+.card .prose { color: var(--ink2); }
+
+/* before -> after table */
+.diff { table-layout: fixed; }
+.diff thead th { font-size: 12.5px; color: var(--ink3); }
+.diff thead th:first-child { color: var(--ink); font-weight: 700; font-size: 13.5px; }
+.diff tbody tr:last-child, .diff tfoot tr { border-bottom: 1px solid var(--rule); }
+.diff tfoot tr { border-top: 1px solid var(--rule); }
+.diff s { color: var(--ink3); }
+.diff .after { font-weight: 800; }
+.diff .same { color: var(--ink3); }
+.diff .note { font-size: 12.5px; font-weight: 500; color: var(--ink2); }
+
+/* validator results */
+.checks { margin: 0; padding: 10px 12px; list-style: none; display: flex; flex-direction: column; gap: 6px; background: var(--surface2); border: 1px solid var(--rule); font-size: 14px; }
+.checks li { display: flex; gap: 10px; }
+.checks .ok { color: var(--good); font-weight: 800; }
+.checks.blocked { padding: 0; background: none; border: 0; color: var(--warn); }
+.checks.blocked .x { font-weight: 800; width: 10px; flex: none; text-align: center; }
+
+.decide { display: flex; flex-direction: column; gap: 8px; }
+.decide label { font-size: 13px; font-weight: 600; color: var(--ink2); }
+.decide .field { min-height: 44px; font-size: 14.5px; }
+.decide-actions { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px; }
+.decide-actions .btn { min-height: 48px; font-size: 15px; }
+.decide-actions .btn:not(.btn--primary) { font-weight: 600; }
+
+/* week before / after, rows run edge to edge */
+.wk { margin: 0 -18px; width: calc(100% + 36px); table-layout: fixed; }
+.wk th:first-child, .wk td:first-child { padding-left: 18px; }
+.wk th:last-child, .wk td:last-child { padding-right: 18px; }
+.wk td, .wk th { vertical-align: top; }
+.wk td + td { padding-left: 12px; }
+.wk .day { white-space: nowrap; font-size: 13px; font-weight: 700; color: var(--ink3); line-height: 1.35; }
+.wk .s { font-weight: 600; }
+.wk .n { font-size: 12.5px; color: var(--ink3); }
+.wk .after-same { color: var(--ink3); }
+.wk .after-same .s { font-weight: 500; }
+.wk tr.decide-row { background: var(--signal-tint); }
+.wk tr.decide-row > :first-child { box-shadow: inset 3px 0 0 var(--signal); }
+.wk tr.decide-row .day { color: var(--signal-tint-ink); }
+.wk tr.decide-row .chg { font-weight: 800; }
+.wk tfoot tr { border-top: 1px solid var(--rule); }
+.wk tfoot th, .wk tfoot td { font-weight: 700; padding-top: 10px; }
+
+.history td, .history th { vertical-align: top; }
+.history .src { color: var(--ink3); }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis.html">Dziś</a>
+    <a href="DesktopTrening.html">Trening</a>
+    <a href="DesktopZywienie.html">Żywienie</a>
+    <a href="DesktopCialo.html">Ciało</a>
+    <a href="DesktopPlan.html">Plan</a>
+    <a href="DesktopPropozycje.html" aria-current="page">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Propozycje</h1><span class="page-meta">Nd 25.10</span></div>
+        <span role="status" style="font-size: 15px; font-weight: 700">2 propozycje czekają</span>
+      </div>
+
+      <div class="d-grid">
+        <!-- Left: queue + history -->
+        <div class="stack s-8">
+          <div class="pair">
+            <article class="box card" aria-labelledby="fa-title">
+              <div class="card-meta"><span class="tag">Żywienie</span><span class="meta">dziś 06:31 · run dzienny</span></div>
+              <h2 id="fa-title">Dzień długiego wybiegania: węgle 412 → 460 g</h2>
+              <p class="prose">Na dwóch ostatnich długich wybieganiach tempo spadało po 13 km, a węgle wyniosły 4,8 i 5,0 g/kg. Wyższy cel i posiłek przed biegiem powinny utrzymać tempo.</p>
+              <table class="table diff">
+                <colgroup><col><col style="width: 72px"><col style="width: 112px"></colgroup>
+                <thead><tr><th scope="col">Nd 1.11 · cel dnia</th><th scope="col" class="r">teraz</th><th scope="col" class="r">po</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row" class="dim">Kalorie</th><td class="r"><s>2 950</s></td><td class="r after">3 140 kcal</td></tr>
+                  <tr><th scope="row" class="dim">Węglowodany</th><td class="r"><s>412 g</s></td><td class="r"><span class="after">460 g</span><br><span class="note">6,0 g/kg</span></td></tr>
+                  <tr><th scope="row" class="dim">Białko</th><td class="r same">145 g</td><td class="r same">145 g</td></tr>
+                  <tr><th scope="row" class="dim">Tłuszcz</th><td class="r same">80 g</td><td class="r same">80 g</td></tr>
+                  <tr><th scope="row" class="dim">Przed biegiem</th><td class="r same">–</td><td class="r after">80 g węgli<br><span class="note">2–3 h przed</span></td></tr>
+                </tbody>
+              </table>
+              <ul class="checks" aria-label="Wynik walidatorów">
+                <li><span class="ok" aria-hidden="true">✓</span>kcal powyżej dolnego progu</li>
+                <li><span class="ok" aria-hidden="true">✓</span>brak deficytu w dniu długiego</li>
+                <li><span class="ok" aria-hidden="true">✓</span>białko ≥ 1,6 g/kg</li>
+              </ul>
+              <div class="decide">
+                <label for="fa-comment">Komentarz dla trenera (opcjonalnie)</label>
+                <input id="fa-comment" class="field" type="text" placeholder="np. przed biegiem jem lekko">
+                <div class="decide-actions"><button type="button" class="btn">Odrzuć</button><button type="button" class="btn btn--primary">Akceptuj</button></div>
+              </div>
+            </article>
+
+            <article class="box card" aria-labelledby="fb-title">
+              <div class="card-meta"><span class="tag">Siła</span><span class="meta">wczoraj 06:30 · run dzienny</span></div>
+              <h2 id="fb-title">Śr 28.10, Legs: 16 → 12 serii</h2>
+              <p class="prose">W bloku Baza kilometraż rośnie, a Legs obciąża te same mięśnie co bieg. 12 serii utrzyma bodziec przy mniejszym zmęczeniu przed sobotnim tempem.</p>
+              <table class="table diff">
+                <colgroup><col><col style="width: 72px"><col style="width: 72px"></colgroup>
+                <thead><tr><th scope="col">Serie robocze</th><th scope="col" class="r">teraz</th><th scope="col" class="r">po</th></tr></thead>
+                <tbody>
+                  <tr><th scope="row" class="dim">Przysiad</th><td class="r"><s>4</s></td><td class="r after">3</td></tr>
+                  <tr><th scope="row" class="dim">Martwy ciąg rumuński</th><td class="r"><s>4</s></td><td class="r after">3</td></tr>
+                  <tr><th scope="row" class="dim">Wykroki</th><td class="r"><s>4</s></td><td class="r after">3</td></tr>
+                  <tr><th scope="row" class="dim">Łydki</th><td class="r"><s>4</s></td><td class="r after">3</td></tr>
+                </tbody>
+                <tfoot><tr><th scope="row" class="strong">Razem</th><td class="r"><s>16</s></td><td class="r after">12</td></tr></tfoot>
+              </table>
+              <ul class="checks" aria-label="Wynik walidatorów">
+                <li><span class="ok" aria-hidden="true">✓</span>dzień wolny: czwartek</li>
+                <li><span class="ok" aria-hidden="true">✓</span>kilometraż bez zmian (46 km)</li>
+              </ul>
+              <div class="decide">
+                <label for="fb-comment">Komentarz dla trenera (opcjonalnie)</label>
+                <input id="fb-comment" class="field" type="text" placeholder="np. zostaw przysiad, tnij akcesoria">
+                <div class="decide-actions"><button type="button" class="btn">Odrzuć</button><button type="button" class="btn btn--primary">Akceptuj</button></div>
+              </div>
+            </article>
+          </div>
+
+          <section class="box" id="historia" aria-label="Historia decyzji">
+            <div class="box-head"><h2>Historia decyzji</h2></div>
+            <table class="table history">
+              <colgroup><col style="width: 64px"><col><col style="width: 140px"><col style="width: 220px"><col style="width: 90px"></colgroup>
+              <thead><tr><th scope="col"><span class="sr-only">Data</span></th><th scope="col">zmiana</th><th scope="col">źródło</th><th scope="col">Twój komentarz</th><th scope="col" class="r">decyzja</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="strong">18.10</th><td>Tydzień 19–25.10: 43 → 46 km</td><td class="src">run tygodniowy</td><td class="muted">–</td><td class="r tone-good">przyjęta</td></tr>
+                <tr><th scope="row" class="strong">14.10</th><td>Sb 17.10: tempo → bieg łatwy (HRV 4 dni pod bazą)</td><td class="src">run dzienny</td><td class="muted">–</td><td class="r tone-good">przyjęta</td></tr>
+                <tr><th scope="row" class="strong">11.10</th><td>Dodatkowy bieg w czwartek 15.10</td><td class="src">run dzienny</td><td class="dim">„czwartek zostaje wolny”</td><td class="r" style="font-weight: 600; color: var(--ink3)">odrzucona</td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+
+        <!-- Right: week diff + blocked -->
+        <div class="stack s-4">
+          <section class="box" aria-label="Tydzień przed i po akceptacji">
+            <div class="box-head"><h2>Tydzień 26.10–1.11</h2><span class="meta">Baza · tydz. 1</span></div>
+            <table class="table wk">
+              <colgroup><col style="width: 76px"><col><col></colgroup>
+              <thead><tr><th scope="col"><span class="sr-only">Dzień</span></th><th scope="col">teraz</th><th scope="col">po akceptacji</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="day">Pn 26</th><td><div class="s">Push + bieg 6 km</div><div class="n">2 750 kcal · W 370</div></td><td class="after-same"><div class="s">Push + bieg 6 km</div><div class="n">2 750 kcal · W 370</div></td></tr>
+                <tr><th scope="row" class="day">Wt 27</th><td><div class="s">Interwały 10 km</div><div class="n">2 700 kcal · W 355</div></td><td class="after-same"><div class="s">Interwały 10 km</div><div class="n">2 700 kcal · W 355</div></td></tr>
+                <tr class="decide-row"><th scope="row" class="day">Śr 28</th><td><div class="s">Legs 16 serii</div><div class="n">2 600 kcal · W 330</div></td><td><div class="s chg">Legs 12 serii</div><div class="n">2 600 kcal · W 330</div></td></tr>
+                <tr><th scope="row" class="day">Cz 29</th><td><div class="s">Odpoczynek</div><div class="n">2 300 kcal · W 255</div></td><td class="after-same"><div class="s">Odpoczynek</div><div class="n">2 300 kcal · W 255</div></td></tr>
+                <tr><th scope="row" class="day">Pt 30</th><td><div class="s">Pull + bieg 6 km</div><div class="n">2 750 kcal · W 370</div></td><td class="after-same"><div class="s">Pull + bieg 6 km</div><div class="n">2 750 kcal · W 370</div></td></tr>
+                <tr><th scope="row" class="day">Sb 31</th><td><div class="s">Tempo 8 km</div><div class="n">2 700 kcal · W 355</div></td><td class="after-same"><div class="s">Tempo 8 km</div><div class="n">2 700 kcal · W 355</div></td></tr>
+                <tr class="decide-row"><th scope="row" class="day">Nd 1</th><td><div class="s">Długie 16 km</div><div class="n">2 950 kcal · W 412</div></td><td><div class="s">Długie 16 km</div><div class="n chg" style="color: var(--ink)">3 140 kcal · W 460</div></td></tr>
+              </tbody>
+              <tfoot><tr><th scope="row">Bieg</th><td>46 km</td><td>46 km</td></tr></tfoot>
+            </table>
+          </section>
+
+          <section class="box" aria-label="Zablokowane przez walidatory">
+            <div class="box-head"><h2>Zablokowane</h2><span class="meta">trener dostał powód</span></div>
+            <div style="font-size: 15px; font-weight: 700">Nd 1.11: długie 16 → 22 km</div>
+            <ul class="checks blocked" aria-label="Wynik walidatorów">
+              <li><span class="x" aria-hidden="true">✕</span>przyrost 46 → 52 km (+13%, limit 10%)</li>
+              <li><span class="x" aria-hidden="true">!</span>długie = 42% tygodnia (limit 35%)</li>
+            </ul>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

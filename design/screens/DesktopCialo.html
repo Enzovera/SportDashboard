@@ -1,0 +1,139 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Ciało, desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+<style>
+/* Screen-specific: weight chart and weigh-in table. */
+.chart { display: block; width: 100%; height: auto; overflow: visible; }
+.chart text { font-family: var(--font); font-size: 12px; fill: var(--ink3); }
+.chart .grid { stroke: var(--grid); stroke-width: 1; }
+.chart .axis { stroke: var(--axis); stroke-width: 1; }
+.chart .range { stroke: var(--chart-mid); stroke-width: 1.5; fill: none; }
+.chart .line-main { fill: none; stroke: var(--chart); stroke-width: 2.5; stroke-linejoin: round; }
+.chart .pt-main { fill: var(--chart); }
+.chart .pt-today { fill: var(--signal); }
+.chart .val-today { fill: var(--signal); font-size: 15px; font-weight: 800; }
+
+.sw { display: inline-block; flex: none; }
+.sw-pt { width: 8px; height: 8px; background: var(--chart); }
+.sw-range { width: 2px; height: 12px; background: var(--chart-mid); }
+
+.box--table { padding-bottom: 8px; gap: 4px; }
+.table { table-layout: fixed; }
+.table tbody th { color: var(--ink2); }
+.table tr.missing th, .table tr.missing td { color: var(--ink3); }
+
+.goal { display: flex; align-items: center; gap: 14px; }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis.html">Dziś</a>
+    <a href="DesktopTrening.html">Trening</a>
+    <a href="DesktopZywienie.html">Żywienie</a>
+    <a href="DesktopCialo.html" aria-current="page">Ciało</a>
+    <a href="DesktopPlan.html">Plan</a>
+    <a href="DesktopPropozycje.html">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Ciało</h1><span class="page-meta">Xiaomi → Garmin · 12 tygodni</span></div>
+        <div class="goal"><span class="meta" style="font-size: 14px">Cel wagi: brak</span><button type="button" class="btn">Ustaw cel</button></div>
+      </div>
+
+      <div class="d-grid">
+        <!-- Left: composition and weekly trend (8 columns) -->
+        <div class="stack s-8">
+          <section class="box" aria-label="Skład ciała" style="padding-bottom: 8px; gap: 2px">
+            <div class="box-head"><h2>Skład ciała</h2><span class="meta">Nd 25.10 · 07:05</span></div>
+            <div class="metric-grid four">
+              <div><div class="metric-label">Waga · śr. 7 dni</div><div class="metric-value">76,4<span class="metric-unit">kg</span></div><div class="metric-sub">−1,7 kg w 12 tyg.</div></div>
+              <div><div class="metric-label">Tkanka tłuszczowa</div><div class="metric-value">15,8<span class="metric-unit">%</span></div><div class="metric-sub">szacunek wagi</div></div>
+              <div><div class="metric-label">Masa mięśniowa</div><div class="metric-value">61,3<span class="metric-unit">kg</span></div><div class="metric-sub">stabilna</div></div>
+              <div><div class="metric-label">Ważenia · tydzień</div><div class="metric-value">6<span class="metric-unit">/ 7</span></div><div class="metric-sub">brak: środa</div></div>
+            </div>
+          </section>
+
+          <section class="box" aria-label="Waga tydzień po tygodniu">
+            <div class="box-head"><h2>Waga spada o ok. 0,15 kg tygodniowo</h2><span class="meta">kg · średnia tygodnia</span></div>
+            <svg class="chart" viewBox="0 0 840 278" role="img" aria-label="Średnia tygodniowa wagi spada z 78,1 do 76,4 kg w 12 tygodni; zakres ważeń w tygodniu do 1,2 kg">
+              <!-- y = 24 + (79 - v) * 68 -->
+              <g class="grid"><line x1="36" y1="24" x2="836" y2="24"/><line x1="36" y1="92" x2="836" y2="92"/><line x1="36" y1="160" x2="836" y2="160"/><line x1="36" y1="228" x2="836" y2="228"/></g>
+              <line class="axis" x1="36" y1="242" x2="836" y2="242"/>
+              <g text-anchor="end"><text x="28" y="232">76</text><text x="28" y="164">77</text><text x="28" y="96">78</text><text x="28" y="28">79</text></g>
+              <!-- min–max of weigh-ins per week -->
+              <path class="range" d="M48 44.4V126M43 44.4h10M43 126h10
+                M114 51.2V132.8M109 51.2h10M109 132.8h10
+                M180 64.8V146.4M175 64.8h10M175 146.4h10
+                M246 58V139.6M241 58h10M241 139.6h10
+                M312 78.4V160M307 78.4h10M307 160h10
+                M378 92V173.6M373 92h10M373 173.6h10
+                M444 98.8V180.4M439 98.8h10M439 180.4h10
+                M510 105.6V187.2M505 105.6h10M505 187.2h10
+                M576 119.2V200.8M571 119.2h10M571 200.8h10
+                M642 132.8V214.4M637 132.8h10M637 214.4h10
+                M708 160V200.8M703 160h10M703 200.8h10
+                M774 166.8V221.2M769 166.8h10M769 221.2h10"/>
+              <polyline class="line-main" points="48,85.2 114,92 180,105.6 246,98.8 312,119.2 378,132.8 444,139.6 510,153.2 576,160 642,173.6 708,180.4 774,200.8"/>
+              <g class="pt-main">
+                <rect x="44" y="81.2" width="8" height="8"/><rect x="110" y="88" width="8" height="8"/><rect x="176" y="101.6" width="8" height="8"/><rect x="242" y="94.8" width="8" height="8"/>
+                <rect x="308" y="115.2" width="8" height="8"/><rect x="374" y="128.8" width="8" height="8"/><rect x="440" y="135.6" width="8" height="8"/><rect x="506" y="149.2" width="8" height="8"/>
+                <rect x="572" y="156" width="8" height="8"/><rect x="638" y="169.6" width="8" height="8"/><rect x="704" y="176.4" width="8" height="8"/>
+              </g>
+              <rect class="pt-today" x="768" y="194.8" width="12" height="12"/>
+              <text class="val-today" x="790" y="206">76,4</text>
+              <g text-anchor="middle">
+                <text x="48" y="266">03.08</text><text x="114" y="266">10.08</text><text x="180" y="266">17.08</text><text x="246" y="266">24.08</text>
+                <text x="312" y="266">31.08</text><text x="378" y="266">07.09</text><text x="444" y="266">14.09</text><text x="510" y="266">21.09</text>
+                <text x="576" y="266">28.09</text><text x="642" y="266">05.10</text><text x="708" y="266">12.10</text><text x="774" y="266">19.10</text>
+              </g>
+            </svg>
+            <div class="legend"><span><span class="sw sw-pt"></span>średnia tygodnia</span><span><span class="sw sw-range"></span>min–max ważeń w tygodniu</span></div>
+          </section>
+        </div>
+
+        <!-- Right: weigh-ins and coach (4 columns) -->
+        <div class="stack s-4">
+          <section class="box box--table" aria-label="Ostatnie ważenia">
+            <div class="box-head"><h2>Ostatnie ważenia</h2><span class="meta">Xiaomi</span></div>
+            <table class="table">
+              <thead><tr><th scope="col"><span class="sr-only">Dzień</span></th><th scope="col" class="r" style="width: 52px">kg</th><th scope="col" class="r" style="width: 64px">tłuszcz</th><th scope="col" class="r" style="width: 66px">mięśnie</th><th scope="col" class="r" style="width: 60px">woda</th></tr></thead>
+              <tbody>
+                <tr><th scope="row">Nd 25.10</th><td class="r strong">76,2</td><td class="r">15,7%</td><td class="r">61,3</td><td class="r">58,5%</td></tr>
+                <tr><th scope="row">Sb 24.10</th><td class="r strong">76,6</td><td class="r">15,9%</td><td class="r">61,2</td><td class="r">58,3%</td></tr>
+                <tr><th scope="row">Pt 23.10</th><td class="r strong">76,3</td><td class="r">15,8%</td><td class="r">61,3</td><td class="r">58,4%</td></tr>
+                <tr><th scope="row">Cz 22.10</th><td class="r strong">76,9</td><td class="r">16,0%</td><td class="r">61,2</td><td class="r">58,2%</td></tr>
+                <tr class="missing"><th scope="row">Śr 21.10</th><td class="r">brak</td><td class="r">–</td><td class="r">–</td><td class="r">–</td></tr>
+                <tr><th scope="row">Wt 20.10</th><td class="r strong">76,4</td><td class="r">15,8%</td><td class="r">61,3</td><td class="r">58,4%</td></tr>
+                <tr><th scope="row">Pn 19.10</th><td class="r strong">76,1</td><td class="r">15,7%</td><td class="r">61,4</td><td class="r">58,5%</td></tr>
+              </tbody>
+            </table>
+          </section>
+
+          <section class="box" aria-label="Uwaga trenera">
+            <div class="box-head"><h2>Trener</h2><span class="meta">zasada</span></div>
+            <p class="prose">Patrzę na średnią 7 dni — pojedyncze ważenie waha się nawet o 0,8 kg, a skład ciała z wagi to tylko szacunek. Dopóki nie ustawisz celu wagi, nie zmieniam kalorii pod redukcję ani masę.</p>
+          </section>
+        </div>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

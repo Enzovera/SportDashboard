@@ -1,0 +1,169 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Żywienie › Suplementy, desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+<style>
+/* Screen-specific: Żywienie › Suplementy (desktop). */
+
+/* Jedzenie | Suplementy switch as links (desktop.css styles only buttons). */
+.segmented a { display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; font-size: 13.5px; color: var(--ink2); text-decoration: none; white-space: nowrap; }
+.segmented a + a { border-left: 1px solid var(--border); }
+.segmented a[aria-current='page'] { background: var(--ink); color: var(--surface); font-weight: 700; }
+
+/* Square checkbox (as in Fold mockups), themed for the hero block. */
+.sq { -webkit-appearance: none; appearance: none; flex: none; width: 24px; height: 24px; margin: 0; border: 1.5px solid var(--hero-ink); background: transparent; display: grid; place-content: center; cursor: pointer; }
+.sq:checked { background: var(--hero-ink); }
+.sq:checked::after { content: ''; width: 11px; height: 5px; border: 2px solid var(--hero); border-top: 0; border-right: 0; transform: translateY(-1px) rotate(-45deg); }
+.sq:focus-visible { outline: 2px solid var(--hero-ink); outline-offset: 2px; }
+
+/* Hero checklist: four time-of-day columns, chronological left to right. */
+.hero-count { font-size: 40px; font-weight: 800; font-stretch: 72%; line-height: 1; }
+.hero-count span { font-size: 22px; font-weight: 600; color: var(--hero-ink2); }
+.slots { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); column-gap: 24px; }
+.slot-label { font-size: 13px; font-weight: 700; color: var(--hero-ink2); padding: 4px 0 6px; }
+.item { display: flex; align-items: center; gap: 12px; min-height: 60px; border-top: 1px solid var(--hero-rule); cursor: pointer; }
+.item-text { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 2px; }
+.item-name { font-size: 15.5px; font-weight: 600; }
+.item-sub { font-size: 13px; color: var(--hero-ink2); }
+.item-when { flex: none; font-size: 13px; font-weight: 600; color: var(--hero-ink2); }
+.sq:checked + .item-text .item-name { text-decoration: line-through; color: var(--hero-ink2); }
+/* hero-good is a proposed token; falls back to hero-ink until it exists. */
+.item-when.done { color: var(--hero-good, var(--hero-ink)); font-weight: 700; }
+.hero-btn { margin-top: 10px; width: 100%; min-height: 44px; border: 1px solid var(--hero-rule); background: transparent; color: var(--hero-ink); font-size: 14px; font-weight: 600; cursor: pointer; }
+
+/* Regularity strip: one square per day, 25.09–24.10. */
+.strip { display: block; width: 100%; max-width: 387px; height: auto; }
+.strip .s-ok { fill: var(--chart); }
+.strip .s-miss { fill: none; stroke: var(--chart-mid); stroke-width: 1.5; }
+.strip .s-miss-warn { fill: none; stroke: var(--warn); stroke-width: 1.5; }
+.strip .s-na { fill: var(--axis); }
+.reg { table-layout: fixed; }
+.reg th:first-child { width: 170px; }
+.reg .c-strip { width: 50%; padding-right: 24px; }
+.reg .c-days { width: 116px; }
+.reg .c-pct { width: 52px; }
+.strip-axis { display: flex; justify-content: space-between; max-width: 387px; }
+.reg tr.warn th, .reg tr.warn td { color: var(--warn); }
+.reg tr.warn th { font-weight: 700; }
+.key-ok { width: 10px; height: 10px; background: var(--chart); }
+.key-miss { width: 10px; height: 10px; border: 1.5px solid var(--chart-mid); }
+.key-na { width: 8px; height: 1.5px; background: var(--axis); }
+
+/* Coach proposal */
+.mark { display: inline-block; width: 8px; height: 8px; background: var(--signal); margin-right: 6px; }
+.actions { display: flex; gap: 12px; margin-top: 4px; }
+.actions .btn { flex: 1; }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis.html">Dziś</a>
+    <a href="DesktopTrening.html">Trening</a>
+    <a href="DesktopZywienie.html" aria-current="page">Żywienie</a>
+    <a href="DesktopCialo.html">Ciało</a>
+    <a href="DesktopPlan.html">Plan</a>
+    <a href="DesktopPropozycje.html">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Żywienie</h1><span class="page-meta">Suplementy · Nd 25.10</span></div>
+        <nav class="segmented" aria-label="Widok żywienia"><a href="DesktopZywienie.html">Jedzenie</a><a href="DesktopSuplementy.html" aria-current="page">Suplementy 2/7</a></nav>
+      </div>
+
+      <div class="d-grid">
+
+        <!-- Hero: today's checklist, one tap per item -->
+        <section class="box box--hero s-12" aria-label="Suplementy dziś">
+          <div class="box-head"><h2>Dziś · długie wybieganie</h2><span class="hero-count">2<span> / 7</span></span></div>
+          <div class="slots">
+            <div>
+              <div class="slot-label">Rano</div>
+              <label class="item"><input class="sq" type="checkbox" checked><span class="item-text"><span class="item-name">Witamina D3 + K2</span><span class="item-sub">2000 IU · z posiłkiem</span></span><span class="item-when done">przyjęte</span></label>
+              <label class="item"><input class="sq" type="checkbox" checked><span class="item-text"><span class="item-name">Omega-3</span><span class="item-sub">2 kaps. · z posiłkiem</span></span><span class="item-when done">przyjęte</span></label>
+            </div>
+            <div>
+              <div class="slot-label">Bieg</div>
+              <label class="item"><input class="sq" type="checkbox"><span class="item-text"><span class="item-name">Kofeina</span><span class="item-sub">200 mg · 60 min przed</span></span><span class="item-when">przed</span></label>
+              <label class="item"><input class="sq" type="checkbox"><span class="item-text"><span class="item-name">Elektrolity</span><span class="item-sub">1 saszetka · bieg &gt; 90 min</span></span><span class="item-when">w trakcie</span></label>
+            </div>
+            <div>
+              <div class="slot-label">Po biegu</div>
+              <label class="item"><input class="sq" type="checkbox"><span class="item-text"><span class="item-name">Kreatyna</span><span class="item-sub">5 g · pora dowolna</span></span><span class="item-when">po</span></label>
+              <label class="item"><input class="sq" type="checkbox"><span class="item-text"><span class="item-name">Białko serwatkowe</span><span class="item-sub">30 g · liczy się w Fitatu</span></span><span class="item-when">po</span></label>
+            </div>
+            <div>
+              <div class="slot-label">Wieczór</div>
+              <label class="item"><input class="sq" type="checkbox"><span class="item-text"><span class="item-name">Magnez</span><span class="item-sub">300 mg · przed snem</span></span><span class="item-when">20:00</span></label>
+              <button type="button" class="hero-btn">+ Dodaj suplement lub regułę</button>
+            </div>
+          </div>
+        </section>
+
+        <!-- Regularity over 30 days -->
+        <section class="box s-8" aria-label="Regularność z 30 dni">
+          <div class="box-head"><h2>Regularność · 30 dni</h2><span class="meta">25.09–24.10</span></div>
+          <table class="table reg">
+            <thead><tr>
+              <th scope="col"><span class="sr-only">Suplement</span></th>
+              <th scope="col" class="c-strip"><span class="strip-axis"><span>25.09</span><span>24.10</span></span></th>
+              <th scope="col" class="r c-days">dni</th>
+              <th scope="col" class="r c-pct">%</th>
+            </tr></thead>
+            <tbody>
+              <tr><th scope="row">Elektrolity</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-na" x="1" y="6.25" width="8" height="1.5"/><rect class="s-na" x="14" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-na" x="40" y="6.25" width="8" height="1.5"/><rect class="s-na" x="53" y="6.25" width="8" height="1.5"/><rect class="s-na" x="66" y="6.25" width="8" height="1.5"/><rect class="s-na" x="79" y="6.25" width="8" height="1.5"/><rect class="s-na" x="92" y="6.25" width="8" height="1.5"/><rect class="s-na" x="105" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-na" x="131" y="6.25" width="8" height="1.5"/><rect class="s-na" x="144" y="6.25" width="8" height="1.5"/><rect class="s-na" x="157" y="6.25" width="8" height="1.5"/><rect class="s-na" x="170" y="6.25" width="8" height="1.5"/><rect class="s-na" x="183" y="6.25" width="8" height="1.5"/><rect class="s-na" x="196" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-na" x="222" y="6.25" width="8" height="1.5"/><rect class="s-na" x="235" y="6.25" width="8" height="1.5"/><rect class="s-na" x="248" y="6.25" width="8" height="1.5"/><rect class="s-na" x="261" y="6.25" width="8" height="1.5"/><rect class="s-na" x="274" y="6.25" width="8" height="1.5"/><rect class="s-na" x="287" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-na" x="313" y="6.25" width="8" height="1.5"/><rect class="s-na" x="326" y="6.25" width="8" height="1.5"/><rect class="s-na" x="339" y="6.25" width="8" height="1.5"/><rect class="s-na" x="352" y="6.25" width="8" height="1.5"/><rect class="s-na" x="365" y="6.25" width="8" height="1.5"/><rect class="s-na" x="378" y="6.25" width="8" height="1.5"/></svg></td><td class="r">4 / 4 długie</td><td class="r strong">100</td></tr>
+              <tr><th scope="row">Witamina D3 + K2</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-ok" x="0" y="2" width="10" height="10"/><rect class="s-ok" x="13" y="2" width="10" height="10"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-ok" x="39" y="2" width="10" height="10"/><rect class="s-ok" x="52" y="2" width="10" height="10"/><rect class="s-ok" x="65" y="2" width="10" height="10"/><rect class="s-ok" x="78" y="2" width="10" height="10"/><rect class="s-ok" x="91" y="2" width="10" height="10"/><rect class="s-ok" x="104" y="2" width="10" height="10"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-ok" x="130" y="2" width="10" height="10"/><rect class="s-ok" x="143" y="2" width="10" height="10"/><rect class="s-ok" x="156" y="2" width="10" height="10"/><rect class="s-ok" x="169" y="2" width="10" height="10"/><rect class="s-ok" x="182" y="2" width="10" height="10"/><rect class="s-miss" x="195.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-ok" x="221" y="2" width="10" height="10"/><rect class="s-ok" x="234" y="2" width="10" height="10"/><rect class="s-ok" x="247" y="2" width="10" height="10"/><rect class="s-ok" x="260" y="2" width="10" height="10"/><rect class="s-ok" x="273" y="2" width="10" height="10"/><rect class="s-ok" x="286" y="2" width="10" height="10"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-ok" x="312" y="2" width="10" height="10"/><rect class="s-ok" x="325" y="2" width="10" height="10"/><rect class="s-ok" x="338" y="2" width="10" height="10"/><rect class="s-ok" x="351" y="2" width="10" height="10"/><rect class="s-ok" x="364" y="2" width="10" height="10"/><rect class="s-ok" x="377" y="2" width="10" height="10"/></svg></td><td class="r">29 / 30</td><td class="r strong">97</td></tr>
+              <tr><th scope="row">Kreatyna</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-ok" x="0" y="2" width="10" height="10"/><rect class="s-ok" x="13" y="2" width="10" height="10"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-ok" x="39" y="2" width="10" height="10"/><rect class="s-ok" x="52" y="2" width="10" height="10"/><rect class="s-ok" x="65" y="2" width="10" height="10"/><rect class="s-ok" x="78" y="2" width="10" height="10"/><rect class="s-ok" x="91" y="2" width="10" height="10"/><rect class="s-miss" x="104.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-ok" x="130" y="2" width="10" height="10"/><rect class="s-ok" x="143" y="2" width="10" height="10"/><rect class="s-ok" x="156" y="2" width="10" height="10"/><rect class="s-ok" x="169" y="2" width="10" height="10"/><rect class="s-ok" x="182" y="2" width="10" height="10"/><rect class="s-ok" x="195" y="2" width="10" height="10"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-ok" x="221" y="2" width="10" height="10"/><rect class="s-ok" x="234" y="2" width="10" height="10"/><rect class="s-ok" x="247" y="2" width="10" height="10"/><rect class="s-ok" x="260" y="2" width="10" height="10"/><rect class="s-ok" x="273" y="2" width="10" height="10"/><rect class="s-miss" x="286.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-ok" x="312" y="2" width="10" height="10"/><rect class="s-ok" x="325" y="2" width="10" height="10"/><rect class="s-ok" x="338" y="2" width="10" height="10"/><rect class="s-ok" x="351" y="2" width="10" height="10"/><rect class="s-ok" x="364" y="2" width="10" height="10"/><rect class="s-ok" x="377" y="2" width="10" height="10"/></svg></td><td class="r">28 / 30</td><td class="r strong">93</td></tr>
+              <tr><th scope="row">Białko serwatkowe</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-ok" x="0" y="2" width="10" height="10"/><rect class="s-miss" x="13.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-ok" x="39" y="2" width="10" height="10"/><rect class="s-ok" x="52" y="2" width="10" height="10"/><rect class="s-ok" x="65" y="2" width="10" height="10"/><rect class="s-na" x="79" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="91" y="2" width="10" height="10"/><rect class="s-ok" x="104" y="2" width="10" height="10"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-miss" x="130.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="143" y="2" width="10" height="10"/><rect class="s-ok" x="156" y="2" width="10" height="10"/><rect class="s-na" x="170" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="182" y="2" width="10" height="10"/><rect class="s-ok" x="195" y="2" width="10" height="10"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-miss" x="221.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="234" y="2" width="10" height="10"/><rect class="s-ok" x="247" y="2" width="10" height="10"/><rect class="s-na" x="261" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="273" y="2" width="10" height="10"/><rect class="s-ok" x="286" y="2" width="10" height="10"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-ok" x="312" y="2" width="10" height="10"/><rect class="s-ok" x="325" y="2" width="10" height="10"/><rect class="s-ok" x="338" y="2" width="10" height="10"/><rect class="s-na" x="352" y="6.25" width="8" height="1.5"/><rect class="s-miss" x="364.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="377" y="2" width="10" height="10"/></svg></td><td class="r">22 / 26 tren.</td><td class="r strong">85</td></tr>
+              <tr><th scope="row">Omega-3</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-ok" x="0" y="2" width="10" height="10"/><rect class="s-ok" x="13" y="2" width="10" height="10"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-miss" x="39.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="52" y="2" width="10" height="10"/><rect class="s-ok" x="65" y="2" width="10" height="10"/><rect class="s-ok" x="78" y="2" width="10" height="10"/><rect class="s-ok" x="91" y="2" width="10" height="10"/><rect class="s-miss" x="104.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-ok" x="130" y="2" width="10" height="10"/><rect class="s-ok" x="143" y="2" width="10" height="10"/><rect class="s-ok" x="156" y="2" width="10" height="10"/><rect class="s-ok" x="169" y="2" width="10" height="10"/><rect class="s-ok" x="182" y="2" width="10" height="10"/><rect class="s-miss" x="195.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-ok" x="221" y="2" width="10" height="10"/><rect class="s-ok" x="234" y="2" width="10" height="10"/><rect class="s-ok" x="247" y="2" width="10" height="10"/><rect class="s-ok" x="260" y="2" width="10" height="10"/><rect class="s-miss" x="273.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="286" y="2" width="10" height="10"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-ok" x="312" y="2" width="10" height="10"/><rect class="s-ok" x="325" y="2" width="10" height="10"/><rect class="s-miss" x="338.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="351" y="2" width="10" height="10"/><rect class="s-ok" x="364" y="2" width="10" height="10"/><rect class="s-ok" x="377" y="2" width="10" height="10"/></svg></td><td class="r">25 / 30</td><td class="r strong">83</td></tr>
+              <tr><th scope="row">Kofeina</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-na" x="1" y="6.25" width="8" height="1.5"/><rect class="s-na" x="14" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-na" x="40" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="52" y="2" width="10" height="10"/><rect class="s-na" x="66" y="6.25" width="8" height="1.5"/><rect class="s-na" x="79" y="6.25" width="8" height="1.5"/><rect class="s-na" x="92" y="6.25" width="8" height="1.5"/><rect class="s-na" x="105" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-na" x="131" y="6.25" width="8" height="1.5"/><rect class="s-miss" x="143.75" y="2.75" width="8.5" height="8.5"/><rect class="s-na" x="157" y="6.25" width="8" height="1.5"/><rect class="s-na" x="170" y="6.25" width="8" height="1.5"/><rect class="s-na" x="183" y="6.25" width="8" height="1.5"/><rect class="s-na" x="196" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-na" x="222" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="234" y="2" width="10" height="10"/><rect class="s-na" x="248" y="6.25" width="8" height="1.5"/><rect class="s-na" x="261" y="6.25" width="8" height="1.5"/><rect class="s-na" x="274" y="6.25" width="8" height="1.5"/><rect class="s-na" x="287" y="6.25" width="8" height="1.5"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-na" x="313" y="6.25" width="8" height="1.5"/><rect class="s-miss" x="325.75" y="2.75" width="8.5" height="8.5"/><rect class="s-na" x="339" y="6.25" width="8" height="1.5"/><rect class="s-na" x="352" y="6.25" width="8" height="1.5"/><rect class="s-na" x="365" y="6.25" width="8" height="1.5"/><rect class="s-na" x="378" y="6.25" width="8" height="1.5"/></svg></td><td class="r">6 / 8 jakość.</td><td class="r strong">75</td></tr>
+              <tr class="warn"><th scope="row">Magnez</th><td class="c-strip"><svg class="strip" viewBox="0 0 387 14" aria-hidden="true"><rect class="s-miss-warn" x="0.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="13" y="2" width="10" height="10"/><rect class="s-ok" x="26" y="2" width="10" height="10"/><rect class="s-ok" x="39" y="2" width="10" height="10"/><rect class="s-miss-warn" x="52.75" y="2.75" width="8.5" height="8.5"/><rect class="s-miss-warn" x="65.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="78" y="2" width="10" height="10"/><rect class="s-ok" x="91" y="2" width="10" height="10"/><rect class="s-ok" x="104" y="2" width="10" height="10"/><rect class="s-ok" x="117" y="2" width="10" height="10"/><rect class="s-ok" x="130" y="2" width="10" height="10"/><rect class="s-miss-warn" x="143.75" y="2.75" width="8.5" height="8.5"/><rect class="s-miss-warn" x="156.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="169" y="2" width="10" height="10"/><rect class="s-ok" x="182" y="2" width="10" height="10"/><rect class="s-ok" x="195" y="2" width="10" height="10"/><rect class="s-ok" x="208" y="2" width="10" height="10"/><rect class="s-ok" x="221" y="2" width="10" height="10"/><rect class="s-miss-warn" x="234.75" y="2.75" width="8.5" height="8.5"/><rect class="s-miss-warn" x="247.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="260" y="2" width="10" height="10"/><rect class="s-ok" x="273" y="2" width="10" height="10"/><rect class="s-ok" x="286" y="2" width="10" height="10"/><rect class="s-ok" x="299" y="2" width="10" height="10"/><rect class="s-miss-warn" x="312.75" y="2.75" width="8.5" height="8.5"/><rect class="s-miss-warn" x="325.75" y="2.75" width="8.5" height="8.5"/><rect class="s-ok" x="338" y="2" width="10" height="10"/><rect class="s-ok" x="351" y="2" width="10" height="10"/><rect class="s-ok" x="364" y="2" width="10" height="10"/><rect class="s-ok" x="377" y="2" width="10" height="10"/></svg></td><td class="r">21 / 30</td><td class="r" style="font-weight:800">70</td></tr>
+            </tbody>
+          </table>
+          <div class="legend"><span><span class="key-ok"></span>przyjęte</span><span><span class="key-miss"></span>pominięte</span><span><span class="key-na"></span>nie dotyczy</span></div>
+        </section>
+
+        <!-- Coach proposal + stock -->
+        <div class="stack s-4">
+          <section class="box" aria-label="Propozycja trenera">
+            <div class="box-head"><h2>Trener</h2><span class="meta"><span class="mark"></span>propozycja</span></div>
+            <p class="prose">Magnez pomijasz głównie po wieczornych treningach (7 z 9 pominięć). Przesunąć przypomnienie na 21:30?</p>
+            <div class="actions"><button type="button" class="btn btn--primary">Przesuń na 21:30</button><button type="button" class="btn">Zostaw 20:00</button></div>
+          </section>
+
+          <section class="box" aria-label="Zapasy">
+            <div class="box-head"><h2>Zapasy</h2></div>
+            <table class="table">
+              <thead><tr><th scope="col"><span class="sr-only">Suplement</span></th><th scope="col" class="r">zostało</th><th scope="col" class="r">na ile</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="strong">Witamina D3 + K2</th><td class="r">12 kaps.</td><td class="r tone-warn" style="font-weight:700">~12 dni · zamów</td></tr>
+                <tr><th scope="row">Elektrolity</th><td class="r">6 sasz.</td><td class="r">~6 długich</td></tr>
+                <tr><th scope="row">Magnez</th><td class="r">20 tabl.</td><td class="r">~20 dni</td></tr>
+                <tr><th scope="row">Omega-3</th><td class="r">54 kaps.</td><td class="r">~27 dni</td></tr>
+                <tr><th scope="row">Kreatyna</th><td class="r">205 g</td><td class="r">~41 dni</td></tr>
+              </tbody>
+            </table>
+          </section>
+        </div>
+
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — szablon desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis.html" aria-current="page">Dziś</a>
+    <a href="DesktopTrening.html">Trening</a>
+    <a href="DesktopZywienie.html">Żywienie</a>
+    <a href="DesktopCialo.html">Ciało</a>
+    <a href="DesktopPlan.html">Plan</a>
+    <a href="DesktopPropozycje.html">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Tytuł ekranu</h1><span class="page-meta">Nd 25.10 · 20 tyg. do maratonu</span></div>
+        <div class="segmented" role="group" aria-label="Zakres"><button type="button" aria-pressed="false">4 tyg.</button><button type="button" aria-pressed="true">12 tyg.</button></div>
+      </div>
+
+      <div class="d-grid">
+        <section class="box box--hero s-4" aria-label="Hero">
+          <div class="box-head"><h2>Blok dominujący</h2><span class="meta">meta</span></div>
+          <div style="font-size: 96px; font-weight: 800; font-stretch: 70%; line-height: .82; color: var(--hero-signal)">16</div>
+        </section>
+        <div class="stack s-4">
+          <section class="box" aria-label="Metryki">
+            <div class="box-head"><h2>Boks</h2><span class="meta">Garmin 06:12</span></div>
+            <div class="metric-grid">
+              <div><div class="metric-label">HRV · 7 dni</div><div class="metric-value">52<span class="metric-unit">ms</span></div><div class="metric-sub tone-good">baza 54 · w normie</div></div>
+              <div><div class="metric-label">Sen</div><div class="metric-value">7:40<span class="metric-unit">h</span></div><div class="metric-sub">śr. 7 h 10 min</div></div>
+            </div>
+          </section>
+        </div>
+        <div class="stack s-4">
+          <section class="box" aria-label="Tabela">
+            <div class="box-head"><h2>Tabela</h2></div>
+            <table class="table"><thead><tr><th scope="col"><span class="sr-only">Składnik</span></th><th scope="col" class="r">zjedzone</th><th scope="col" class="r">cel</th></tr></thead>
+            <tbody><tr><th scope="row">Kalorie</th><td class="r">820</td><td class="r dim">2 950</td></tr></tbody></table>
+          </section>
+          <a class="link-row" href="DesktopPropozycje.html"><span class="count">2</span><span style="flex:1;font-weight:700">propozycje zmian czekają</span><span>Przejrzyj →</span></a>
+        </div>
+      </div>
+    </div>
+  </main>
+  <!-- <aside class="d-aside" aria-label="Czat z trenerem"> ... </aside>  (only in DesktopCzat) -->
+</div>
+
+</body>
+</html>

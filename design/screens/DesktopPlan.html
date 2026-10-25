@@ -1,0 +1,165 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Plan, desktop</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<link rel="stylesheet" href="desktop.css">
+<style>
+/* Screen-specific: Plan */
+.goal-big { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; padding: 4px 0 6px; }
+.goal-time { font-size: 96px; font-weight: 800; font-stretch: 70%; line-height: .82; letter-spacing: -0.01em; }
+.goal-pace { text-align: right; font-size: 14px; line-height: 1.5; color: var(--hero-ink2); }
+.goal-pace strong { color: var(--hero-ink); font-weight: 700; }
+.goal-row { display: flex; justify-content: space-between; gap: 12px; border-top: 1px solid var(--hero-rule); padding-top: 10px; font-size: 14.5px; }
+.goal-row .k, .goal-row .d { color: var(--hero-ink2); }
+.goal-row .v { font-weight: 700; }
+
+/* Macrocycle timeline */
+.tl { margin-top: auto; position: relative; display: flex; flex-direction: column; gap: 6px; }
+.tl::before { content: ''; position: absolute; left: 0; top: 0; width: 2px; height: 64px; background: var(--signal); }
+.tl-now { display: flex; align-items: center; gap: 8px; padding-left: 10px; height: 22px; font-size: 13.5px; font-weight: 700; color: var(--signal); }
+.tl-blocks { display: flex; gap: 8px; padding-left: 6px; }
+.tl-block { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
+.tl-bar { display: flex; gap: 2px; height: 36px; }
+.tl-bar > span { flex: 1; background: var(--chart-soft); }
+.tl-block.current .tl-bar > span { background: var(--ink); }
+.tl-name { font-size: 15.5px; font-weight: 800; }
+.tl-dates { font-size: 13px; color: var(--ink3); }
+.tl-desc { font-size: 13.5px; line-height: 1.45; color: var(--ink2); margin-top: 4px; }
+.tl-end { flex: none; width: 76px; display: flex; flex-direction: column; gap: 10px; }
+.tl-end .mark { height: 36px; display: flex; align-items: center; padding-left: 4px; }
+.tl-end .mark::before { content: ''; width: 14px; height: 14px; background: var(--ink); transform: rotate(45deg); }
+
+/* Week tables: rows run edge to edge so "do decyzji" tint spans the box */
+.wk { margin: 0 -18px; width: calc(100% + 36px); table-layout: fixed; }
+.wk th:first-child, .wk td:first-child { padding-left: 18px; }
+.wk th:last-child, .wk td:last-child { padding-right: 18px; }
+.wk td, .wk th { vertical-align: top; }
+.wk .day { white-space: nowrap; font-size: 13px; font-weight: 700; color: var(--ink3); line-height: 1.35; }
+.wk .s-name { font-weight: 700; }
+.wk .s-sub { color: var(--ink2); }
+.wk tfoot tr { border-top: 1px solid var(--rule); }
+.wk tfoot th, .wk tfoot td { font-weight: 700; padding-top: 10px; }
+.wk tr.today .day, .wk tr.today .km { color: var(--signal); font-weight: 800; }
+.wk tr.decide { background: var(--signal-tint); }
+.wk tr.decide > :first-child { box-shadow: inset 3px 0 0 var(--signal); }
+.wk tr.decide .day { color: var(--signal-tint-ink); }
+.prop-link { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; margin: -8px 0 -12px; font-size: 13.5px; font-weight: 700; text-decoration: none; }
+.prop-link::before { content: ''; width: 8px; height: 8px; background: var(--signal); flex: none; }
+.decide-label { font-size: 13.5px; font-weight: 700; color: var(--signal); }
+</style>
+</head>
+<body>
+
+<header class="d-header">
+  <a class="d-brand" href="DesktopDzis.html">Forma</a>
+  <nav class="d-nav" aria-label="Główna nawigacja">
+    <a href="DesktopDzis.html">Dziś</a>
+    <a href="DesktopTrening.html">Trening</a>
+    <a href="DesktopZywienie.html">Żywienie</a>
+    <a href="DesktopCialo.html">Ciało</a>
+    <a href="DesktopPlan.html" aria-current="page">Plan</a>
+    <a href="DesktopPropozycje.html">Propozycje <span class="count">2</span></a>
+  </nav>
+  <div class="d-actions">
+    <span class="status">Hevy: błąd sync</span>
+    <a class="btn" href="DesktopCzat.html">Trener</a>
+  </div>
+</header>
+
+<div class="d-body">
+  <main class="d-main">
+    <div class="d-content">
+      <div class="d-pagehead">
+        <div class="title"><h1>Plan</h1><span class="page-meta">Makrocykl · Maraton 14.03.2027</span></div>
+        <a class="btn" href="DesktopPropozycje.html#historia">Historia zmian</a>
+      </div>
+
+      <div class="d-grid">
+        <!-- Row 1: goal (hero) + macrocycle -->
+        <section class="box box--hero s-4" aria-label="Cele">
+          <div class="box-head"><h2>Maraton · 14.03.2027</h2><span class="meta">za 20 tyg.</span></div>
+          <div class="goal-big">
+            <span class="goal-time">4:00:00</span>
+            <span class="goal-pace">cel<br><strong>5:41 /km</strong></span>
+          </div>
+          <div class="goal-row"><span class="k">Półmaraton</span><span><span class="v">&lt; 1:40</span><span class="d"> · najlepszy 1:47</span></span></div>
+          <div class="goal-row"><span class="k">Siła</span><span><span class="v">Push / Pull / Legs</span><span class="d"> · 3× w Bazie</span></span></div>
+        </section>
+
+        <section class="box s-8" aria-label="Oś makrocyklu" style="align-self: stretch">
+          <div class="box-head"><h2>Cztery bloki do startu</h2><span class="meta">20 tyg. · 26.10–14.03</span></div>
+          <div class="tl">
+            <div class="tl-now">Dziś · 25.10 · Baza od jutra</div>
+            <div class="tl-blocks">
+              <div class="tl-block current" style="flex: 6 1 0">
+                <div class="tl-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div><div class="tl-name">Baza</div><div class="tl-dates">6 tyg. · 26.10–6.12</div><div class="tl-desc">46 → ok. 60 km, głównie strefa 2. PPL 3×.</div></div>
+              </div>
+              <div class="tl-block" style="flex: 6 1 0">
+                <div class="tl-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span><span></span></div>
+                <div><div class="tl-name">Budowa</div><div class="tl-dates">6 tyg. · 7.12–17.01</div><div class="tl-desc">Tempo i interwały 2×. PPL 2–3×.</div></div>
+              </div>
+              <div class="tl-block" style="flex: 5 1 0">
+                <div class="tl-bar" aria-hidden="true"><span></span><span></span><span></span><span></span><span></span></div>
+                <div><div class="tl-name">Szczyt</div><div class="tl-dates">5 tyg. · 18.01–21.02</div><div class="tl-desc">Najdłuższe wybiegania, tempo 5:41 /km.</div></div>
+              </div>
+              <div class="tl-block" style="flex: 3 1 0">
+                <div class="tl-bar" aria-hidden="true"><span></span><span></span><span></span></div>
+                <div><div class="tl-name">Taper</div><div class="tl-dates">3 tyg. · 22.02–14.03</div></div>
+              </div>
+              <div class="tl-end">
+                <div class="mark" aria-hidden="true"></div>
+                <div><div class="tl-name">Maraton</div><div class="tl-dates">14.03.2027</div></div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- Row 2: this week + next week -->
+        <div class="stack s-5">
+          <section class="box" aria-label="Ten tydzień">
+            <div class="box-head"><h2>Ten tydzień · 19–25.10</h2><span class="meta">bieg 30 / 46 km · siła 3 / 3</span></div>
+            <table class="table wk">
+              <colgroup><col style="width: 76px"><col><col style="width: 44px"><col style="width: 112px"><col style="width: 74px"></colgroup>
+              <thead><tr><th scope="col"><span class="sr-only">Dzień</span></th><th scope="col">sesja</th><th scope="col" class="r">km</th><th scope="col" class="r">wykonane</th><th scope="col" class="r">cel kcal</th></tr></thead>
+              <tbody>
+                <tr><th scope="row" class="day">Pn 19</th><td><span class="s-name">Push</span> <span class="s-sub">+ bieg łatwy</span></td><td class="r">6</td><td class="r dim">6,0 km · 18 serii</td><td class="r dim">2 750</td></tr>
+                <tr><th scope="row" class="day">Wt 20</th><td><span class="s-name">Interwały</span> <span class="s-sub">6×800 m</span></td><td class="r">10</td><td class="r dim">10,2 km</td><td class="r dim">2 700</td></tr>
+                <tr><th scope="row" class="day">Śr 21</th><td><span class="s-name">Legs</span></td><td class="r muted">–</td><td class="r dim">16 serii</td><td class="r dim">2 600</td></tr>
+                <tr><th scope="row" class="day">Cz 22</th><td class="dim">Odpoczynek</td><td class="r muted">–</td><td class="r muted">–</td><td class="r dim">2 300</td></tr>
+                <tr><th scope="row" class="day">Pt 23</th><td><span class="s-name">Pull</span> <span class="s-sub">+ bieg łatwy</span></td><td class="r">6</td><td class="r dim">6,1 km · 17 serii</td><td class="r dim">2 750</td></tr>
+                <tr><th scope="row" class="day">Sb 24</th><td><span class="s-name">Tempo</span></td><td class="r">8</td><td class="r dim">8,0 km</td><td class="r dim">2 700</td></tr>
+                <tr class="today"><th scope="row" class="day">Nd 25</th><td><span class="s-name">Długie wybieganie</span> <span class="s-sub">strefa 2</span></td><td class="r km">16</td><td class="r tone-signal strong">dziś</td><td class="r dim">2 950</td></tr>
+              </tbody>
+            </table>
+          </section>
+          <a class="link-row" href="DesktopPropozycje.html"><span class="count">2</span><span style="flex: 1; font-weight: 700">propozycje zmian czekają</span><span>Przejrzyj →</span></a>
+        </div>
+
+        <section class="box s-7" aria-label="Następny tydzień">
+          <div class="box-head"><h2>Tydzień 26.10–1.11</h2><span class="meta">Baza · tydz. 1 · 46 km · <span class="decide-label">2 do decyzji</span></span></div>
+          <table class="table wk">
+            <colgroup><col style="width: 76px"><col><col style="width: 40px"><col style="width: 142px"><col style="width: 58px"><col style="width: 40px"><col style="width: 40px"><col style="width: 50px"></colgroup>
+            <thead><tr><th scope="col"><span class="sr-only">Dzień</span></th><th scope="col">sesja</th><th scope="col" class="r">km</th><th scope="col" style="padding-left: 16px">typ dnia</th><th scope="col" class="r">kcal</th><th scope="col" class="r">B</th><th scope="col" class="r">W</th><th scope="col" class="r">T</th></tr></thead>
+            <tbody>
+              <tr><th scope="row" class="day">Pn 26</th><td><span class="s-name">Push</span> <span class="s-sub">+ bieg łatwy</span></td><td class="r">6</td><td class="dim" style="padding-left: 16px">Siłowy + bieg</td><td class="r">2 750</td><td class="r dim">145</td><td class="r dim">370</td><td class="r dim">80</td></tr>
+              <tr><th scope="row" class="day">Wt 27</th><td><span class="s-name">Interwały</span> <span class="s-sub">6×800 m</span></td><td class="r">10</td><td class="dim" style="padding-left: 16px">Bieg</td><td class="r">2 700</td><td class="r dim">145</td><td class="r dim">355</td><td class="r dim">80</td></tr>
+              <tr class="decide"><th scope="row" class="day">Śr 28</th><td><div><span class="s-name">Legs</span> <span class="s-sub">16 serii roboczych</span></div><a class="prop-link" href="DesktopPropozycje.html#fb-title">propozycja: 12 serii →</a></td><td class="r muted">–</td><td class="dim" style="padding-left: 16px">Siłowy</td><td class="r">2 600</td><td class="r dim">145</td><td class="r dim">330</td><td class="r dim">80</td></tr>
+              <tr><th scope="row" class="day">Cz 29</th><td class="dim">Odpoczynek</td><td class="r muted">–</td><td class="dim" style="padding-left: 16px">Odpoczynek</td><td class="r">2 300</td><td class="r dim">145</td><td class="r dim">255</td><td class="r dim">80</td></tr>
+              <tr><th scope="row" class="day">Pt 30</th><td><span class="s-name">Pull</span> <span class="s-sub">+ bieg łatwy</span></td><td class="r">6</td><td class="dim" style="padding-left: 16px">Siłowy + bieg</td><td class="r">2 750</td><td class="r dim">145</td><td class="r dim">370</td><td class="r dim">80</td></tr>
+              <tr><th scope="row" class="day">Sb 31</th><td><span class="s-name">Tempo</span></td><td class="r">8</td><td class="dim" style="padding-left: 16px">Bieg</td><td class="r">2 700</td><td class="r dim">145</td><td class="r dim">355</td><td class="r dim">80</td></tr>
+              <tr class="decide"><th scope="row" class="day">Nd 1</th><td><div><span class="s-name">Długie wybieganie</span> <span class="s-sub">strefa 2</span></div><a class="prop-link" href="DesktopPropozycje.html#fa-title">propozycja: W 460 g, 3 140 kcal →</a></td><td class="r">16</td><td class="dim" style="padding-left: 16px">Długie wybieganie</td><td class="r">2 950</td><td class="r dim">145</td><td class="r dim">412</td><td class="r dim">80</td></tr>
+            </tbody>
+            <tfoot><tr><th scope="row" colspan="2">Tydzień</th><td class="r">46</td><td colspan="5" class="dim" style="padding-left: 16px; font-weight: 500">makro w g</td></tr></tfoot>
+          </table>
+        </section>
+      </div>
+    </div>
+  </main>
+</div>
+
+</body>
+</html>

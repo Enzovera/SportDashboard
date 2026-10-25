@@ -33,3 +33,7 @@ Wysokość powyżej 823 (lub 905 na zewnętrznym) oznacza przewijanie.
 - **Dostępność:** cele dotykowe ≥ 44 px, kontrast tekstu ≥ 4.5:1 w obu motywach, statusy zawsze także słowem (nie tylko kolorem).
 
 Tokeny: `tokens.css` (zmienne CSS, motyw przez `prefers-color-scheme` lub `data-theme`) i `tokens.json` (te same wartości z opisem użycia).
+
+## Desktop (web)
+
+Makiety `screens/Desktop*.html` (+ `-dark`) dla przeglądarki od 1024 px, projekt na 1440 × 900. Zasady, które różnią się od Fold6, są w `desktop.md`; wspólne style w `screens/desktop.css`. Otwieraj przez serwer makiet (`http://localhost:8082`), bo strony ładują wspólny CSS. PNG dla desktopu jeszcze nie ma.
