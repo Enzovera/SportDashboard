@@ -1,0 +1,105 @@
+:root {
+  color-scheme: light;
+  --bg: #F4F3EE;
+  --surface: #FFFFFF;
+  --surface2: #F8F7F3;
+  --border: #DCD9CF;
+  --border-strong: #B9B6AB;
+  --ink: #141410;
+  --ink2: #4A4942;
+  --ink3: #6B695F;
+  --rule: #E8E5DC;
+  --hero: #141410;
+  --hero-border: #141410;
+  --hero-ink: #F4F3EE;
+  --hero-ink2: #ABA99F;
+  --hero-rule: #34332D;
+  --hero-signal: #FF4A3D;
+  --signal: #D92B21;
+  --signal-ink: #FFFFFF;
+  --signal-tint: #FBE9E7;
+  --signal-tint-ink: #A3190F;
+  --good: #1D7A45;
+  --good-tint: #E6F2EA;
+  --warn: #975A00;
+  --warn-tint: #F8EED9;
+  --chart: #141410;
+  --chart-soft: #C4C1B6;
+  --chart-mid: #8A887E;
+  --grid: #ECE9E1;
+  --axis: #B9B6AB;
+  --font: 'Archivo', system-ui, sans-serif;
+  --radius: 0;
+  --header-h: 56px;
+  --nav-h: 56px;
+}
+
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme='light']) {
+    color-scheme: dark;
+    --bg: #0E0E0C;
+    --surface: #161614;
+    --surface2: #1B1B18;
+    --border: #2B2A26;
+    --border-strong: #4A4943;
+    --ink: #ECEAE2;
+    --ink2: #B3B1A7;
+    --ink3: #8E8C82;
+    --rule: #25241F;
+    --hero: #1F1F1B;
+    --hero-border: #3A3934;
+    --hero-ink: #ECEAE2;
+    --hero-ink2: #A3A197;
+    --hero-rule: #36352F;
+    --hero-signal: #FF5A4D;
+    --signal: #D92B21;
+    --signal-ink: #FFFFFF;
+    --signal-tint: #3A1A16;
+    --signal-tint-ink: #FFB3A8;
+    --good: #62CF8F;
+    --good-tint: #14291C;
+    --warn: #E8B24A;
+    --warn-tint: #2E2410;
+    --chart: #ECEAE2;
+    --chart-soft: #4F4E48;
+    --chart-mid: #8E8C82;
+    --grid: #22211D;
+    --axis: #4A4943;
+  }
+}
+
+:root[data-theme='dark'] {
+  color-scheme: dark;
+  --bg: #0E0E0C;
+  --surface: #161614;
+  --surface2: #1B1B18;
+  --border: #2B2A26;
+  --border-strong: #4A4943;
+  --ink: #ECEAE2;
+  --ink2: #B3B1A7;
+  --ink3: #8E8C82;
+  --rule: #25241F;
+  --hero: #1F1F1B;
+  --hero-border: #3A3934;
+  --hero-ink: #ECEAE2;
+  --hero-ink2: #A3A197;
+  --hero-rule: #36352F;
+  --hero-signal: #FF5A4D;
+  --signal: #D92B21;
+  --signal-ink: #FFFFFF;
+  --signal-tint: #3A1A16;
+  --signal-tint-ink: #FFB3A8;
+  --good: #62CF8F;
+  --good-tint: #14291C;
+  --warn: #E8B24A;
+  --warn-tint: #2E2410;
+  --chart: #ECEAE2;
+  --chart-soft: #4F4E48;
+  --chart-mid: #8E8C82;
+  --grid: #22211D;
+  --axis: #4A4943;
+}
+
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--font); font-variant-numeric: tabular-nums; }
+.num { font-stretch: 75%; font-weight: 750; }
+* { border-radius: 0 !important; }

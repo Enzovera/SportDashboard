@@ -1,0 +1,127 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Trening, Fold6 ekran wewnętrzny</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<style>
+body{margin:0}
+.sq{-webkit-appearance:none;appearance:none;flex:none;width:22px;height:22px;margin:0;box-sizing:border-box;border:1.5px solid var(--ink);background:transparent;display:grid;place-content:center;cursor:pointer}
+.sq:checked{background:var(--ink)}
+.sq:checked::after{content:'';width:10px;height:5px;border:2px solid var(--paper);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.sq:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+</style>
+<style>body{background:#F4F3EE}</style>
+</head>
+<body>
+<div style="width: 707px; height: 1040px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F3EE; color: #141410; font-family: 'Archivo', system-ui, sans-serif; font-variant-numeric: tabular-nums; overflow: hidden; --ink: #141410; --paper: #FFFFFF">
+
+<header style="flex: none; height: 56px; box-sizing: border-box; padding: 0 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; align-items: center; background: #FFFFFF; border-bottom: 1px solid #DCD9CF">
+<div style="display: flex; align-items: baseline; gap: 10px; min-width: 0">
+<h1 style="margin: 0; font-size: 24px; font-weight: 800; font-stretch: 78%; line-height: 1">Trening</h1>
+<span style="font-size: 13px; color: #6B695F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Garmin + Hevy · 03.08–25.10</span>
+</div>
+<div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 0">
+<div role="group" aria-label="Zakres czasu" style="display: inline-flex; border: 1px solid #B9B6AB"><button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 12px; border: 0; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; background: transparent; color: #4A4942; font-weight: 500">4 tyg.</button><button type="button" aria-pressed="true" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 12px; border: 0; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; background: #141410; color: #FFFFFF; font-weight: 700; border-left: 1px solid #DCD9CF">12 tyg.</button><button type="button" aria-pressed="false" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 12px; border: 0; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; background: transparent; color: #4A4942; font-weight: 500; border-left: 1px solid #DCD9CF">Blok</button></div>
+</div>
+</header>
+
+<main style="flex: 1; min-height: 0; box-sizing: border-box; padding: 12px 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<section aria-label="Wskaźniki" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px 4px; display: flex; flex-direction: column; gap: 0">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Obciążenie</h2><span style="font-size: 12.5px; color: #6B695F">Garmin · tydzień 19–25.10</span></div>
+<div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 16px"><div style="padding: 8px 0"><div style="font-size: 12.5px; color: #6B695F">Kilometraż</div><div style="font-size: 34px; font-weight: 750; font-stretch: 75%; line-height: 1.05">46<span style="font-size: 15px; font-weight: 600; color: #4A4942; margin-left: 3px">km</span></div><div style="font-size: 12.5px; color: #4A4942">+7% vs 43 km</div></div><div style="padding: 8px 0"><div style="font-size: 12.5px; color: #6B695F">Fitness · CTL</div><div style="font-size: 34px; font-weight: 750; font-stretch: 75%; line-height: 1.05">41</div><div style="font-size: 12.5px; color: #4A4942">+11 w 12 tyg.</div></div><div style="padding: 8px 0; border-top: 1px solid #E8E5DC"><div style="font-size: 12.5px; color: #6B695F">Zmęczenie · ATL</div><div style="font-size: 34px; font-weight: 750; font-stretch: 75%; line-height: 1.05">37</div><div style="font-size: 12.5px; color: #4A4942">−5 vs poprz. tydz.</div></div><div style="padding: 8px 0; border-top: 1px solid #E8E5DC"><div style="font-size: 12.5px; color: #6B695F">Forma · TSB</div><div style="font-size: 34px; font-weight: 750; font-stretch: 75%; line-height: 1.05">+4</div><div style="font-size: 12.5px; color: #1D7A45; font-weight: 600">świeży</div></div></div>
+</section>
+<section aria-label="Kilometraż tygodniowy" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Kilometraż rośnie zgodnie z planem</h2></div>
+<svg viewBox="0 0 300 196" width="100%" role="img" aria-label="Kilometraż tygodniowy od 31 do 46 km w 12 tygodni, blisko planu; odciążenie w tygodniach 24.08 i 21.09; dziś planowane 16 km">
+<g stroke="#ECE9E1" stroke-width="1"><line x1="30" y1="20" x2="296" y2="20"></line><line x1="30" y1="50" x2="296" y2="50"></line><line x1="30" y1="80" x2="296" y2="80"></line><line x1="30" y1="110" x2="296" y2="110"></line><line x1="30" y1="140" x2="296" y2="140"></line></g>
+<line x1="30" y1="170" x2="296" y2="170" stroke="#B9B6AB" stroke-width="1"></line>
+<g font-family="Archivo, sans-serif" font-size="10.5" fill="#6B695F" text-anchor="end"><text x="24" y="174">0</text><text x="24" y="144">10</text><text x="24" y="114">20</text><text x="24" y="84">30</text><text x="24" y="54">40</text><text x="24" y="24">50</text></g>
+<g fill="#8A887E"><rect x="35.1" y="77" width="12" height="93"></rect><rect x="57.3" y="68" width="12" height="102"></rect><rect x="79.4" y="62" width="12" height="108"></rect><rect x="123.8" y="59" width="12" height="111"></rect><rect x="145.9" y="53" width="12" height="117"></rect><rect x="168.1" y="47" width="12" height="123"></rect><rect x="212.4" y="50" width="12" height="120"></rect><rect x="234.6" y="44" width="12" height="126"></rect><rect x="256.8" y="41" width="12" height="129"></rect><rect x="278.9" y="80" width="12" height="90"></rect></g>
+<g fill="#C4C1B6"><rect x="101.6" y="71" width="12" height="99"></rect><rect x="190.3" y="62" width="12" height="108"></rect></g>
+<rect x="279.9" y="33" width="10" height="46" fill="none" stroke="#D92B21" stroke-width="1.5" stroke-dasharray="3 2"></rect>
+<g stroke="#141410" stroke-width="2"><line x1="32.1" y1="74" x2="50.1" y2="74"></line><line x1="54.3" y1="68" x2="72.3" y2="68"></line><line x1="76.4" y1="59" x2="94.4" y2="59"></line><line x1="98.6" y1="74" x2="116.6" y2="74"></line><line x1="120.8" y1="56" x2="138.8" y2="56"></line><line x1="142.9" y1="50" x2="160.9" y2="50"></line><line x1="165.1" y1="44" x2="183.1" y2="44"></line><line x1="187.3" y1="62" x2="205.3" y2="62"></line><line x1="209.4" y1="50" x2="227.4" y2="50"></line><line x1="231.6" y1="44" x2="249.6" y2="44"></line><line x1="253.8" y1="38" x2="271.8" y2="38"></line><line x1="275.9" y1="32" x2="293.9" y2="32"></line></g>
+<text x="284.9" y="25" font-family="Archivo, sans-serif" font-size="11.5" font-weight="800" fill="#D92B21" text-anchor="middle">16</text>
+<g font-family="Archivo, sans-serif" font-size="10.5" fill="#6B695F"><text x="41.1" y="188" text-anchor="middle">03.08</text><text x="129.8" y="188" text-anchor="middle">31.08</text><text x="218.4" y="188" text-anchor="middle">28.09</text><text x="296" y="188" text-anchor="end">19.10</text></g>
+</svg>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: #4A4942"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; background: #8A887E"></span>wykonanie</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; background: #C4C1B6"></span>odciążenie</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 12px; height: 2px; background: #141410"></span>plan</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 10px; height: 10px; box-sizing: border-box; border: 1.5px dashed #D92B21"></span>dziś</span></div>
+</section>
+<section aria-label="Obciążenie treningowe" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px; display: flex; flex-direction: column; gap: 10px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Fitness rośnie szybciej niż zmęczenie</h2></div>
+<svg viewBox="0 0 300 196" width="100%" role="img" aria-label="CTL rośnie z 30 do 41, ATL waha się od 29 do 43 i kończy na 37">
+<g stroke="#ECE9E1" stroke-width="1"><line x1="30" y1="20" x2="292" y2="20"></line><line x1="30" y1="70" x2="292" y2="70"></line><line x1="30" y1="120" x2="292" y2="120"></line></g>
+<line x1="30" y1="170" x2="292" y2="170" stroke="#B9B6AB" stroke-width="1"></line>
+<g font-family="Archivo, sans-serif" font-size="10.5" fill="#6B695F" text-anchor="end"><text x="24" y="174">20</text><text x="24" y="124">30</text><text x="24" y="74">40</text><text x="24" y="24">50</text></g>
+<polyline points="30,105 53.8,90 77.6,85 101.5,125 125.3,80 149.1,70 172.9,60 196.7,115 220.5,70 244.4,55 268.2,60 292,85" fill="none" stroke="#8A887E" stroke-width="1.75" stroke-dasharray="5 3" stroke-linejoin="round"></polyline>
+<polyline points="30,120 53.8,115 77.6,110 101.5,110 125.3,105 149.1,100 172.9,95 196.7,95 220.5,90 244.4,80 268.2,75 292,65" fill="none" stroke="#141410" stroke-width="2.5" stroke-linejoin="round"></polyline>
+<rect x="288.5" y="61.5" width="7" height="7" fill="#141410"></rect><rect x="288.5" y="81.5" width="7" height="7" fill="#8A887E"></rect>
+<text x="284" y="53" font-family="Archivo, sans-serif" font-size="11.5" font-weight="800" fill="#141410" text-anchor="end">CTL 41</text>
+<text x="284" y="104" font-family="Archivo, sans-serif" font-size="11.5" font-weight="700" fill="#4A4942" text-anchor="end">ATL 37</text>
+<g font-family="Archivo, sans-serif" font-size="10.5" fill="#6B695F"><text x="30" y="188">03.08</text><text x="292" y="188" text-anchor="end">19.10</text></g>
+</svg>
+<div style="display: flex; flex-wrap: wrap; gap: 6px 14px; font-size: 12.5px; color: #4A4942"><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 14px; height: 3px; background: #141410"></span>CTL · 42 dni</span><span style="display: inline-flex; align-items: center; gap: 6px"><span style="width: 14px; height: 0; border-top: 2px dashed #8A887E"></span>ATL · 7 dni</span></div>
+</section>
+<section aria-label="Uwaga trenera" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Trener</h2><span style="font-size: 12.5px; color: #6B695F">18.10</span></div>
+<p style="margin: 0; font-size: 14.5px; line-height: 1.5">Legs w środę daje 4 dni regeneracji przed długim wybieganiem. Zostaw ten układ na cały blok Baza.</p>
+</section>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<section aria-label="Ostatnie biegi" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px 6px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Ostatnie biegi</h2><span style="font-size: 12.5px; color: #6B695F">Garmin</span></div>
+<table style="width: 100%; border-collapse: collapse; font-family: inherit; font-size: 13.5px; color: #141410; table-layout: fixed">
+<thead><tr style="font-size: 12px; color: #6B695F"><th scope="col" style="padding: 4px 0; text-align: left; font-weight: 500"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Trening</span></th><th scope="col" style="padding: 4px 0; width: 46px; text-align: right; font-weight: 500">km</th><th scope="col" style="padding: 4px 0; width: 46px; text-align: right; font-weight: 500">/km</th><th scope="col" style="padding: 4px 0; width: 40px; text-align: right; font-weight: 500">bpm</th><th scope="col" style="padding: 4px 0; width: 40px; text-align: right; font-weight: 500">obc.</th></tr></thead>
+<tbody>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Tempo</span><span style="font-size: 12px; color: #6B695F">Sb 24.10</span></th><td style="padding: 6px 0; text-align: right; font-weight: 700">8,0</td><td style="padding: 6px 0; text-align: right">4:58</td><td style="padding: 6px 0; text-align: right">162</td><td style="padding: 6px 0; text-align: right; color: #4A4942">118</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Bieg łatwy</span><span style="font-size: 12px; color: #6B695F">Pt 23.10</span></th><td style="padding: 6px 0; text-align: right; font-weight: 700">6,1</td><td style="padding: 6px 0; text-align: right">6:02</td><td style="padding: 6px 0; text-align: right">138</td><td style="padding: 6px 0; text-align: right; color: #4A4942">52</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Interwały 6×800</span><span style="font-size: 12px; color: #6B695F">Wt 20.10</span></th><td style="padding: 6px 0; text-align: right; font-weight: 700">10,2</td><td style="padding: 6px 0; text-align: right">5:12</td><td style="padding: 6px 0; text-align: right">155</td><td style="padding: 6px 0; text-align: right; color: #4A4942">131</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Bieg łatwy</span><span style="font-size: 12px; color: #6B695F">Pn 19.10</span></th><td style="padding: 6px 0; text-align: right; font-weight: 700">6,0</td><td style="padding: 6px 0; text-align: right">6:05</td><td style="padding: 6px 0; text-align: right">136</td><td style="padding: 6px 0; text-align: right; color: #4A4942">50</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Długie</span><span style="font-size: 12px; color: #6B695F">Nd 18.10</span></th><td style="padding: 6px 0; text-align: right; font-weight: 700">15,0</td><td style="padding: 6px 0; text-align: right">5:58</td><td style="padding: 6px 0; text-align: right">145</td><td style="padding: 6px 0; text-align: right; color: #4A4942">142</td></tr>
+</tbody>
+</table>
+</section>
+<section aria-label="Serie robocze na partię" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px; display: flex; flex-direction: column; gap: 6px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Serie robocze · tydzień</h2><span style="font-size: 12.5px; color: #6B695F">Hevy</span></div>
+<div style="display: flex; flex-direction: column; gap: 2px"><div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Plecy</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 100%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">12</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Klatka</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 75%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">9</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Czworogłowe</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 58%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">7</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Barki</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 50%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">6</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Biceps</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 42%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">5</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Dwugłowe uda</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 42%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">5</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Pośladki</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 33%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">4</span></div>
+<div style="display: flex; align-items: center; gap: 10px; min-height: 26px; font-size: 13.5px"><span style="flex: 0 0 100px">Triceps</span><div style="flex: 1; height: 8px; background: #E8E5DC"><div style="width: 25%; height: 100%; background: #8A887E"></div></div><span style="flex: 0 0 22px; text-align: right; font-weight: 700">3</span></div></div>
+</section>
+<section aria-label="Treningi siłowe" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px 6px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Push / Pull / Legs</h2><span style="display: inline-flex; align-items: center; gap: 6px; font-size: 13px; font-weight: 600; color: #975A00; white-space: nowrap"><span style="width: 7px; height: 7px; background: #975A00"></span>sync: wcz. 18:02</span></div>
+<table style="width: 100%; border-collapse: collapse; font-family: inherit; font-size: 13.5px; color: #141410; table-layout: fixed">
+<thead><tr style="font-size: 12px; color: #6B695F"><th scope="col" style="padding: 4px 0; text-align: left; font-weight: 500"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Sesja</span></th><th scope="col" style="padding: 4px 0; width: 44px; text-align: right; font-weight: 500">min</th><th scope="col" style="padding: 4px 0; width: 48px; text-align: right; font-weight: 500">serie</th><th scope="col" style="padding: 4px 0; width: 72px; text-align: right; font-weight: 500">tonaż kg</th></tr></thead>
+<tbody>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Push</span><span style="font-size: 12px; color: #6B695F">Pn 19.10</span></th><td style="padding: 6px 0; text-align: right">58</td><td style="padding: 6px 0; text-align: right">18</td><td style="padding: 6px 0; text-align: right; font-weight: 700">8 420</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Legs</span><span style="font-size: 12px; color: #6B695F">Śr 21.10</span></th><td style="padding: 6px 0; text-align: right">64</td><td style="padding: 6px 0; text-align: right">16</td><td style="padding: 6px 0; text-align: right; font-weight: 700">11 950</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; padding: 7px 0"><span style="display: block; font-weight: 700">Pull</span><span style="font-size: 12px; color: #6B695F">Pt 23.10</span></th><td style="padding: 6px 0; text-align: right">52</td><td style="padding: 6px 0; text-align: right">17</td><td style="padding: 6px 0; text-align: right; font-weight: 700">7 380</td></tr>
+</tbody>
+</table>
+</section>
+</div>
+</main>
+
+<nav aria-label="Główna nawigacja" style="flex: none; height: 56px; box-sizing: border-box; padding: 0 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; background: #FFFFFF; border-top: 1px solid #DCD9CF">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<a href="FoldDzis.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Dziś</a>
+<a href="FoldTrening.html" aria-current="page" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 800; color: #141410; box-shadow: inset 0 3px 0 #141410">Trening</a>
+<a href="FoldZywienie.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Żywienie</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<a href="FoldCialo.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Ciało</a>
+<a href="FoldPlan.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Plan</a>
+<a href="FoldPropozycje.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Propozycje<span style="min-width: 18px; height: 18px; box-sizing: border-box; padding: 0 4px; display: flex; align-items: center; justify-content: center; background: #D92B21; color: #FFFFFF; font-size: 11.5px; font-weight: 800">2</span></a>
+</div>
+</nav>
+
+</div>
+</body>
+</html>

@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Czat z trenerem, Fold6 ekran zewnętrzny, ciemny</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<style>
+body{margin:0}
+.sq{-webkit-appearance:none;appearance:none;flex:none;width:22px;height:22px;margin:0;box-sizing:border-box;border:1.5px solid var(--ink);background:transparent;display:grid;place-content:center;cursor:pointer}
+.sq:checked{background:var(--ink)}
+.sq:checked::after{content:'';width:10px;height:5px;border:2px solid var(--paper);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.sq:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+</style>
+<style>body{background:#0E0E0C}</style>
+</head>
+<body>
+<div style="width: 369px; height: 905px; box-sizing: border-box; display: flex; flex-direction: column; background: #0E0E0C; color: #ECEAE2; font-family: 'Archivo', system-ui, sans-serif; font-variant-numeric: tabular-nums; overflow: hidden; --ink: #ECEAE2; --paper: #161614">
+
+<header style="flex: none; height: 56px; box-sizing: border-box; padding: 0 12px; display: flex; align-items: center; justify-content: space-between; gap: 8px; background: #161614; border-bottom: 1px solid #2B2A26">
+<div style="min-width: 0">
+<h1 style="margin: 0; font-size: 22px; font-weight: 800; font-stretch: 78%; line-height: 1">Trener</h1>
+<div style="font-size: 12.5px; color: #8E8C82; margin-top: 3px">kontekst: Dziś</div>
+</div>
+<div style="display: flex; align-items: center; gap: 10px">
+<a href="CoverDzis-dark.html" aria-label="Wróć do widoku Dziś" style="display: inline-flex; align-items: center; min-height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #4A4943; color: #ECEAE2; text-decoration: none; font-size: 14px; font-weight: 700">← Dziś</a>
+</div>
+</header>
+
+<main style="flex: 1; min-height: 0; overflow: hidden; display: flex; flex-direction: column; justify-content: flex-end; gap: 10px; padding: 12px">
+<div style="align-self: center; font-size: 12px; color: #8E8C82">dziś</div>
+<div style="align-self: flex-end; max-width: 86%; display: flex; flex-direction: column; align-items: flex-end; gap: 3px"><div style="background: #ECEAE2; color: #161614; padding: 9px 12px; font-size: 15px; line-height: 1.45">We wtorek nie zdążę na interwały. Da się je przesunąć?</div><span style="font-size: 11.5px; color: #8E8C82">13:40</span></div>
+<div style="align-self: flex-start; font-size: 12.5px; color: #8E8C82">Sprawdzono: plan, obciążenie, kolejka propozycji</div>
+<div style="align-self: flex-start; max-width: 94%; background: #1B1B18; border: 1px solid #25241F; padding: 9px 12px; font-size: 15px; line-height: 1.45">Da się: wtorek wolny, interwały w środę, Legs w czwartek. Kilometraż bez zmian. Legs bliżej weekendu daje 3 dni do długiego — przyjmij też czekającą propozycję 12 serii.</div>
+<div style="align-self: stretch; border: 1px solid #ECEAE2; background: #161614; padding: 12px; display: flex; flex-direction: column; gap: 8px"><div style="display: flex; justify-content: space-between; align-items: center; gap: 8px"><span style="font-size: 14px; font-weight: 800">Propozycja zmiany planu</span></div><div style="display: flex; flex-direction: column; font-size: 14.5px"><div style="display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid #25241F"><span style="color: #8E8C82">Wt 27</span><span><s style="color: #8E8C82">Interwały</s> → <strong style="font-weight: 800">wolne</strong></span></div><div style="display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid #25241F"><span style="color: #8E8C82">Śr 28</span><span><s style="color: #8E8C82">Legs</s> → <strong style="font-weight: 800">Interwały</strong></span></div><div style="display: flex; justify-content: space-between; gap: 8px; padding: 6px 0; border-top: 1px solid #25241F; border-bottom: 1px solid #25241F"><span style="color: #8E8C82">Cz 29</span><span><s style="color: #8E8C82">wolne</s> → <strong style="font-weight: 800">Legs</strong></span></div></div><ul aria-label="Wynik walidatorów" style="margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 3px; font-size: 13px; color: #B3B1A7"><li style="display: flex; gap: 6px"><span style="color: #62CF8F; font-weight: 800" aria-hidden="true">✓</span>dzień wolny: wtorek</li><li style="display: flex; gap: 6px"><span style="color: #62CF8F; font-weight: 800" aria-hidden="true">✓</span>kilometraż bez zmian (46 km)</li></ul><div style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 8px"><button type="button" style="min-height: 44px; border: 1px solid #4A4943; background: transparent; color: #ECEAE2; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Odrzuć</button><button type="button" style="min-height: 44px; border: 1px solid #ECEAE2; background: #ECEAE2; color: #161614; font: inherit; font-size: 14px; font-weight: 800; cursor: pointer">Akceptuj</button></div></div>
+</main>
+
+<div style="flex: none; display: flex; flex-direction: column; gap: 8px; padding: 10px 12px 14px; background: #161614; border-top: 1px solid #2B2A26"><div style="display: flex; gap: 6px; overflow: hidden"><button type="button" style="flex: none; min-height: 36px; padding: 0 12px; border: 1px solid #2B2A26; background: transparent; color: #B3B1A7; font: inherit; font-size: 13px; cursor: pointer">Co zjeść przed biegiem?</button><button type="button" style="flex: none; min-height: 36px; padding: 0 12px; border: 1px solid #2B2A26; background: transparent; color: #B3B1A7; font: inherit; font-size: 13px; cursor: pointer">Zdążę na 1:40?</button></div><div style="display: flex; gap: 8px; align-items: center"><label for="cc-input" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap">Wiadomość do trenera</label><input id="cc-input" type="text" placeholder="Napisz do trenera…" style="flex: 1; min-width: 0; min-height: 44px; box-sizing: border-box; padding: 0 12px; border: 1px solid #4A4943; font: inherit; font-size: 14.5px; color: #ECEAE2; background: #161614"><button type="button" aria-label="Wyślij" style="flex: none; width: 44px; height: 44px; border: 0; background: #ECEAE2; color: #161614; display: flex; align-items: center; justify-content: center; cursor: pointer"><svg width="18" height="18" viewBox="0 0 18 18" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" aria-hidden="true"><path d="M9 15V3M4 8l5-5 5 5"></path></svg></button></div></div>
+
+</div>
+</body>
+</html>

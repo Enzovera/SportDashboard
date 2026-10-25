@@ -1,0 +1,141 @@
+<!doctype html>
+<html lang="pl">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Forma — Suplementy, Fold6 ekran wewnętrzny</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&amp;display=swap">
+<style>
+body{margin:0}
+.sq{-webkit-appearance:none;appearance:none;flex:none;width:22px;height:22px;margin:0;box-sizing:border-box;border:1.5px solid var(--ink);background:transparent;display:grid;place-content:center;cursor:pointer}
+.sq:checked{background:var(--ink)}
+.sq:checked::after{content:'';width:10px;height:5px;border:2px solid var(--paper);border-top:0;border-right:0;transform:translateY(-1px) rotate(-45deg)}
+.sq:focus-visible{outline:2px solid var(--ink);outline-offset:2px}
+</style>
+<style>body{background:#F4F3EE}</style>
+</head>
+<body>
+<div style="width: 707px; height: 823px; box-sizing: border-box; display: flex; flex-direction: column; background: #F4F3EE; color: #141410; font-family: 'Archivo', system-ui, sans-serif; font-variant-numeric: tabular-nums; overflow: hidden; --ink: #141410; --paper: #FFFFFF">
+
+<header style="flex: none; height: 56px; box-sizing: border-box; padding: 0 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; align-items: center; background: #FFFFFF; border-bottom: 1px solid #DCD9CF">
+<div style="display: flex; align-items: baseline; gap: 10px; min-width: 0">
+<h1 style="margin: 0; font-size: 24px; font-weight: 800; font-stretch: 78%; line-height: 1">Żywienie</h1>
+<span style="font-size: 13px; color: #6B695F; white-space: nowrap; overflow: hidden; text-overflow: ellipsis">Suplementy · Nd 25.10</span>
+</div>
+<div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; min-width: 0">
+<nav aria-label="Widok żywienia" style="display: inline-flex; border: 1px solid #B9B6AB"><a href="FoldZywienie.html" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 12px; border: 0; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; background: transparent; color: #4A4942; font-weight: 500">Jedzenie</a><a href="FoldSuplementy.html" aria-current="page" style="display: inline-flex; align-items: center; min-height: 38px; box-sizing: border-box; padding: 0 12px; border: 0; font: inherit; font-size: 13px; text-decoration: none; cursor: pointer; white-space: nowrap; background: #141410; color: #FFFFFF; font-weight: 700; border-left: 1px solid #DCD9CF">Suplementy 2/7</a></nav>
+</div>
+</header>
+
+<main style="flex: 1; min-height: 0; box-sizing: border-box; padding: 12px 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; align-items: start">
+
+<div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<section aria-label="Suplementy dziś" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px 14px; display: flex; flex-direction: column; gap: 0">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Dziś · długie wybieganie</h2><span style="font-size: 20px; font-weight: 800; font-stretch: 75%">2<span style="color: #6B695F; font-weight: 600"> / 7</span></span></div>
+<div style="font-size: 12.5px; font-weight: 700; color: #6B695F; padding: 10px 0 2px">Rano</div>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" checked style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: line-through; color: #6B695F">Witamina D3 + K2</span><span style="font-size: 12.5px; color: #6B695F">2000 IU · z posiłkiem</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #1D7A45">przyjęte</span>
+</label>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" checked style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: line-through; color: #6B695F">Omega-3</span><span style="font-size: 12.5px; color: #6B695F">2 kaps. · z posiłkiem</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #1D7A45">przyjęte</span>
+</label>
+
+<div style="font-size: 12.5px; font-weight: 700; color: #6B695F; padding: 10px 0 2px">Bieg</div>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: none; color: #141410">Kofeina</span><span style="font-size: 12.5px; color: #6B695F">200 mg · 60 min przed</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #6B695F">przed</span>
+</label>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: none; color: #141410">Elektrolity</span><span style="font-size: 12.5px; color: #6B695F">1 saszetka · bieg > 90 min</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #6B695F">w trakcie</span>
+</label>
+
+<div style="font-size: 12.5px; font-weight: 700; color: #6B695F; padding: 10px 0 2px">Po biegu</div>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: none; color: #141410">Kreatyna</span><span style="font-size: 12.5px; color: #6B695F">5 g · pora dowolna</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #6B695F">po</span>
+</label>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: none; color: #141410">Białko serwatkowe</span><span style="font-size: 12.5px; color: #6B695F">30 g · liczy się w Fitatu</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #6B695F">po</span>
+</label>
+
+<div style="font-size: 12.5px; font-weight: 700; color: #6B695F; padding: 10px 0 2px">Wieczór</div>
+
+<label style="display: flex; align-items: center; gap: 12px; min-height: 52px; border-top: 1px solid #E8E5DC; cursor: pointer">
+<input class="sq" type="checkbox" style="accent-color: #141410">
+<span style="flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 1px"><span style="font-size: 14.5px; font-weight: 600; text-decoration: none; color: #141410">Magnez</span><span style="font-size: 12.5px; color: #6B695F">300 mg · przed snem</span></span>
+<span style="flex: none; font-size: 12.5px; font-weight: 600; color: #6B695F">20:00</span>
+</label>
+
+<button type="button" style="margin-top: 10px; min-height: 44px; border: 1px solid #B9B6AB; background: transparent; color: #141410; font: inherit; font-size: 13.5px; font-weight: 600; cursor: pointer">+ Dodaj suplement lub regułę</button>
+</section>
+</div>
+
+<div style="display: flex; flex-direction: column; gap: 12px; min-width: 0">
+<section aria-label="Regularność z 30 dni" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px 6px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Regularność · 30 dni</h2></div>
+<table style="width: 100%; border-collapse: collapse; font-family: inherit; font-size: 13.5px; color: #141410; table-layout: fixed">
+<thead><tr style="font-size: 12px; color: #6B695F"><th scope="col" style="padding: 4px 0; text-align: left; font-weight: 500"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Suplement</span></th><th scope="col" style="padding: 4px 0; width: 104px; text-align: right; font-weight: 500">dni</th><th scope="col" style="padding: 4px 0; width: 40px; text-align: right; font-weight: 500">%</th></tr></thead>
+<tbody>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Elektrolity</th><td style="padding: 6px 0; text-align: right">4 / 4 długie</td><td style="padding: 6px 0; text-align: right; font-weight: 700">100</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Witamina D3 + K2</th><td style="padding: 6px 0; text-align: right">29 / 30</td><td style="padding: 6px 0; text-align: right; font-weight: 700">97</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Kreatyna</th><td style="padding: 6px 0; text-align: right">28 / 30</td><td style="padding: 6px 0; text-align: right; font-weight: 700">93</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Białko serwatkowe</th><td style="padding: 6px 0; text-align: right">22 / 26 tren.</td><td style="padding: 6px 0; text-align: right; font-weight: 700">85</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Omega-3</th><td style="padding: 6px 0; text-align: right">25 / 30</td><td style="padding: 6px 0; text-align: right; font-weight: 700">83</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Kofeina</th><td style="padding: 6px 0; text-align: right">6 / 8 jakość.</td><td style="padding: 6px 0; text-align: right; font-weight: 700">75</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; font-weight: 700; color: #975A00">Magnez</th><td style="padding: 6px 0; text-align: right; color: #975A00">21 / 30</td><td style="padding: 6px 0; text-align: right; font-weight: 800; color: #975A00">70</td></tr>
+</tbody>
+</table>
+</section>
+<section aria-label="Zapasy" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px 6px; display: flex; flex-direction: column; gap: 4px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Zapasy</h2></div>
+<table style="width: 100%; border-collapse: collapse; font-family: inherit; font-size: 13.5px; color: #141410; table-layout: fixed">
+<thead><tr style="font-size: 12px; color: #6B695F"><th scope="col" style="padding: 4px 0; text-align: left; font-weight: 500"><span style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Suplement</span></th><th scope="col" style="padding: 4px 0; width: 72px; text-align: right; font-weight: 500">zostało</th><th scope="col" style="padding: 4px 0; width: 106px; text-align: right; font-weight: 500">na ile</th></tr></thead>
+<tbody>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500; font-weight: 700">Witamina D3 + K2</th><td style="padding: 6px 0; text-align: right">12 kaps.</td><td style="padding: 6px 0; text-align: right; font-weight: 700; color: #975A00">~12 dni · zamów</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Elektrolity</th><td style="padding: 6px 0; text-align: right">6 sasz.</td><td style="padding: 6px 0; text-align: right">~6 długich</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Magnez</th><td style="padding: 6px 0; text-align: right">20 tabl.</td><td style="padding: 6px 0; text-align: right">~20 dni</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Omega-3</th><td style="padding: 6px 0; text-align: right">54 kaps.</td><td style="padding: 6px 0; text-align: right">~27 dni</td></tr>
+<tr style="border-top: 1px solid #E8E5DC"><th scope="row" style="padding: 6px 0; text-align: left; font-weight: 500">Kreatyna</th><td style="padding: 6px 0; text-align: right">205 g</td><td style="padding: 6px 0; text-align: right">~41 dni</td></tr>
+</tbody>
+</table>
+</section>
+<section aria-label="Uwaga trenera" style="background: #FFFFFF; border: 1px solid #DCD9CF; padding: 12px 14px; display: flex; flex-direction: column; gap: 8px">
+<div style="display: flex; justify-content: space-between; align-items: baseline; gap: 8px"><h2 style="margin: 0; font-size: 14px; font-weight: 700">Trener</h2><span style="font-size: 12.5px; color: #6B695F">propozycja</span></div>
+<p style="margin: 0; font-size: 14.5px; line-height: 1.5">Magnez pomijasz głównie po wieczornych treningach (7 z 9 pominięć). Przesunąć przypomnienie na 21:30?</p>
+<div style="display: flex; gap: 8px; margin-top: 4px"><button type="button" style="flex: 1; min-height: 44px; border: 1px solid #141410; background: #141410; color: #FFFFFF; font: inherit; font-size: 14px; font-weight: 700; cursor: pointer">Przesuń na 21:30</button><button type="button" style="flex: 1; min-height: 44px; border: 1px solid #B9B6AB; background: transparent; color: #141410; font: inherit; font-size: 14px; font-weight: 600; cursor: pointer">Zostaw 20:00</button></div>
+</section>
+</div>
+</main>
+
+<nav aria-label="Główna nawigacja" style="flex: none; height: 56px; box-sizing: border-box; padding: 0 16px; display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 24px; background: #FFFFFF; border-top: 1px solid #DCD9CF">
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<a href="FoldDzis.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Dziś</a>
+<a href="FoldTrening.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Trening</a>
+<a href="FoldZywienie.html" aria-current="page" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 800; color: #141410; box-shadow: inset 0 3px 0 #141410">Żywienie</a>
+</div>
+<div style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr))">
+<a href="FoldCialo.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Ciało</a>
+<a href="FoldPlan.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Plan</a>
+<a href="FoldPropozycje.html" style="display: flex; align-items: center; justify-content: center; gap: 6px; text-decoration: none; font-size: 14px; font-weight: 500; color: #4A4942">Propozycje<span style="min-width: 18px; height: 18px; box-sizing: border-box; padding: 0 4px; display: flex; align-items: center; justify-content: center; background: #D92B21; color: #FFFFFF; font-size: 11.5px; font-weight: 800">2</span></a>
+</div>
+</nav>
+
+</div>
+</body>
+</html>

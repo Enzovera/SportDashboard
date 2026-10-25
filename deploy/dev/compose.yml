@@ -1,0 +1,93 @@
+# Local development environment (not production — prod runs on Mikrus).
+# Usage (from repo root):
+#   docker compose -f deploy/dev/compose.yml --env-file .env up -d
+#   docker compose -f deploy/dev/compose.yml --env-file .env --profile jobs run --rm ingest hevy
+#   docker compose -f deploy/dev/compose.yml --profile tools run --rm go go version
+
+name: forma-dev
+
+x-database-url: &database-url postgres://${POSTGRES_USER:-forma}:${POSTGRES_PASSWORD:-forma_dev}@postgres:5432/${POSTGRES_DB:-forma}?sslmode=disable
+
+services:
+  postgres:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: ${POSTGRES_DB:-forma}
+      POSTGRES_USER: ${POSTGRES_USER:-forma}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-forma_dev}
+      TZ: Europe/Warsaw
+    ports:
+      - "127.0.0.1:5432:5432"
+    volumes:
+      - pgdata:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U $${POSTGRES_USER} -d $${POSTGRES_DB}"]
+      interval: 5s
+      timeout: 3s
+      retries: 10
+
+  # Runs pending migrations on every `up`, then exits.
+  migrate:
+    image: migrate/migrate:v4.18.3
+    command: ["-path=/migrations", "-database", *database-url, "up"]
+    volumes:
+      - ../../migrations:/migrations:ro
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  adminer:
+    image: adminer:latest
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8081:8080"
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  # Ingest workers, run on demand: `run --rm ingest {hevy|garmin|garmin-login}`.
+  ingest:
+    build:
+      context: ../../services/ingest
+      target: dev
+    profiles: ["jobs"]
+    environment:
+      DATABASE_URL: *database-url
+      HEVY_API_KEY: ${HEVY_API_KEY:-}
+      GARMIN_EMAIL: ${GARMIN_EMAIL:-}
+      GARMINTOKENS: /data/garmin
+      TZ: Europe/Warsaw
+    volumes:
+      - ../../services/ingest:/app
+      - garmin_tokens:/data/garmin
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  # Toolchains for services/*, run on demand (profile "tools"), so nothing has to be installed on the host.
+  go:
+    image: golang:1.25
+    profiles: ["tools"]
+    working_dir: /src
+    volumes:
+      - ../..:/src
+      - gomod:/go/pkg/mod
+    environment:
+      DATABASE_URL: *database-url
+
+  node:
+    image: node:24-alpine
+    profiles: ["tools"]
+    working_dir: /src
+    volumes:
+      - ../..:/src
+      - npmcache:/root/.npm
+    environment:
+      DATABASE_URL: *database-url
+
+volumes:
+  pgdata:
+  garmin_tokens:
+  gomod:
+  npmcache:
