@@ -130,6 +130,69 @@ func ApplyBodyComposition(d *Day, raw []byte) error {
 	return nil
 }
 
+// WeighIn is one body_composition row: a single weigh-in from Garmin's dateWeightList.
+type WeighIn struct {
+	MeasuredAt time.Time
+	LocalDate  time.Time
+	WeightKg   float64
+	FatPct     *float64
+	MuscleKg   *float64
+	WaterPct   *float64
+	SourceType *string
+}
+
+type weighInsBody struct {
+	DateWeightList []struct {
+		TimestampGMT *int64   `json:"timestampGMT"` // ms, UTC
+		CalendarDate string   `json:"calendarDate"`
+		Weight       *float64 `json:"weight"`     // grams
+		BodyFat      *float64 `json:"bodyFat"`    // %
+		MuscleMass   *float64 `json:"muscleMass"` // grams
+		BodyWater    *float64 `json:"bodyWater"`  // %
+		SourceType   *string  `json:"sourceType"`
+	} `json:"dateWeightList"`
+}
+
+// ParseWeighIns returns the single weigh-ins of a body_composition payload (composition only when the scale sends it).
+func ParseWeighIns(raw []byte) ([]WeighIn, error) {
+	var b weighInsBody
+	if err := json.Unmarshal(raw, &b); err != nil {
+		return nil, fmt.Errorf("body_composition: %w", err)
+	}
+	var out []WeighIn
+	for _, e := range b.DateWeightList {
+		if e.Weight == nil || *e.Weight <= 0 || e.TimestampGMT == nil {
+			continue
+		}
+		local, err := time.Parse(time.DateOnly, e.CalendarDate)
+		if err != nil {
+			return nil, fmt.Errorf("body_composition: calendarDate: %w", err)
+		}
+		w := WeighIn{
+			MeasuredAt: time.UnixMilli(*e.TimestampGMT).UTC(),
+			LocalDate:  local,
+			WeightKg:   math.Round(*e.Weight/10) / 100,
+			FatPct:     positive(e.BodyFat, 1),
+			WaterPct:   positive(e.BodyWater, 1),
+			SourceType: e.SourceType,
+		}
+		if m := positive(e.MuscleMass, 1); m != nil {
+			w.MuscleKg = ptr(math.Round(*m/10) / 100)
+		}
+		out = append(out, w)
+	}
+	return out, nil
+}
+
+// positive drops zero and negative readings (the scale sends 0 when it could not measure), rounded to n decimals.
+func positive(v *float64, n int) *float64 {
+	if v == nil || *v <= 0 {
+		return nil
+	}
+	p := math.Pow(10, float64(n))
+	return ptr(math.Round(*v*p) / p)
+}
+
 type activityBody struct {
 	ActivityID   json.Number `json:"activityId"`
 	ActivityName *string     `json:"activityName"`

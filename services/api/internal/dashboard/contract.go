@@ -134,3 +134,50 @@ type StrengthRow struct {
 	Sets        int     `json:"sets"`
 	TonnageKg   float64 `json:"tonnageKg"`
 }
+
+// ---------- GET /api/body ----------
+
+type BodyResponse struct {
+	Date           string          `json:"date"`
+	From           string          `json:"from"`
+	To             string          `json:"to"`
+	RangeWeeks     int             `json:"rangeWeeks"`
+	Device         *string         `json:"device"`
+	Sync           []SyncStatus    `json:"sync"`
+	Composition    BodyComposition `json:"composition"`
+	TrendKgPerWeek *float64        `json:"trendKgPerWeek"`
+	Weeks          []BodyWeek      `json:"weeks"`
+	WeighIns       []WeighIn       `json:"weighIns"`
+	Goal           any             `json:"goal"`      // stage 4 (athlete profile)
+	CoachNote      any             `json:"coachNote"` // stage 3
+}
+
+type BodyComposition struct {
+	MeasuredAt    *string  `json:"measuredAt"`
+	LastKg        *float64 `json:"lastKg"`
+	Avg7dKg       *float64 `json:"avg7dKg"`
+	Avg7dChangeKg *float64 `json:"avg7dChangeKg"`
+	FatPct        *float64 `json:"fatPct"`
+	MuscleKg      *float64 `json:"muscleKg"`
+	MuscleTrend   *string  `json:"muscleTrend"` // up | stable | down
+	WeekCount     int      `json:"weekCount"`
+	WeekDays      int      `json:"weekDays"`
+	WeekMissing   []string `json:"weekMissing"`
+	RangeCount    int      `json:"rangeCount"`
+}
+
+type BodyWeek struct {
+	WeekStart string   `json:"weekStart"`
+	AvgKg     *float64 `json:"avgKg"`
+	MinKg     *float64 `json:"minKg"`
+	MaxKg     *float64 `json:"maxKg"`
+	Count     int      `json:"count"`
+}
+
+type WeighIn struct {
+	MeasuredAt string   `json:"measuredAt"`
+	WeightKg   float64  `json:"weightKg"`
+	FatPct     *float64 `json:"fatPct"`
+	MuscleKg   *float64 `json:"muscleKg"`
+	WaterPct   *float64 `json:"waterPct"`
+}

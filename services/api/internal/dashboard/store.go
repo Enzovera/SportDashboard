@@ -48,10 +48,20 @@ type SyncRow struct {
 	LastSuccessAt *time.Time
 }
 
+type WeighInRow struct {
+	MeasuredAt time.Time
+	LocalDate  time.Time
+	WeightKg   float64
+	FatPct     *float64
+	MuscleKg   *float64
+	WaterPct   *float64
+}
+
 type Data struct {
 	Days       []DayRow
 	Activities []ActivityRow
 	Workouts   []WorkoutRow
+	WeighIns   []WeighInRow // oldest first
 	Sync       []SyncRow
 }
 
@@ -131,6 +141,16 @@ func (s *PgStore) Load(ctx context.Context, since time.Time) (Data, error) {
 	}
 	for _, id := range order {
 		d.Workouts = append(d.Workouts, *byID[id])
+	}
+
+	rows, _ = s.pool.Query(ctx, `
+		select measured_at, local_date, weight_kg::float8, fat_pct::float8, muscle_kg::float8, water_pct::float8
+		from body_composition where local_date >= $1 order by measured_at`, since)
+	if d.WeighIns, err = pgx.CollectRows(rows, func(r pgx.CollectableRow) (WeighInRow, error) {
+		var x WeighInRow
+		return x, r.Scan(&x.MeasuredAt, &x.LocalDate, &x.WeightKg, &x.FatPct, &x.MuscleKg, &x.WaterPct)
+	}); err != nil {
+		return d, fmt.Errorf("body_composition: %w", err)
 	}
 
 	rows, _ = s.pool.Query(ctx, `

@@ -1,4 +1,5 @@
-// Package projector rebuilds projections (day_summary, activity, workout, strength_set) from raw_payload.
+// Package projector rebuilds projections (day_summary, activity, workout, strength_set, body_composition) from
+// raw_payload.
 //
 // Every run is a full rebuild inside one transaction: projections are disposable by design
 // (docs/design.md, "Model danych"), the data is small, and a full rebuild is trivially correct after a
@@ -21,6 +22,7 @@ type Stats struct {
 	Activities int `json:"activities"`
 	Workouts   int `json:"workouts"`
 	Sets       int `json:"sets"`
+	WeighIns   int `json:"weighIns"`
 	Skipped    int `json:"skipped"`
 }
 
@@ -38,6 +40,7 @@ type Projection struct {
 	Days       []Day
 	Activities []Activity
 	Workouts   []Workout
+	WeighIns   []WeighIn
 	Skipped    int
 }
 
@@ -51,6 +54,7 @@ func Build(latest []payload) (Projection, []error) {
 		zones   = map[string][]float64{}
 		muscles = map[string]*string{}
 		deleted = map[string]int64{} // workout id -> payload id of the delete event
+		weighIn = map[time.Time]WeighIn{}
 		acts    []payload
 		works   []payload
 	)
@@ -81,6 +85,17 @@ func Build(latest []payload) (Projection, []error) {
 			}[key]
 			if err := apply(day(*r.forDate), r.body); err != nil {
 				skip(err)
+				continue
+			}
+			if key == "garmin/body_composition" {
+				ws, err := ParseWeighIns(r.body)
+				if err != nil {
+					skip(err)
+					continue
+				}
+				for _, w := range ws {
+					weighIn[w.MeasuredAt] = w // the same weigh-in can come in the payloads of two dates
+				}
 			}
 		case "garmin/activity_hr_zones":
 			z, err := ParseZones(r.body)
@@ -129,6 +144,10 @@ func Build(latest []payload) (Projection, []error) {
 	for _, d := range days {
 		p.Days = append(p.Days, *d)
 	}
+	for _, w := range weighIn {
+		p.WeighIns = append(p.WeighIns, w)
+	}
+	sort.Slice(p.WeighIns, func(i, j int) bool { return p.WeighIns[i].MeasuredAt.Before(p.WeighIns[j].MeasuredAt) })
 	sort.Slice(p.Days, func(i, j int) bool { return p.Days[i].Date.Before(p.Days[j].Date) })
 	sort.Slice(p.Activities, func(i, j int) bool { return p.Activities[i].StartedAt.Before(p.Activities[j].StartedAt) })
 	sort.Slice(p.Workouts, func(i, j int) bool { return p.Workouts[i].StartedAt.Before(p.Workouts[j].StartedAt) })
@@ -178,7 +197,8 @@ func Rebuild(ctx context.Context, pool *pgxpool.Pool) (Stats, error) {
 		return Stats{}, err
 	}
 
-	st := Stats{Days: len(proj.Days), Activities: len(proj.Activities), Workouts: len(proj.Workouts), Skipped: proj.Skipped}
+	st := Stats{Days: len(proj.Days), Activities: len(proj.Activities), Workouts: len(proj.Workouts),
+		WeighIns: len(proj.WeighIns), Skipped: proj.Skipped}
 	for _, w := range proj.Workouts {
 		st.Sets += len(w.Sets)
 	}
@@ -186,7 +206,7 @@ func Rebuild(ctx context.Context, pool *pgxpool.Pool) (Stats, error) {
 }
 
 func write(ctx context.Context, tx pgx.Tx, p Projection) error {
-	if _, err := tx.Exec(ctx, `truncate day_summary, activity, strength_set, workout`); err != nil {
+	if _, err := tx.Exec(ctx, `truncate day_summary, activity, strength_set, workout, body_composition`); err != nil {
 		return fmt.Errorf("truncate: %w", err)
 	}
 
@@ -234,6 +254,16 @@ func write(ctx context.Context, tx pgx.Tx, p Projection) error {
 		[]string{"workout_id", "exercise_index", "set_no", "exercise_template_id", "exercise", "muscle_group",
 			"set_type", "weight_kg", "reps", "rpe", "distance_m", "duration_s"}, pgx.CopyFromRows(setRows)); err != nil {
 		return fmt.Errorf("copy strength_set: %w", err)
+	}
+
+	weighRows := make([][]any, 0, len(p.WeighIns))
+	for _, w := range p.WeighIns {
+		weighRows = append(weighRows, []any{w.MeasuredAt, w.LocalDate, w.WeightKg, w.FatPct, w.MuscleKg, w.WaterPct, w.SourceType})
+	}
+	if _, err := tx.CopyFrom(ctx, pgx.Identifier{"body_composition"},
+		[]string{"measured_at", "local_date", "weight_kg", "fat_pct", "muscle_kg", "water_pct", "source_type"},
+		pgx.CopyFromRows(weighRows)); err != nil {
+		return fmt.Errorf("copy body_composition: %w", err)
 	}
 	return nil
 }

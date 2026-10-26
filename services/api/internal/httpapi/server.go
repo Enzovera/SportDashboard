@@ -3,6 +3,7 @@
 //	GET /health
 //	GET /api/today
 //	GET /api/training?range=4w|12w|block
+//	GET /api/body
 //
 // /api/chat/* belongs to coach-chat (in dev Vite proxies it there directly; here it is not handled yet).
 package httpapi
@@ -19,6 +20,7 @@ import (
 type Views interface {
 	Today(ctx context.Context) (dashboard.TodayResponse, error)
 	Training(ctx context.Context, rng string) (dashboard.TrainingResponse, error)
+	Body(ctx context.Context) (dashboard.BodyResponse, error)
 }
 
 func New(v Views) http.Handler {
@@ -39,6 +41,10 @@ func New(v Views) http.Handler {
 			return
 		}
 		resp, err := v.Training(r.Context(), rng)
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("GET /api/body", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := v.Body(r.Context())
 		respond(w, r, resp, err)
 	})
 	return mux

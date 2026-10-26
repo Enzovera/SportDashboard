@@ -58,6 +58,16 @@ func (s *Service) Training(ctx context.Context, rng string) (TrainingResponse, e
 	return BuildTraining(data, today, rng, now), nil
 }
 
+func (s *Service) Body(ctx context.Context) (BodyResponse, error) {
+	now := s.now()
+	today := Today(now)
+	data, err := s.store.Load(ctx, today.Add(-historyDays*day))
+	if err != nil {
+		return BodyResponse{}, err
+	}
+	return BuildBody(data, today, now), nil
+}
+
 // ---------- shared helpers ----------
 
 func iso(t time.Time) string { return t.Format(time.DateOnly) }

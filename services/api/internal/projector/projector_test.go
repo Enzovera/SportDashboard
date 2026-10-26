@@ -185,3 +185,36 @@ func TestBuild(t *testing.T) {
 		})
 	}
 }
+
+func TestParseWeighIns(t *testing.T) {
+	tests := []struct {
+		name  string
+		body  string
+		check func([]WeighIn) bool
+	}{
+		{"manual weigh-in without composition",
+			`{"dateWeightList":[{"timestampGMT":1782374463031,"calendarDate":"2026-06-25","weight":71300.0,"bodyFat":null,"muscleMass":null,"sourceType":"MANUAL"}]}`,
+			func(ws []WeighIn) bool {
+				w := ws[0]
+				return len(ws) == 1 && w.WeightKg == 71.3 && w.LocalDate.Equal(date("2026-06-25")) &&
+					w.MeasuredAt.Equal(time.UnixMilli(1782374463031)) && w.FatPct == nil && w.MuscleKg == nil && *w.SourceType == "MANUAL"
+			}},
+		{"scale with composition, zero water dropped",
+			`{"dateWeightList":[{"timestampGMT":1782374463031,"calendarDate":"2026-06-25","weight":76230.0,"bodyFat":15.84,"muscleMass":61340.0,"bodyWater":0}]}`,
+			func(ws []WeighIn) bool {
+				return *ws[0].FatPct == 15.8 && *ws[0].MuscleKg == 61.34 && ws[0].WaterPct == nil
+			}},
+		{"no weigh-ins", `{"dateWeightList":[]}`, func(ws []WeighIn) bool { return len(ws) == 0 }},
+	}
+	for _, tt := range tests {
+		t.Run(tt.name, func(t *testing.T) {
+			ws, err := ParseWeighIns([]byte(tt.body))
+			if err != nil {
+				t.Fatal(err)
+			}
+			if !tt.check(ws) {
+				t.Errorf("unexpected weigh-ins: %+v", ws)
+			}
+		})
+	}
+}

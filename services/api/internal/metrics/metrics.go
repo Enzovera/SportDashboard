@@ -117,3 +117,23 @@ func Round(v float64, n int) float64 {
 	p := math.Pow(10, float64(n))
 	return math.Round(v*p) / p
 }
+
+// Slope of the least-squares line through (xs, ys); false with fewer than min points or no spread in xs.
+func Slope(xs, ys []float64, min int) (float64, bool) {
+	n := len(xs)
+	if n < min || n != len(ys) || n < 2 {
+		return 0, false
+	}
+	var sx, sy, sxx, sxy float64
+	for i := range xs {
+		sx += xs[i]
+		sy += ys[i]
+		sxx += xs[i] * xs[i]
+		sxy += xs[i] * ys[i]
+	}
+	den := float64(n)*sxx - sx*sx
+	if den == 0 {
+		return 0, false
+	}
+	return (float64(n)*sxy - sx*sy) / den, true
+}
