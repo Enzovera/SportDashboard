@@ -11,7 +11,7 @@ cp .env.example .env          # uzupełnij HEVY_API_KEY, GARMIN_EMAIL
 docker compose -f deploy/dev/compose.yml --env-file .env up -d
 ```
 
-`up` startuje Postgresa (127.0.0.1:5432), adminera (http://localhost:8081), uruchamia migracje z `migrations/` i startuje `scheduler`: Hevy co godzinę o :05, Garmin (2 dni) o :10, backfill Garmina 7 dni o 3:00. Harmonogram jest w [scheduler.py](services/ingest/ingest/scheduler.py), logi: `docker compose -f deploy/dev/compose.yml logs -f scheduler`.
+`up` startuje Postgresa (127.0.0.1:5432), adminera (http://localhost:8081), uruchamia migracje z `migrations/` i startuje `scheduler`: Hevy co godzinę o :05, Garmin (2 dni) o :10, backfill Garmina 7 dni o 3:00. Harmonogram jest w [scheduler.py](services/ingest/ingest/scheduler.py), logi: `docker compose -f deploy/dev/compose.yml logs -f scheduler`. Przycisk „Odśwież” w dashboardzie kolejkuje sync wszystkich źródeł (`POST /api/sync`), który scheduler wykonuje w ciągu kilku sekund.
 
 Na dev sync działa tylko, gdy komputer nie śpi i Docker Desktop jest uruchomiony (warto włączyć „Start Docker Desktop when you sign in”). Przerwy do 7 dni nadrabia nocny backfill.
 

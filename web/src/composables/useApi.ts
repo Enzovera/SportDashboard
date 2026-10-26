@@ -1,6 +1,7 @@
 import { ref, shallowRef, watch, type Ref, type WatchSource } from 'vue'
+import { syncGeneration } from '@/api/sync'
 
-/** Loads data on mount and whenever `deps` change; keeps the previous data while reloading. */
+/** Loads data on mount, whenever `deps` change and after an on-demand sync; keeps the previous data while reloading. */
 export function useApi<T>(load: () => Promise<T>, deps: WatchSource[] = []) {
   const data: Ref<T | null> = shallowRef(null)
   const error = ref<string | null>(null)
@@ -18,6 +19,6 @@ export function useApi<T>(load: () => Promise<T>, deps: WatchSource[] = []) {
     }
   }
 
-  watch(deps, reload, { immediate: true })
+  watch([...deps, syncGeneration], reload, { immediate: true })
   return { data, error, loading, reload }
 }

@@ -5,6 +5,7 @@ import { useApi } from '@/composables/useApi'
 import { useLayout } from '@/composables/useLayout'
 import PageLayout from '@/components/ui/PageLayout.vue'
 import SyncStatus from '@/components/ui/SyncStatus.vue'
+import SyncButton from '@/components/ui/SyncButton.vue'
 import BalanceBox from './BalanceBox.vue'
 import DaysTable from './DaysTable.vue'
 import KcalChartBox from './KcalChartBox.vue'
@@ -29,6 +30,7 @@ const todayType = computed(() => data.value?.today?.dayType ?? null)
   <PageLayout title="Żywienie" :meta="meta">
     <template #global>
       <SyncStatus v-if="data" :sync="data.sync" :compact="layout === 'cover'" />
+      <SyncButton />
     </template>
     <template #actions>
       <NutritionSwitch :supplements-label="tabLabel" />

@@ -68,7 +68,7 @@ services:
       migrate:
         condition: service_completed_successfully
 
-  # Hourly Garmin + Hevy sync and 3:00 backfill (schedule in services/ingest/ingest/scheduler.py).
+  # Hourly Garmin + Hevy sync, 3:00 backfill and on-demand syncs from sync_request (services/ingest/ingest/scheduler.py).
   scheduler:
     <<: *ingest
     profiles: []

@@ -21,6 +21,7 @@ import (
 	"forma/api/internal/httpapi"
 	"forma/api/internal/plan"
 	"forma/api/internal/projector"
+	"forma/api/internal/syncreq"
 )
 
 func main() {
@@ -74,7 +75,8 @@ func serve(ctx context.Context, pool *pgxpool.Pool) error {
 		}
 		interval = d
 	}
-	go projectLoop(ctx, pool, interval)
+	syncs := syncreq.NewStore(pool)
+	go projectLoop(ctx, pool, syncs, interval)
 
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -82,7 +84,7 @@ func serve(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 	srv := &http.Server{
 		Addr:              ":" + port,
-		Handler:           httpapi.New(dashboard.NewService(dashboard.NewPgStore(pool), plan.NewStore(pool))),
+		Handler:           httpapi.New(dashboard.NewService(dashboard.NewPgStore(pool), plan.NewStore(pool)), syncs),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {
@@ -98,15 +100,27 @@ func serve(ctx context.Context, pool *pgxpool.Pool) error {
 	return nil
 }
 
-// projectLoop rebuilds projections at startup and then periodically, so new ingest runs show up
-// without coupling the Python workers to this service.
-func projectLoop(ctx context.Context, pool *pgxpool.Pool, interval time.Duration) {
+// projectLoop rebuilds projections at startup, periodically and right after an on-demand sync
+// (NOTIFY sync_done from the ingest scheduler), without coupling the Python workers to this service.
+func projectLoop(ctx context.Context, pool *pgxpool.Pool, syncs *syncreq.Store, interval time.Duration) {
 	tick := time.NewTicker(interval)
 	defer tick.Stop()
+	synced := make(chan struct{}, 1)
+	go syncreq.Listen(ctx, pool, func() {
+		select {
+		case synced <- struct{}{}:
+		default: // a rebuild is already pending
+		}
+	}, func(err error) { slog.Error("listen sync_done failed", "err", err) })
 	for {
+		doneUpTo, err := syncs.DoneUpTo(ctx)
+		if err != nil {
+			slog.Error("sync_request read failed", "err", err)
+		}
 		if stats, err := projector.Rebuild(ctx, pool); err != nil {
 			slog.Error("projection failed", "err", err)
 		} else {
+			syncs.MarkProjected(doneUpTo)
 			slog.Info("projections rebuilt", "stats", stats)
 		}
 		// plan_session / plan_target are rewritten on every plan event; this only repairs them (e.g. after a seed).
@@ -117,6 +131,8 @@ func projectLoop(ctx context.Context, pool *pgxpool.Pool, interval time.Duration
 		case <-ctx.Done():
 			return
 		case <-tick.C:
+		case <-synced:
+			tick.Reset(interval)
 		}
 	}
 }

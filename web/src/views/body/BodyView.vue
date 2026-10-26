@@ -5,6 +5,7 @@ import { useApi } from '@/composables/useApi'
 import { useLayout } from '@/composables/useLayout'
 import PageLayout from '@/components/ui/PageLayout.vue'
 import SyncStatus from '@/components/ui/SyncStatus.vue'
+import SyncButton from '@/components/ui/SyncButton.vue'
 import { num } from '@/lib/format'
 import BodyNoteBox from './BodyNoteBox.vue'
 import CompositionBox from './CompositionBox.vue'
@@ -31,6 +32,7 @@ const hasWeighIns = computed(() => (data.value?.composition.rangeCount ?? 0) > 0
   <PageLayout title="Ciało" :meta="meta">
     <template #global>
       <SyncStatus v-if="data" :sync="data.sync" :compact="layout === 'cover'" />
+      <SyncButton />
     </template>
     <template #actions>
       <span v-if="data && hasWeighIns" class="goal">{{ goal }}</span>

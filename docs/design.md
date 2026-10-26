@@ -24,6 +24,8 @@ Tylko Hevy ma oficjalne API; Garmin i Fitatu idą przez nieoficjalne biblioteki,
 
 Fitatu w ingeście (`services/ingest/ingest/fitatu.py`, `fitatu-api` 0.6.0): na każdy dzień trzy surowe odpowiedzi — `diet_day` (`/diet-and-activity-plan/{user}/day/{date}`: posiłki z pozycjami, flaga zjedzone, kcal i makro), `settings` (`/users/{user}/settings-new/{date}`: cele kcal i makro, BMR/TMR) i `water`. Worker używa wyłącznie odczytów biblioteki (ma też metody zapisu: posiłki, produkty, waga — nie wolno ich wołać). Logowanie raz przez `ingest fitatu-login`; sesja z tokenami w wolumenie, biblioteka sama ją odświeża. Harmonogram: 10:15, 16:15, 22:15 po 2 dni + backfill 7 dni o 3:20.
 
+Sync na żądanie: przycisk „Odśwież” w nagłówku dashboardu (Dziś, Trening na desktopie, Żywienie, Ciało). API nie ma poświadczeń do źródeł, więc tylko wstawia wiersz do `sync_request` (`POST /api/sync`; naraz najwyżej jedno aktywne żądanie, drugie kliknięcie dołącza do niego; 2 min przerwy po poprzednim, bo Garmin nie lubi częstych logowań, potem 429 z `Retry-After`). Scheduler między pełnymi minutami co 5 s przejmuje żądanie (`for update skip locked`), uruchamia po kolei Hevy, Garmin (2 dni) i Fitatu (2 dni) jako osobne procesy, oznacza je `done` i robi `NOTIFY sync_done`. API nasłuchuje i od razu przebudowuje projekcje; `GET /api/sync/{id}` zwraca `done` dopiero po tej przebudowie, z wynikiem każdego źródła z `ingest_run`. Dashboard odpytuje status co 2 s i przeładowuje widoki; błędy źródeł pokazuje zwykły status syncu.
+
 Plan B dla Fitatu i wagi: Health Connect / Apple Zdrowie, z którymi Fitatu synchronizuje się w obie strony.
 
 Otwarte pytanie: jaki telefon i model wagi — to rozstrzyga, czy Mi Scale Exporter zadziała.
@@ -331,7 +333,7 @@ Bezpieczeństwo:
 
 Dev stoi lokalnie w Docker Desktop (`deploy/dev/compose.yml`: Postgres 17, migracje, adminer, ingest, toolchainy Go i Node); produkcja to Mikrus.
 
-Harmonogram ingestu nie zależy od crona hosta: kontener `scheduler` (`python -m ingest schedule`) budzi się co minutę i odpala każde zadanie jako osobny proces, więc awaria jednego workera nie zatrzymuje pozostałych. Ten sam kontener pójdzie na Mikrusa.
+Harmonogram ingestu nie zależy od crona hosta: kontener `scheduler` (`python -m ingest schedule`) budzi się co minutę i odpala każde zadanie jako osobny proces, więc awaria jednego workera nie zatrzymuje pozostałych. W przerwach między minutami obsługuje kolejkę `sync_request` (sync na żądanie, sekcja „Integracje”). Ten sam kontener pójdzie na Mikrusa.
 
 Całość stoi na jednym Mikrusie w docker compose. Rekomendacja to Mikrus 3.0 (2 GB RAM, 25 GB, 130 zł/rok): Mikrus nie pozwala dodać swapu, więc 1 GB z planu 2.1 nie wystarczy na Postgresa, czat i workery naraz ([oferta](https://mikr.us/), [ograniczenia](https://wiki.mikr.us/ograniczenia_techniczne_mikrusa/)).
 
@@ -354,6 +356,7 @@ Całość stoi na jednym Mikrusie w docker compose. Rekomendacja to Mikrus 3.0 (
 | --- | --- |
 | Sync Garmin i Hevy | co godzinę |
 | Sync Fitatu | 3 razy dziennie |
+| Sync wszystkich źródeł na żądanie | przycisk „Odśwież”, najwyżej raz na 2 min |
 | Backfill 7 dni wszystkich źródeł | codziennie 3:00 |
 | Run dzienny trenera | codziennie 6:30 |
 | Run tygodniowy trenera | niedziela 20:00 |

@@ -4,6 +4,7 @@ import TrainerButton from '@/components/chat/TrainerButton.vue'
 import { proposalsPendingCount } from '@/api/proposals'
 import PageLayout from '@/components/ui/PageLayout.vue'
 import SyncStatus from '@/components/ui/SyncStatus.vue'
+import SyncButton from '@/components/ui/SyncButton.vue'
 import { getToday } from '@/api/client'
 import { useApi } from '@/composables/useApi'
 import { useLayout } from '@/composables/useLayout'
@@ -29,6 +30,7 @@ const cells = computed(() => (data.value && layout.value === 'desktop' ? desktop
     <template #global>
       <template v-if="data">
         <SyncStatus :sync="data.sync" :compact="cover" />
+        <SyncButton />
         <TrainerButton />
       </template>
     </template>

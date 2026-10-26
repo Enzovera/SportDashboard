@@ -86,7 +86,7 @@ def main() -> int:
             fitatu.interactive_login(os.environ.get("FITATU_EMAIL"), env("FITATU_SESSION"))
             return 0
         case "schedule":
-            scheduler.loop()
+            scheduler.loop(requests=scheduler.PgRequests(env("DATABASE_URL")))
             return 0
     return 2
 

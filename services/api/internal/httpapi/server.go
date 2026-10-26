@@ -10,6 +10,8 @@
 //	GET /api/plan
 //	GET /api/proposals
 //	POST /api/proposals/{id}/accept|reject   body {comment}   404 unknown, 409 decided, 422 comment > 500
+//	POST /api/sync        queue an on-demand sync of all sources; 202, or 429 + Retry-After within the cooldown
+//	GET /api/sync/{id}    request status and per-source results
 //
 // /api/chat/* belongs to coach-chat (in dev Vite proxies it there directly; here it is not handled yet).
 package httpapi
@@ -20,8 +22,11 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strconv"
+	"time"
 
 	"forma/api/internal/dashboard"
+	"forma/api/internal/syncreq"
 )
 
 type Views interface {
@@ -36,10 +41,16 @@ type Views interface {
 	Decide(ctx context.Context, id string, accept bool, comment *string) (dashboard.ProposalDecision, error)
 }
 
+// Syncer queues on-demand syncs (syncreq.Store).
+type Syncer interface {
+	Request(ctx context.Context) (syncreq.Request, error)
+	Get(ctx context.Context, id int64) (syncreq.Request, error)
+}
+
 // maxBody caps request bodies; every POST body here is a few short fields.
 const maxBody = 4 << 10
 
-func New(v Views) http.Handler {
+func New(v Views, s Syncer) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
@@ -108,6 +119,28 @@ func New(v Views) http.Handler {
 	}
 	mux.HandleFunc("POST /api/proposals/{id}/accept", decide(true))
 	mux.HandleFunc("POST /api/proposals/{id}/reject", decide(false))
+	mux.HandleFunc("POST /api/sync", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := s.Request(r.Context())
+		var tooSoon syncreq.TooSoonError
+		switch {
+		case errors.As(err, &tooSoon):
+			w.Header().Set("Retry-After", strconv.Itoa(int(tooSoon.RetryAfter / time.Second)))
+			writeJSON(w, http.StatusTooManyRequests, map[string]string{"error": err.Error()})
+		case err == nil:
+			writeJSON(w, http.StatusAccepted, resp)
+		default:
+			respond(w, r, resp, err)
+		}
+	})
+	mux.HandleFunc("GET /api/sync/{id}", func(w http.ResponseWriter, r *http.Request) {
+		id, err := strconv.ParseInt(r.PathValue("id"), 10, 64)
+		if err != nil {
+			writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+			return
+		}
+		resp, err := s.Get(r.Context(), id)
+		respond(w, r, resp, err)
+	})
 	return mux
 }
 
@@ -127,7 +160,7 @@ func respond(w http.ResponseWriter, r *http.Request, body any, err error) {
 	switch {
 	case err == nil:
 		writeJSON(w, http.StatusOK, body)
-	case errors.Is(err, dashboard.ErrNotFound):
+	case errors.Is(err, dashboard.ErrNotFound), errors.Is(err, syncreq.ErrNotFound):
 		writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
 	case errors.Is(err, dashboard.ErrConflict):
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "already decided"})
