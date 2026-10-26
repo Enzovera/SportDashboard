@@ -98,6 +98,9 @@ type Data struct {
 type Store interface {
 	// Load returns projections from `since` (local calendar date) onwards, plus sync status.
 	Load(ctx context.Context, since time.Time) (Data, error)
+	// LoadSupplements returns the supplement set, rules, log from `since` and the latest stock counts.
+	LoadSupplements(ctx context.Context, since time.Time) (SupplementData, error)
+	AppendSupplementLog(ctx context.Context, supplementID string, date time.Time, typ string) error
 }
 
 type PgStore struct{ pool *pgxpool.Pool }

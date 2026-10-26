@@ -5,6 +5,8 @@
 //	GET /api/training?range=4w|12w|block
 //	GET /api/body
 //	GET /api/nutrition?range=14d
+//	GET /api/supplements
+//	POST /api/supplements/{id}/log   body {status: taken|skipped, date}
 //
 // /api/chat/* belongs to coach-chat (in dev Vite proxies it there directly; here it is not handled yet).
 package httpapi
@@ -12,6 +14,7 @@ package httpapi
 import (
 	"context"
 	"encoding/json"
+	"errors"
 	"log/slog"
 	"net/http"
 
@@ -23,7 +26,12 @@ type Views interface {
 	Training(ctx context.Context, rng string) (dashboard.TrainingResponse, error)
 	Body(ctx context.Context) (dashboard.BodyResponse, error)
 	Nutrition(ctx context.Context) (dashboard.NutritionResponse, error)
+	Supplements(ctx context.Context) (dashboard.SupplementsResponse, error)
+	LogSupplement(ctx context.Context, id, status, date string) (dashboard.SupplementItem, error)
 }
+
+// maxBody caps request bodies; every POST body here is a few short fields.
+const maxBody = 4 << 10
 
 func New(v Views) http.Handler {
 	mux := http.NewServeMux()
@@ -57,16 +65,48 @@ func New(v Views) http.Handler {
 		resp, err := v.Nutrition(r.Context())
 		respond(w, r, resp, err)
 	})
+	mux.HandleFunc("GET /api/supplements", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := v.Supplements(r.Context())
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("POST /api/supplements/{id}/log", func(w http.ResponseWriter, r *http.Request) {
+		var body struct {
+			Status string `json:"status"`
+			Date   string `json:"date"`
+		}
+		if !decode(w, r, &body) {
+			return
+		}
+		resp, err := v.LogSupplement(r.Context(), r.PathValue("id"), body.Status, body.Date)
+		respond(w, r, resp, err)
+	})
 	return mux
 }
 
+// decode reads a JSON body into dst; on failure it writes 400 and returns false.
+func decode(w http.ResponseWriter, r *http.Request, dst any) bool {
+	dec := json.NewDecoder(http.MaxBytesReader(w, r.Body, maxBody))
+	dec.DisallowUnknownFields()
+	if err := dec.Decode(dst); err != nil {
+		writeJSON(w, http.StatusBadRequest, map[string]string{"error": "invalid JSON body"})
+		return false
+	}
+	return true
+}
+
+// respond maps domain errors to HTTP statuses; anything unexpected is logged and hidden behind a 500.
 func respond(w http.ResponseWriter, r *http.Request, body any, err error) {
-	if err != nil {
+	switch {
+	case err == nil:
+		writeJSON(w, http.StatusOK, body)
+	case errors.Is(err, dashboard.ErrNotFound):
+		writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+	case errors.Is(err, dashboard.ErrInvalid):
+		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
+	default:
 		slog.Error("request failed", "path", r.URL.Path, "err", err)
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal error"})
-		return
 	}
-	writeJSON(w, http.StatusOK, body)
 }
 
 func writeJSON(w http.ResponseWriter, status int, body any) {

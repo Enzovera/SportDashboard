@@ -4,6 +4,8 @@ package dashboard
 
 import (
 	"context"
+	"errors"
+	"fmt"
 	"math"
 	"sort"
 	"time"
@@ -75,7 +77,57 @@ func (s *Service) Nutrition(ctx context.Context) (NutritionResponse, error) {
 	if err != nil {
 		return NutritionResponse{}, err
 	}
-	return BuildNutrition(data, today, now), nil
+	sd, err := s.store.LoadSupplements(ctx, today)
+	if err != nil {
+		return NutritionResponse{}, err
+	}
+	resp := BuildNutrition(data, today, now)
+	resp.Supplements = SupplementsSummary(BuildSupplements(data, sd, today))
+	return resp, nil
+}
+
+func (s *Service) Supplements(ctx context.Context) (SupplementsResponse, error) {
+	today := Today(s.now())
+	data, sd, err := s.loadSupplements(ctx, today)
+	if err != nil {
+		return SupplementsResponse{}, err
+	}
+	return BuildSupplements(data, sd, today), nil
+}
+
+// ErrInvalid: the request is well-formed but not acceptable (HTTP 422).
+var ErrInvalid = errors.New("invalid request")
+
+// LogSupplement appends SupplementTaken / SupplementSkipped for today and returns the updated checklist item.
+// Only today can be ticked: the date guards against a page left open past midnight.
+func (s *Service) LogSupplement(ctx context.Context, id, status, date string) (SupplementItem, error) {
+	today := Today(s.now())
+	typ, ok := map[string]string{"taken": SupplementTaken, "skipped": SupplementSkipped}[status]
+	if !ok || date != iso(today) {
+		return SupplementItem{}, fmt.Errorf("%w: status must be taken or skipped and date today (%s)", ErrInvalid, iso(today))
+	}
+	if err := s.store.AppendSupplementLog(ctx, id, today, typ); err != nil {
+		return SupplementItem{}, err
+	}
+	data, sd, err := s.loadSupplements(ctx, today)
+	if err != nil {
+		return SupplementItem{}, err
+	}
+	for _, it := range BuildSupplements(data, sd, today).Checklist {
+		if it.ID == id {
+			return it, nil
+		}
+	}
+	return SupplementItem{}, ErrNotFound // logged, but the supplement is not active today
+}
+
+func (s *Service) loadSupplements(ctx context.Context, today time.Time) (Data, SupplementData, error) {
+	data, err := s.store.Load(ctx, today.Add(-regularityDays*day))
+	if err != nil {
+		return Data{}, SupplementData{}, err
+	}
+	sd, err := s.store.LoadSupplements(ctx, today.Add(-regularityDays*day))
+	return data, sd, err
 }
 
 // ---------- shared helpers ----------

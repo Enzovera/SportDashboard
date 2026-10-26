@@ -276,3 +276,68 @@ type SupplementsToday struct {
 	Total int     `json:"total"`
 	Next  *string `json:"next"`
 }
+
+// ---------- GET /api/supplements, POST /api/supplements/{id}/log ----------
+
+type SupplementsResponse struct {
+	Date       string            `json:"date"`
+	DayType    *string           `json:"dayType"`
+	Checklist  []SupplementItem  `json:"checklist"`
+	Regularity RegularityRange   `json:"regularity"`
+	Stock      []SupplementStock `json:"stock"`
+	Proposal   *ReminderProposal `json:"proposal"`
+}
+
+type Dose struct {
+	Amount float64 `json:"amount"`
+	Unit   string  `json:"unit"`
+}
+
+type SupplementItem struct {
+	ID              string  `json:"id"`
+	Name            string  `json:"name"`
+	Dose            Dose    `json:"dose"`
+	Note            *string `json:"note"`
+	CountedInFitatu bool    `json:"countedInFitatu"`
+	Slot            string  `json:"slot"`     // morning | before | during | after | evening
+	RemindAt        *string `json:"remindAt"` // "HH:MM"
+	Status          string  `json:"status"`   // pending | taken | skipped
+	LoggedAt        *string `json:"loggedAt"`
+}
+
+type RegularityRange struct {
+	From  string                 `json:"from"`
+	To    string                 `json:"to"`
+	Items []SupplementRegularity `json:"items"`
+}
+
+type SupplementRegularity struct {
+	SupplementID string   `json:"supplementId"`
+	Name         string   `json:"name"`
+	When         string   `json:"when"`
+	Days         []string `json:"days"` // taken | missed | na
+	Taken        int      `json:"taken"`
+	Applicable   int      `json:"applicable"`
+	Pct          int      `json:"pct"`
+	Tone         string   `json:"tone"`
+}
+
+type SupplementStock struct {
+	SupplementID string `json:"supplementId"`
+	Name         string `json:"name"`
+	Left         Dose   `json:"left"`
+	Lasts        struct {
+		Count int    `json:"count"`
+		Per   string `json:"per"`
+	} `json:"lasts"`
+	Reorder bool `json:"reorder"`
+}
+
+type ReminderProposal struct {
+	ID             string `json:"id"`
+	SupplementID   string `json:"supplementId"`
+	SupplementName string `json:"supplementName"`
+	Text           string `json:"text"`
+	CurrentTime    string `json:"currentTime"`
+	ProposedTime   string `json:"proposedTime"`
+}
