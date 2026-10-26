@@ -4,7 +4,8 @@ import type { ProposalDecision } from '@/api/proposals'
 import { dayMonth, localDate } from '@/lib/format'
 import { DECISION_LABEL, ORIGIN_LABEL } from './proposals'
 
-// Compact (fold/cover): date | change + source + comment | decision. Wide (desktop): separate columns.
+// Compact (fold/cover): date | change + source + comment | decision. Wide (desktop): separate columns, but the
+// box can be narrow there too (two-thirds column next to the week diff), so below 680px it falls back to compact.
 defineProps<{ history: ProposalDecision[]; wide: boolean }>()
 
 const date = (d: ProposalDecision) => dayMonth(localDate(d.decidedAt))
@@ -12,7 +13,7 @@ const date = (d: ProposalDecision) => dayMonth(localDate(d.decidedAt))
 
 <template>
   <BoxSection title="Historia decyzji" class="history-box">
-    <table v-if="wide" class="table history">
+    <table v-if="wide" class="table history wide">
       <colgroup>
         <col class="c-date" /><col /><col class="c-src" /><col class="c-comment" /><col class="c-dec" />
       </colgroup>
@@ -36,7 +37,7 @@ const date = (d: ProposalDecision) => dayMonth(localDate(d.decidedAt))
       </tbody>
     </table>
 
-    <table v-else class="table history compact">
+    <table class="table history compact" :class="{ fallback: wide }">
       <colgroup><col class="c-date" /><col /><col class="c-dec" /></colgroup>
       <thead class="sr-only">
         <tr><th scope="col">Data</th><th scope="col">Zmiana</th><th scope="col">Decyzja</th></tr>
@@ -80,6 +81,14 @@ const date = (d: ProposalDecision) => dayMonth(localDate(d.decidedAt))
 .history:not(.compact) .c-src { width: 140px; }
 .history:not(.compact) .c-comment { width: 220px; }
 .history:not(.compact) .c-dec { width: 90px; }
+
+/* Fixed columns of the wide table take 514px; below 680px the change column has no room left. */
+.history-box { container: history / inline-size; }
+.compact.fallback { display: none; }
+@container history (max-width: 680px) {
+  .wide { display: none; }
+  .compact.fallback { display: table; }
+}
 @media (min-width: 1024px) {
   .history-box { padding-bottom: 16px; gap: 10px; }
 }
