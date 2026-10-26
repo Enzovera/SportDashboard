@@ -89,7 +89,7 @@ services:
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
       COACH_MODEL: ${COACH_MODEL:-claude-opus-5-5}
       COACH_EFFORT: ${COACH_EFFORT:-medium}
-      FORMA_MCP_URL: ${FORMA_MCP_URL:-}
+      FORMA_MCP_URL: ${FORMA_MCP_URL:-http://mcp:8091/mcp}
       FORMA_MCP_TOKEN: ${FORMA_MCP_TOKEN:-}
       CLAUDE_CONFIG_DIR: /data/claude
     volumes:
@@ -113,6 +113,27 @@ services:
     environment:
       DATABASE_URL: *database-url
       PROJECT_INTERVAL: 5m
+      TZ: Europe/Warsaw
+    volumes:
+      - ../../services/api:/src/services/api
+      - gomod:/go/pkg/mod
+      - gobuild:/root/.cache/go-build
+    depends_on:
+      migrate:
+        condition: service_completed_successfully
+
+  # MCP server (Go, same module as api): the coach's only way to data, http://localhost:8091/mcp with
+  # `Authorization: Bearer $FORMA_MCP_TOKEN` (min. 32 chars). Reads projections kept fresh by `api`.
+  mcp:
+    image: golang:1.25
+    working_dir: /src/services/api
+    command: ["go", "run", "./cmd/mcp"]
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8091:8091"
+    environment:
+      DATABASE_URL: *database-url
+      FORMA_MCP_TOKEN: ${FORMA_MCP_TOKEN:-}
       TZ: Europe/Warsaw
     volumes:
       - ../../services/api:/src/services/api

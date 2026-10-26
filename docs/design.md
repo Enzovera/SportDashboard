@@ -230,6 +230,13 @@ Serwer MCP jest jedyną drogą AI do danych: czyta projekcje i zapisuje tylko no
 
 Ten sam serwer obsługuje runy z crona i czat ad hoc w aplikacji Claude; w czacie warto wyłączyć `save_coach_note`, żeby luźne pytania nie zaśmiecały dziennika.
 
+Implementacja: `services/api/cmd/mcp` + `internal/mcpserver`, w tym samym module Go co API, bo korzysta z `internal/metrics` i loadera projekcji (`dashboard.PgStore`), a pakietów `internal` nie da się importować z innego modułu. Osobna binarka i kontener. Oficjalny `modelcontextprotocol/go-sdk`, streamable HTTP w trybie stateless pod `/mcp`, `Authorization: Bearer $FORMA_MCP_TOKEN`. Serwer tylko czyta projekcje (przebudowuje je `api serve`).
+
+- Rejestrowane są tylko narzędzia, które mają dane: `get_day_summary`, `get_activities`, `get_strength_volume` (`group_by`: `week | muscle | session`), `get_trends`, `get_coach_log`, `save_coach_note`. Pozostałe dochodzą razem z projekcjami (żywienie, suplementy, plan, profil, `propose_plan_change`).
+- `get_trends`, metryki dzienne: `training_load`, `atl`, `ctl`, `tsb`, `hrv`, `hrv_7d`, `resting_hr`, `sleep_h`, `weight`, `weight_7d`. Tygodniowe (całe tygodnie ISO): `run_km_week`, `long_run_km_week`, `strength_sets_week`, każdy punkt z `change_pct` (zmiana tydzień do tygodnia w %, `null` gdy poprzedni tydzień miał 0), żeby model nie liczył procentów sam. Okna takie same jak w widoku Dziś; `null` oznacza brak danych.
+- Zakres dat: domyślnie 28 dni do dziś, maksymalnie 366. `get_day_summary` ma pole `missing` ze źródłami, których jeszcze brak, i status syncu.
+- `coach_note` jest append-only (`daily | weekly | decision`, do 8000 znaków, data od 30 dni wstecz do 7 dni naprzód). `get_coach_log(days)`: domyślnie 14 dni, maks. 90. Błędy bazy idą do logu, a model dostaje ogólny komunikat.
+
 ## Czat z trenerem (Agent SDK)
 
 Czat w dashboardzie działa przez Claude Agent SDK zalogowany twoją subskrypcją i korzysta z tego samego serwera MCP co runy z crona, więc narzędzia i walidatory są wspólne dla obu.
