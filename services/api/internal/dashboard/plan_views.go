@@ -27,9 +27,10 @@ func dayTypeOf(data Data, date, today time.Time) *string {
 	return inferDayType(data, date, today)
 }
 
-// planTargetAt is the plan's nutrition target for the day, nil without a plan target.
+// planTargetAt is the plan's nutrition target for the day; nil without a plan target or for a day the plan does
+// not cover (before it started, the Fitatu goal of that time stays).
 func planTargetAt(data Data, date time.Time, dayType *string) *DietTarget {
-	if data.Plan == nil || dayType == nil {
+	if data.Plan == nil || dayType == nil || !data.Plan.Covers(date) {
 		return nil
 	}
 	t := data.Plan.TargetAt(date, *dayType)

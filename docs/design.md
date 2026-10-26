@@ -74,6 +74,13 @@ Projekcje buduje kod w Go (`api project`), nie workery: Python tylko zbiera, a p
 
 Każda projekcja to pełna przebudowa w jednej transakcji z najnowszej wersji każdego rekordu (`max(id)` per źródło, endpoint, `external_id`). `api serve` robi ją przy starcie i co `PROJECT_INTERVAL` (domyślnie 5 min), więc nowe runy ingestu trafiają na dashboard bez sprzężenia workerów z API. Payload, którego nie da się sparsować, jest pomijany i logowany, nie blokuje reszty. Trening usunięty w Hevy znika, gdy zdarzenie usunięcia jest nowsze niż ostatnia wersja treningu.
 
+Tabele w kodzie (migracje `000004`–`000008`), poza `raw_payload` i projekcjami dnia i aktywności:
+
+- `body_composition` (klucz `measured_at`): pojedyncze ważenia z `dateWeightList` Garmina, z `fat_pct`, `muscle_kg`, `water_pct`, gdy waga je wysyła. `day_summary.weight_kg` zostaje średnią dnia dla Dziś i średniej 7 dni.
+- `nutrition_day` i `nutrition_meal`: dzień i posiłki (sloty Fitatu) z `fitatu/diet_day`; cel z ustawień Fitatu (`userDietSettings`) obowiązujący danego dnia, dla starszych dni najbliższy wcześniejszy. Dzień bez produktów nie ma wiersza.
+- `supplement`, `supplement_rule`, `supplement_log` (append-only), `supplement_stock`: dane wpisane ręcznie, nie projekcje. `supplement` ma `pack_unit` i `pack_per_dose`, bo dawkę liczy się w IU czy mg, a zapas w kapsułkach.
+- `plan_event` (źródło prawdy), `plan_proposal_blocked`, projekcje `plan_session` i `plan_target`, `athlete_profile`.
+
 ```sql
 create table raw_payload (
   id          bigserial primary key,
@@ -114,6 +121,15 @@ Zmiana planu przechodzi zawsze tę samą drogę:
 4. Ty akceptujesz albo odrzucasz z komentarzem → `PlanChangeAccepted` / `PlanChangeRejected`.
 5. Projekcja `plan_session` przelicza się po akceptacji; komentarz z odrzucenia trafia do kontekstu trenera, żeby nie proponował tego samego.
 
+Implementacja: `services/api/internal/plan`.
+
+- Payloady v1 (`"v": 1`). `PlanCreated` niesie cel startu, bloki, cele żywieniowe per typ dnia i dni z sesjami; dzień nieopisany to dzień wolny. `PlanChangeProposed` niesie tytuł, uruchomienie (`daily_run | weekly_run | chat`), uzasadnienie, `diff` dla widoku Propozycje (pisze go trener), krótkie `summary` na dzień planu, wyniki walidatorów i `change`: całe dni do podmiany, cele per typ dnia (pola `null` zostają) albo przesunięcie pory przypomnienia suplementu.
+- Stan planu to fold zdarzeń bieżącego strumienia (ostatni `PlanCreated`), liczony w pamięci przy każdym żądaniu. Po każdym zdarzeniu `plan_session` i `plan_target` przepisują się w tej samej transakcji, a `api project` i pętla projekcji je naprawiają, np. po seedzie.
+- Cele żywieniowe to oś czasu: wersja celu typu dnia obowiązuje od daty. Zaakceptowana zmiana celu działa od `effectiveFrom`, bez niego od dnia decyzji.
+- `Store.Propose` (dla `propose_plan_change` w MCP) uruchamia walidatory. Wynik z `fail` trafia tylko do `plan_proposal_blocked` (widok pokazuje 7 dni), nie do `plan_event`; trener dostaje wyniki w obu przypadkach.
+- `Store.Decide` (tylko `POST /api/proposals/{id}/accept|reject`) działa pod blokadą doradczą w jednej transakcji: zdarzenie, przepisanie projekcji i przy akceptacji przypomnienia `update supplement_rule` (ta sama pora co w propozycji). Drugą decyzję blokuje unikalny indeks: 409. Komentarz do 500 znaków, inaczej 422.
+- Gdzie plan obejmuje dzień (od pierwszego dnia do startu), to on wyznacza typ dnia i cel żywieniowy w Żywieniu i Suplementach. Poza nim typ dnia wynika z aktywności, a cel z Fitatu.
+
 ## Metryki liczone w kodzie
 
 Model dostaje gotowe agregaty i je interpretuje; sam niczego nie przelicza, więc nie myli się w arytmetyce i zużywa mniej tokenów.
@@ -144,6 +160,12 @@ Definicje w kodzie (`services/api/internal/metrics`, `internal/dashboard`), wart
 | Kilometraż | suma dystansu aktywności, których typ zawiera `running` (bieg, bieżnia, trail), w tygodniu ISO |
 | Serie robocze | serie Hevy bez rozgrzewek i z powtórzeniami, po głównej partii z szablonu ćwiczenia; bez `cardio` |
 | Status syncu | ostatni run źródła z `ingest_run`: `error`/`partial` wprost, `stale` bez udanego runu od 3 h |
+| Typ dnia bez planu | bieg ≥ 90 min → długie, bieg + Hevy → siła + bieg, bieg → bieg, Hevy → siła; miniony dzień bez aktywności → wolny, dziś bez aktywności → nieznany |
+| Żywienie vs cel | 14 dni; % = (kcal − cel) / cel z dni pełnych (dziś „w toku” poza bilansem); cel z planu, bez planu z Fitatu; deficyt w dniu długiego → ostrzeżenie |
+| Białko i węgle g/kg | gramy / waga dnia: średnia 7 dni, inaczej ostatnie ważenie; poniżej 1,6 g/kg → ostrzeżenie |
+| Waga, widok Ciało | 12 tygodni ISO; zmiana średniej 7 dni od pierwszej policzalnej w zakresie; trend kg/tydz. = nachylenie prostej MNK przez średnie tygodniowe (min. 4 tygodnie z ważeniem); mięśnie: średnia z 7 dni vs 4 tygodnie wcześniej, ± 0,3 kg = stabilnie |
+| Regularność suplementów | 30 pełnych dni; dzień „wymagany”, gdy reguła pasuje do typu dnia (`quality_run` bez planu = każdy dzień biegowy); przyjęcie poza regułą też się liczy; poniżej 75% → ostrzeżenie |
+| Zapas suplementu | ostatni stan minus dawki przyjęte po nim; dni = dawki dla reguł dziennych, inaczej według częstości reguły z 30 dni; poniżej 14 dni → „zamów” |
 
 ## Rytmy AI
 
@@ -267,6 +289,8 @@ Suplementy mają własny widok w zakładce Żywienie (przełącznik Jedzenie | S
 
 Listę na dziś generuje kod z reguł i planu. Dzień długiego wybiegania dokłada elektrolity i kofeinę, a dzień siłowy kreatynę po treningu. Regularność z 30 dni i prognoza zapasów („~12 dni”) to projekcje z logu i stanu.
 
+Implementacja: `GET /api/supplements` i `POST /api/supplements/{id}/log` w `services/api`. Odhaczać można tylko dziś (inna data → 422), a stan dnia to ostatnie zdarzenie (odznaczenie dopisuje `SupplementSkipped`). Na liście dnia są suplementy z pasującą regułą i te już zalogowane dziś. Zestaw do dev: `deploy/dev/seed/supplements.sql`; ekranu konfiguracji nie ma.
+
 Białko serwatkowe logujesz w Fitatu jak posiłek. W module suplementów jest tylko odhaczenie, bez makro, żeby nie liczyć go podwójnie.
 
 Trener widzi suplementy przez `get_supplements(from, to)`. Może zauważyć wzorzec (np. magnez pomijany po wieczornych treningach) i zaproponować inną porę przypomnienia jako zwykłą propozycję zmiany. Nie dodaje suplementów, nie zmienia dawek i nie poleca nowych; walidator odrzuca takie propozycje.
@@ -286,6 +310,8 @@ Twarde reguły żyją w kodzie, nie w prompcie: propozycja, która je łamie, ni
 | Dolny próg kcal | konfigurowalny, nie niżej niż szacowana podstawowa przemiana materii | odrzuć |
 | Deficyt w dniu długiego wybiegania | brak deficytu | odrzuć |
 | Białko | min 1,6 g/kg masy ciała | ostrzeżenie |
+
+W kodzie (`internal/plan/validate.go`) każda reguła ma klucz (`km_increase`, `long_run_share`, `rest_day`, `taper`, `kcal_floor`, `long_run_deficit`, `protein_min`) i zwraca `pass | warn | fail` z tekstem dla trenera i widoku. Zmiana dni sprawdza każdy dotknięty tydzień ISO: kilometraż po zmianie vs poprzedni tydzień, a po tygodniu odciążenia (< 90% tygodnia wcześniej) vs tydzień sprzed niego. Taper dotyczy 3 ostatnich tygodni przed startem. Zmiana celów sprawdza próg kcal, deficyt w dniu długiego i białko. Próg kcal, szacowane zapotrzebowanie i wagę podaje wywołujący (`plan.Limits`); bez zapotrzebowania reguła deficytu daje `warn`. Zmiana pory przypomnienia ma tylko regułę `reminder_time` (format `HH:MM`, inna niż obecna); innych zmian w suplementach model danych propozycji nie przewiduje.
 
 Bezpieczeństwo:
 

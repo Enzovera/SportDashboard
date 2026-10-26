@@ -169,6 +169,10 @@ func TestPlanDrivesNutritionAndSupplements(t *testing.T) {
 	if d := n.Days[12]; *d.DayType != plan.DayRun || *d.KcalTarget != 2700 { // Sat 24.10: plan says Tempo
 		t.Errorf("24.10: %+v", d)
 	}
+	// 18.10 is before the plan's first day (19.10): inferred long run, the Fitatu goal of that time.
+	if d := n.Days[6]; *d.DayType != plan.DayLongRun || *d.KcalTarget != 2700 || *d.KcalVsTargetPct != -4 {
+		t.Errorf("18.10: %+v", d)
+	}
 
 	_, sd := supplementData()
 	s := BuildSupplements(data, sd, today)
