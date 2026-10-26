@@ -68,6 +68,16 @@ func (s *Service) Body(ctx context.Context) (BodyResponse, error) {
 	return BuildBody(data, today, now), nil
 }
 
+func (s *Service) Nutrition(ctx context.Context) (NutritionResponse, error) {
+	now := s.now()
+	today := Today(now)
+	data, err := s.store.Load(ctx, today.Add(-historyDays*day))
+	if err != nil {
+		return NutritionResponse{}, err
+	}
+	return BuildNutrition(data, today, now), nil
+}
+
 // ---------- shared helpers ----------
 
 func iso(t time.Time) string { return t.Format(time.DateOnly) }
@@ -78,7 +88,8 @@ func round1(v float64) float64 { return metrics.Round(v, 1) }
 
 func isRun(sport string) bool { return projector.Activity{Sport: sport}.IsRun() }
 
-func buildSync(rows []SyncRow, now time.Time) []SyncStatus {
+// BuildSync reports every core source plus any other with runs; also used by the MCP server.
+func BuildSync(rows []SyncRow, now time.Time) []SyncStatus {
 	bySource := map[string]SyncRow{}
 	for _, r := range rows {
 		bySource[r.Source] = r
@@ -153,7 +164,7 @@ func BuildToday(data Data, today, now time.Time) TodayResponse {
 	series := loadSeries(data, today)
 	return TodayResponse{
 		Date:      iso(today),
-		Sync:      buildSync(data.Sync, now),
+		Sync:      BuildSync(data.Sync, now),
 		Week:      buildWeek(data, today),
 		Readiness: buildReadiness(data, today, series),
 		Weight:    buildWeight(data.Days, today),
@@ -296,7 +307,7 @@ func BuildTraining(data Data, today time.Time, rng string, now time.Time) Traini
 		Range:            rng,
 		From:             iso(from),
 		To:               iso(today),
-		Sync:             buildSync(data.Sync, now),
+		Sync:             BuildSync(data.Sync, now),
 		Load:             buildLoad(km, series, thisWeek, today, from),
 		RecentRuns:       recentRuns(data.Activities, 5),
 		SetsPerMuscle:    setsPerMuscle(data.Workouts, thisWeek),

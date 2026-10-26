@@ -57,11 +57,41 @@ type WeighInRow struct {
 	WaterPct   *float64
 }
 
+// DietTarget is a daily nutrition goal (Fitatu settings now, plan per day type in stage 4).
+type DietTarget struct {
+	Kcal     float64
+	ProteinG float64
+	CarbsG   float64
+	FatG     float64
+}
+
+type NutritionDayRow struct {
+	Date     time.Time
+	Kcal     float64
+	ProteinG float64
+	CarbsG   float64
+	FatG     float64
+	Target   *DietTarget // Fitatu goal in force that day
+}
+
+type MealRow struct {
+	Date     time.Time
+	Slot     string
+	At       *time.Time
+	Title    string
+	Kcal     float64
+	ProteinG float64
+	CarbsG   float64
+	FatG     float64
+}
+
 type Data struct {
 	Days       []DayRow
 	Activities []ActivityRow
 	Workouts   []WorkoutRow
-	WeighIns   []WeighInRow // oldest first
+	WeighIns   []WeighInRow      // oldest first
+	Nutrition  []NutritionDayRow // days with a logged meal, oldest first
+	Meals      []MealRow         // in Fitatu slot order
 	Sync       []SyncRow
 }
 
@@ -154,6 +184,37 @@ func (s *PgStore) Load(ctx context.Context, since time.Time) (Data, error) {
 	}
 
 	rows, _ = s.pool.Query(ctx, `
+		select date, kcal::float8, protein_g::float8, carbs_g::float8, fat_g::float8,
+		       kcal_target::float8, protein_target_g::float8, carbs_target_g::float8, fat_target_g::float8
+		from nutrition_day where date >= $1 order by date`, since)
+	if d.Nutrition, err = pgx.CollectRows(rows, func(r pgx.CollectableRow) (NutritionDayRow, error) {
+		var (
+			x       NutritionDayRow
+			kcal    *float64
+			p, c, f *float64
+		)
+		if err := r.Scan(&x.Date, &x.Kcal, &x.ProteinG, &x.CarbsG, &x.FatG, &kcal, &p, &c, &f); err != nil {
+			return x, err
+		}
+		if kcal != nil {
+			x.Target = &DietTarget{Kcal: *kcal, ProteinG: deref(p), CarbsG: deref(c), FatG: deref(f)}
+		}
+		return x, nil
+	}); err != nil {
+		return d, fmt.Errorf("nutrition_day: %w", err)
+	}
+
+	rows, _ = s.pool.Query(ctx, `
+		select date, slot, at, title, kcal::float8, protein_g::float8, carbs_g::float8, fat_g::float8
+		from nutrition_meal where date >= $1 order by date, slot_no`, since)
+	if d.Meals, err = pgx.CollectRows(rows, func(r pgx.CollectableRow) (MealRow, error) {
+		var x MealRow
+		return x, r.Scan(&x.Date, &x.Slot, &x.At, &x.Title, &x.Kcal, &x.ProteinG, &x.CarbsG, &x.FatG)
+	}); err != nil {
+		return d, fmt.Errorf("nutrition_meal: %w", err)
+	}
+
+	rows, _ = s.pool.Query(ctx, `
 		select source,
 		       (array_agg(status order by started_at desc))[1],
 		       max(finished_at) filter (where status in ('ok', 'partial'))
@@ -165,4 +226,11 @@ func (s *PgStore) Load(ctx context.Context, since time.Time) (Data, error) {
 		return d, fmt.Errorf("ingest_run: %w", err)
 	}
 	return d, nil
+}
+
+func deref(p *float64) float64 {
+	if p == nil {
+		return 0
+	}
+	return *p
 }

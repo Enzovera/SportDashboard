@@ -28,7 +28,7 @@ func BuildBody(data Data, today, now time.Time) BodyResponse {
 		From:       iso(from),
 		To:         iso(thisWeek.Add(6 * day)),
 		RangeWeeks: bodyRangeWeeks,
-		Sync:       syncOf(buildSync(data.Sync, now), "garmin"),
+		Sync:       syncOf(BuildSync(data.Sync, now), "garmin"),
 		WeighIns:   []WeighIn{},
 	}
 

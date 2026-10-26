@@ -1,5 +1,5 @@
-// Package projector rebuilds projections (day_summary, activity, workout, strength_set, body_composition) from
-// raw_payload.
+// Package projector rebuilds projections (day_summary, activity, workout, strength_set, body_composition,
+// nutrition_day, nutrition_meal) from raw_payload.
 //
 // Every run is a full rebuild inside one transaction: projections are disposable by design
 // (docs/design.md, "Model danych"), the data is small, and a full rebuild is trivially correct after a
@@ -23,6 +23,7 @@ type Stats struct {
 	Workouts   int `json:"workouts"`
 	Sets       int `json:"sets"`
 	WeighIns   int `json:"weighIns"`
+	Nutrition  int `json:"nutritionDays"`
 	Skipped    int `json:"skipped"`
 }
 
@@ -41,6 +42,7 @@ type Projection struct {
 	Activities []Activity
 	Workouts   []Workout
 	WeighIns   []WeighIn
+	Nutrition  []NutritionDay
 	Skipped    int
 }
 
@@ -55,6 +57,8 @@ func Build(latest []payload) (Projection, []error) {
 		muscles = map[string]*string{}
 		deleted = map[string]int64{} // workout id -> payload id of the delete event
 		weighIn = map[time.Time]WeighIn{}
+		diet    []payload
+		targets = map[time.Time]*DietTarget{}
 		acts    []payload
 		works   []payload
 	)
@@ -117,6 +121,23 @@ func Build(latest []payload) (Projection, []error) {
 			works = append(works, r)
 		case "hevy/workout_deleted":
 			deleted[r.externalID] = r.id
+		case "fitatu/diet_day", "fitatu/settings":
+			if r.forDate == nil {
+				skip(fmt.Errorf("%s %s: no for_date", key, r.externalID))
+				continue
+			}
+			if key == "fitatu/diet_day" {
+				diet = append(diet, r)
+				continue
+			}
+			t, err := ParseSettings(r.body)
+			if err != nil {
+				skip(err)
+				continue
+			}
+			if t != nil {
+				targets[*r.forDate] = t
+			}
 		}
 	}
 
@@ -144,6 +165,18 @@ func Build(latest []payload) (Projection, []error) {
 	for _, d := range days {
 		p.Days = append(p.Days, *d)
 	}
+	for _, r := range diet {
+		n, ok, err := ParseDietDay(*r.forDate, r.body)
+		if err != nil {
+			skip(err)
+			continue
+		}
+		if ok {
+			n.Target = targetFor(targets, n.Date)
+			p.Nutrition = append(p.Nutrition, n)
+		}
+	}
+	sort.Slice(p.Nutrition, func(i, j int) bool { return p.Nutrition[i].Date.Before(p.Nutrition[j].Date) })
 	for _, w := range weighIn {
 		p.WeighIns = append(p.WeighIns, w)
 	}
@@ -158,7 +191,7 @@ const latestSQL = `
 select distinct on (source, endpoint, coalesce(external_id, ''))
        id, source, endpoint, coalesce(external_id, ''), for_date, body
 from raw_payload
-where source in ('garmin', 'hevy')
+where source in ('garmin', 'hevy', 'fitatu')
 order by source, endpoint, coalesce(external_id, ''), id desc`
 
 // Rebuild replaces all projections with a fresh build from raw_payload.
@@ -198,7 +231,7 @@ func Rebuild(ctx context.Context, pool *pgxpool.Pool) (Stats, error) {
 	}
 
 	st := Stats{Days: len(proj.Days), Activities: len(proj.Activities), Workouts: len(proj.Workouts),
-		WeighIns: len(proj.WeighIns), Skipped: proj.Skipped}
+		WeighIns: len(proj.WeighIns), Nutrition: len(proj.Nutrition), Skipped: proj.Skipped}
 	for _, w := range proj.Workouts {
 		st.Sets += len(w.Sets)
 	}
@@ -206,7 +239,7 @@ func Rebuild(ctx context.Context, pool *pgxpool.Pool) (Stats, error) {
 }
 
 func write(ctx context.Context, tx pgx.Tx, p Projection) error {
-	if _, err := tx.Exec(ctx, `truncate day_summary, activity, strength_set, workout, body_composition`); err != nil {
+	if _, err := tx.Exec(ctx, `truncate day_summary, activity, strength_set, workout, body_composition, nutrition_day, nutrition_meal`); err != nil {
 		return fmt.Errorf("truncate: %w", err)
 	}
 
@@ -264,6 +297,28 @@ func write(ctx context.Context, tx pgx.Tx, p Projection) error {
 		[]string{"measured_at", "local_date", "weight_kg", "fat_pct", "muscle_kg", "water_pct", "source_type"},
 		pgx.CopyFromRows(weighRows)); err != nil {
 		return fmt.Errorf("copy body_composition: %w", err)
+	}
+
+	var nutRows, mealRows [][]any
+	for _, n := range p.Nutrition {
+		row := []any{n.Date, n.Kcal, n.ProteinG, n.CarbsG, n.FatG, nil, nil, nil, nil}
+		if t := n.Target; t != nil {
+			row[5], row[6], row[7], row[8] = t.Kcal, t.ProteinG, t.CarbsG, t.FatG
+		}
+		nutRows = append(nutRows, row)
+		for _, m := range n.Meals {
+			mealRows = append(mealRows, []any{n.Date, m.Slot, m.SlotNo, m.At, m.Title, m.Kcal, m.ProteinG, m.CarbsG, m.FatG})
+		}
+	}
+	if _, err := tx.CopyFrom(ctx, pgx.Identifier{"nutrition_day"},
+		[]string{"date", "kcal", "protein_g", "carbs_g", "fat_g", "kcal_target", "protein_target_g", "carbs_target_g", "fat_target_g"},
+		pgx.CopyFromRows(nutRows)); err != nil {
+		return fmt.Errorf("copy nutrition_day: %w", err)
+	}
+	if _, err := tx.CopyFrom(ctx, pgx.Identifier{"nutrition_meal"},
+		[]string{"date", "slot", "slot_no", "at", "title", "kcal", "protein_g", "carbs_g", "fat_g"},
+		pgx.CopyFromRows(mealRows)); err != nil {
+		return fmt.Errorf("copy nutrition_meal: %w", err)
 	}
 	return nil
 }

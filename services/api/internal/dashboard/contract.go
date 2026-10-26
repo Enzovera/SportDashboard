@@ -181,3 +181,98 @@ type WeighIn struct {
 	MuscleKg   *float64 `json:"muscleKg"`
 	WaterPct   *float64 `json:"waterPct"`
 }
+
+// ---------- GET /api/nutrition?range=14d ----------
+
+type NutritionRow struct {
+	Eaten  float64 `json:"eaten"`
+	Target float64 `json:"target"`
+}
+
+type NutritionResponse struct {
+	Range           string                `json:"range"`
+	From            string                `json:"from"`
+	To              string                `json:"to"`
+	Sync            []SyncStatus          `json:"sync"`
+	Today           *NutritionTodayDetail `json:"today"`
+	Balance         *NutritionBalance     `json:"balance"`
+	Days            []NutritionDay        `json:"days"`
+	Targets         []DayTarget           `json:"targets"`
+	TargetProposals []TargetProposal      `json:"targetProposals"`
+	Meals           []Meal                `json:"meals"`
+	CoachNote       any                   `json:"coachNote"` // stage 3
+	Supplements     *SupplementsToday     `json:"supplements"`
+}
+
+type NutritionTodayDetail struct {
+	DayType  string       `json:"dayType"`
+	Kcal     NutritionRow `json:"kcal"`
+	ProteinG NutritionRow `json:"proteinG"`
+	CarbsG   NutritionRow `json:"carbsG"`
+	FatG     NutritionRow `json:"fatG"`
+}
+
+type NutritionBalance struct {
+	From                string        `json:"from"`
+	To                  string        `json:"to"`
+	KcalAvg             float64       `json:"kcalAvg"`
+	KcalTargetAvg       float64       `json:"kcalTargetAvg"`
+	KcalVsTargetPct     float64       `json:"kcalVsTargetPct"`
+	ProteinAvgGPerKg    float64       `json:"proteinAvgGPerKg"`
+	ProteinTargetGPerKg float64       `json:"proteinTargetGPerKg"`
+	ProteinMinGPerKg    float64       `json:"proteinMinGPerKg"`
+	ProteinDaysAtMin    int           `json:"proteinDaysAtMin"`
+	Days                int           `json:"days"`
+	LongRunCarbs        *LongRunCarbs `json:"longRunCarbs"`
+}
+
+type LongRunCarbs struct {
+	Date         string  `json:"date"`
+	GPerKg       float64 `json:"gPerKg"`
+	TargetGPerKg float64 `json:"targetGPerKg"`
+	Tone         string  `json:"tone"`
+}
+
+type NutritionDay struct {
+	Date            string   `json:"date"`
+	DayType         *string  `json:"dayType"`
+	Complete        bool     `json:"complete"`
+	Kcal            *float64 `json:"kcal"`
+	KcalTarget      *float64 `json:"kcalTarget"`
+	KcalVsTargetPct *float64 `json:"kcalVsTargetPct"`
+	KcalTone        string   `json:"kcalTone"`
+	ProteinGPerKg   *float64 `json:"proteinGPerKg"`
+	ProteinTone     string   `json:"proteinTone"`
+}
+
+type DayTarget struct {
+	DayType  string  `json:"dayType"`
+	Kcal     float64 `json:"kcal"`
+	ProteinG float64 `json:"proteinG"`
+	CarbsG   float64 `json:"carbsG"`
+	FatG     float64 `json:"fatG"`
+}
+
+type TargetProposal struct {
+	ID      string  `json:"id"`
+	DayType string  `json:"dayType"`
+	Field   string  `json:"field"` // kcal | proteinG | carbsG | fatG
+	Value   float64 `json:"value"`
+}
+
+type Meal struct {
+	ID       string  `json:"id"`
+	Slot     string  `json:"slot"`
+	At       *string `json:"at"`
+	Title    string  `json:"title"`
+	Kcal     float64 `json:"kcal"`
+	ProteinG float64 `json:"proteinG"`
+	CarbsG   float64 `json:"carbsG"`
+	FatG     float64 `json:"fatG"`
+}
+
+type SupplementsToday struct {
+	Taken int     `json:"taken"`
+	Total int     `json:"total"`
+	Next  *string `json:"next"`
+}

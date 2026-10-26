@@ -218,3 +218,54 @@ func TestParseWeighIns(t *testing.T) {
 		})
 	}
 }
+
+func TestParseDietDay(t *testing.T) {
+	const body = `{"dietPlan":{
+	 "supper":{"mealTime":"","items":[]},
+	 "dinner":{"mealTime":"","items":[
+	   {"name":"Chicken bites","energy":426,"protein":36,"carbohydrate":26,"fat":19.6,"visible":true},
+	   {"name":"Frytki","energy":290,"protein":5,"carbohydrate":50,"fat":7,"visible":true},
+	   {"name":"Ukryty","energy":999,"protein":99,"carbohydrate":99,"fat":99,"visible":false}]},
+	 "breakfast":{"mealTime":"07:40","items":[{"name":"Skyr","energy":117,"protein":14.4,"carbohydrate":15,"fat":0}]}}}`
+	d, ok, err := ParseDietDay(date("2026-10-25"), []byte(body))
+	if err != nil || !ok {
+		t.Fatal(ok, err)
+	}
+	if d.Kcal != 833 || d.ProteinG != 55.4 || d.CarbsG != 91 || d.FatG != 26.6 || len(d.Meals) != 2 {
+		t.Fatalf("totals: %+v", d)
+	}
+	b, din := d.Meals[0], d.Meals[1]
+	if b.Slot != "breakfast" || b.At == nil || b.At.Format(time.RFC3339) != "2026-10-25T07:40:00+01:00" {
+		t.Errorf("breakfast: %+v", b)
+	}
+	if din.Slot != "dinner" || din.At != nil || din.Title != "Chicken bites, Frytki" || din.Kcal != 716 {
+		t.Errorf("dinner: %+v", din)
+	}
+
+	if _, ok, _ := ParseDietDay(date("2026-10-25"), []byte(`{"dietPlan":{"breakfast":{"items":[]}}}`)); ok {
+		t.Error("empty day reported as logged")
+	}
+}
+
+func TestTargetFor(t *testing.T) {
+	a, b := &DietTarget{Kcal: 1800}, &DietTarget{Kcal: 2000}
+	settings := map[time.Time]*DietTarget{date("2026-10-20"): a, date("2026-10-23"): b}
+	tests := []struct {
+		day  string
+		want *DietTarget
+	}{
+		{"2026-10-10", a}, // before the first known settings: the earliest
+		{"2026-10-20", a},
+		{"2026-10-22", a},
+		{"2026-10-23", b},
+		{"2026-10-30", b},
+	}
+	for _, tt := range tests {
+		if got := targetFor(settings, date(tt.day)); got != tt.want {
+			t.Errorf("%s: got %v", tt.day, got)
+		}
+	}
+	if targetFor(nil, date("2026-10-20")) != nil {
+		t.Error("no settings: want nil")
+	}
+}

@@ -146,7 +146,7 @@ func TestBuildSync(t *testing.T) {
 		{Source: "hevy", LastStatus: "ok", LastSuccessAt: tp(now.Add(-4 * time.Hour))},
 		{Source: "fitatu", LastStatus: "partial", LastSuccessAt: tp(now.Add(-time.Hour))},
 	}
-	got := buildSync(rows, now)
+	got := BuildSync(rows, now)
 	want := map[string]string{"garmin": "ok", "hevy": "stale", "fitatu": "partial"}
 	if len(got) != 3 {
 		t.Fatalf("got %+v", got)
@@ -156,7 +156,7 @@ func TestBuildSync(t *testing.T) {
 			t.Errorf("%s = %s, want %s", s.Source, s.Status, want[s.Source])
 		}
 	}
-	if got := buildSync(nil, now); len(got) != 2 || got[0].Status != "stale" || got[0].LastSuccessAt != nil {
+	if got := BuildSync(nil, now); len(got) != 2 || got[0].Status != "stale" || got[0].LastSuccessAt != nil {
 		t.Errorf("no runs: %+v", got)
 	}
 }
