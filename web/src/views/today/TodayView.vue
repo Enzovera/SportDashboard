@@ -1,5 +1,7 @@
 <script setup lang="ts">
-import { computed } from 'vue'
+import { computed, watch } from 'vue'
+import TrainerButton from '@/components/chat/TrainerButton.vue'
+import { proposalsPendingCount } from '@/api/proposals'
 import PageLayout from '@/components/ui/PageLayout.vue'
 import SyncStatus from '@/components/ui/SyncStatus.vue'
 import { getToday } from '@/api/client'
@@ -10,6 +12,11 @@ import TodaySection from './TodaySection.vue'
 
 const layout = useLayout()
 const { data, error } = useApi(getToday)
+
+// Dziś is the usual entry point: seed the nav badge before Propozycje is ever opened.
+watch(data, (d) => {
+  if (d) proposalsPendingCount.value = d.proposalsPending
+})
 
 const cover = computed(() => layout.value === 'cover')
 const meta = computed(() => (data.value ? headerMeta(data.value) : null))
@@ -22,7 +29,7 @@ const cells = computed(() => (data.value && layout.value === 'desktop' ? desktop
     <template #global>
       <template v-if="data">
         <SyncStatus :sync="data.sync" :compact="cover" />
-        <RouterLink v-if="data.coach" to="/plan" class="btn trainer">Trener</RouterLink>
+        <TrainerButton />
       </template>
     </template>
 

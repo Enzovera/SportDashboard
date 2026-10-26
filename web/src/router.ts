@@ -2,6 +2,8 @@ import { createRouter, createWebHistory } from 'vue-router'
 
 export const router = createRouter({
   history: createWebHistory(),
+  // /propozycje#<id> (links from Plan) scrolls to the card; other navigations start at the top.
+  scrollBehavior: (to) => (to.hash ? { el: to.hash } : { top: 0 }),
   routes: [
     { path: '/', name: 'today', component: () => import('@/views/today/TodayView.vue') },
     { path: '/trening', name: 'training', component: () => import('@/views/training/TrainingView.vue') },

@@ -11,7 +11,7 @@ defineProps<{ supplements: SupplementsToday }>()
       <h2>Suplementy</h2>
       <span class="taken">{{ supplements.taken }}<span class="of"> / {{ supplements.total }}</span></span>
     </div>
-    <RouterLink to="/zywienie" class="row">
+    <RouterLink to="/zywienie/suplementy" class="row">
       <span>
         <template v-if="supplements.next">Następna: {{ supplements.next }} <span class="of">· wszystkie</span></template>
         <template v-else>Wszystkie</template>

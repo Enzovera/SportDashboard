@@ -5,6 +5,7 @@ import { getTraining } from '@/api/client'
 import { useApi } from '@/composables/useApi'
 import { useLayout } from '@/composables/useLayout'
 import PageLayout from '@/components/ui/PageLayout.vue'
+import TrainerButton from '@/components/chat/TrainerButton.vue'
 import { dayMonth } from '@/lib/format'
 import { syncProblem } from '@/lib/labels'
 import CoachNoteBox from './CoachNoteBox.vue'
@@ -40,6 +41,8 @@ const hevyProblem = computed(() => problemOf('hevy'))
 
 <template>
   <PageLayout title="Trening" :meta="meta">
+    <!-- Fold header already holds the range switch (FoldTrening has no Trener button there). -->
+    <template v-if="layout === 'desktop'" #global><TrainerButton /></template>
     <template #actions>
       <div class="segmented" role="group" aria-label="Zakres czasu">
         <button

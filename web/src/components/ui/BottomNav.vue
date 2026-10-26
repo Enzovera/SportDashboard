@@ -1,9 +1,12 @@
 <script setup lang="ts">
 import { computed } from 'vue'
+import { useRoute } from 'vue-router'
 import { useLayout } from '@/composables/useLayout'
+import { isTabActive } from '@/lib/nav'
 
 const props = defineProps<{ proposalsPending?: number | null }>()
 const layout = useLayout()
+const route = useRoute()
 
 interface Tab { to: string; label: string; badge?: boolean }
 
@@ -26,7 +29,14 @@ const groups = computed(() =>
 <template>
   <nav aria-label="Główna nawigacja" class="nav" :class="layout">
     <div v-for="(group, i) in groups" :key="i" class="group" :style="{ '--n': group.length }">
-      <RouterLink v-for="tab in group" :key="tab.to" :to="tab.to" class="tab">
+      <RouterLink
+        v-for="tab in group"
+        :key="tab.to"
+        :to="tab.to"
+        class="tab"
+        :class="{ current: isTabActive(tab.to, route.path) }"
+        :aria-current="isTabActive(tab.to, route.path) ? 'page' : undefined"
+      >
         {{ tab.label }}
         <span v-if="tab.badge && props.proposalsPending" class="count">{{ props.proposalsPending }}</span>
       </RouterLink>
@@ -47,6 +57,7 @@ const groups = computed(() =>
   text-decoration: none; font-size: 14px; font-weight: 500; color: var(--ink2);
 }
 .cover .tab { font-size: 13px; }
-.tab.router-link-exact-active { font-weight: 800; color: var(--ink); box-shadow: inset 0 3px 0 var(--ink); }
+
+.tab.current { font-weight: 800; color: var(--ink); box-shadow: inset 0 3px 0 var(--ink); }
 .tab:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 </style>

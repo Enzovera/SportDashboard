@@ -1,17 +1,27 @@
 <script setup lang="ts">
+import { useRoute } from 'vue-router'
 import BottomNav from '@/components/ui/BottomNav.vue'
 import DesktopHeader from '@/components/ui/DesktopHeader.vue'
+import ChatHost from '@/components/chat/ChatHost.vue'
+import { proposalsPendingCount } from '@/api/proposals'
 import { useLayout } from '@/composables/useLayout'
 
 const layout = useLayout()
+const route = useRoute()
 </script>
 
 <template>
   <div class="app" :class="layout">
-    <DesktopHeader v-if="layout === 'desktop'" />
+    <DesktopHeader v-if="layout === 'desktop'" :proposals-pending="proposalsPendingCount" />
     <!-- Wrapper keeps the nav at the bottom while a lazy view chunk is still loading. -->
     <div class="view"><RouterView /></div>
-    <BottomNav v-if="layout !== 'desktop'" />
+    <!-- Cover chat is full screen without the nav (CoverCzat). -->
+    <BottomNav
+      v-if="layout !== 'desktop' && !(layout === 'cover' && route.name === 'chat')"
+      :proposals-pending="proposalsPendingCount"
+    />
+    <!-- Positions itself: desktop aside 420 px, fold right column, nothing on cover. -->
+    <ChatHost />
   </div>
 </template>
 
