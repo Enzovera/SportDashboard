@@ -4,10 +4,10 @@ package dashboard
 
 import (
 	"context"
-	"errors"
 	"fmt"
 	"math"
 	"sort"
+	"strings"
 	"time"
 
 	"forma/api/internal/metrics"
@@ -29,10 +29,23 @@ var coreSources = []string{"garmin", "hevy"}
 
 type Service struct {
 	store Store
+	plans PlanStore
 	now   func() time.Time
 }
 
-func NewService(store Store) *Service { return &Service{store: store, now: time.Now} }
+func NewService(store Store, plans PlanStore) *Service {
+	return &Service{store: store, plans: plans, now: time.Now}
+}
+
+// load reads projections from `since` and the current plan.
+func (s *Service) load(ctx context.Context, since time.Time) (Data, error) {
+	data, err := s.store.Load(ctx, since)
+	if err != nil {
+		return data, err
+	}
+	data.Plan, err = s.plans.Current(ctx)
+	return data, err
+}
 
 // Today returns the local calendar date (UTC midnight) for now.
 func Today(now time.Time) time.Time {
@@ -43,7 +56,7 @@ func Today(now time.Time) time.Time {
 func (s *Service) Today(ctx context.Context) (TodayResponse, error) {
 	now := s.now()
 	today := Today(now)
-	data, err := s.store.Load(ctx, today.Add(-historyDays*day))
+	data, err := s.load(ctx, today.Add(-historyDays*day))
 	if err != nil {
 		return TodayResponse{}, err
 	}
@@ -53,7 +66,7 @@ func (s *Service) Today(ctx context.Context) (TodayResponse, error) {
 func (s *Service) Training(ctx context.Context, rng string) (TrainingResponse, error) {
 	now := s.now()
 	today := Today(now)
-	data, err := s.store.Load(ctx, today.Add(-historyDays*day))
+	data, err := s.load(ctx, today.Add(-historyDays*day))
 	if err != nil {
 		return TrainingResponse{}, err
 	}
@@ -63,7 +76,7 @@ func (s *Service) Training(ctx context.Context, rng string) (TrainingResponse, e
 func (s *Service) Body(ctx context.Context) (BodyResponse, error) {
 	now := s.now()
 	today := Today(now)
-	data, err := s.store.Load(ctx, today.Add(-historyDays*day))
+	data, err := s.load(ctx, today.Add(-historyDays*day))
 	if err != nil {
 		return BodyResponse{}, err
 	}
@@ -73,7 +86,7 @@ func (s *Service) Body(ctx context.Context) (BodyResponse, error) {
 func (s *Service) Nutrition(ctx context.Context) (NutritionResponse, error) {
 	now := s.now()
 	today := Today(now)
-	data, err := s.store.Load(ctx, today.Add(-historyDays*day))
+	data, err := s.load(ctx, today.Add(-historyDays*day))
 	if err != nil {
 		return NutritionResponse{}, err
 	}
@@ -94,9 +107,6 @@ func (s *Service) Supplements(ctx context.Context) (SupplementsResponse, error) 
 	}
 	return BuildSupplements(data, sd, today), nil
 }
-
-// ErrInvalid: the request is well-formed but not acceptable (HTTP 422).
-var ErrInvalid = errors.New("invalid request")
 
 // LogSupplement appends SupplementTaken / SupplementSkipped for today and returns the updated checklist item.
 // Only today can be ticked: the date guards against a page left open past midnight.
@@ -122,7 +132,7 @@ func (s *Service) LogSupplement(ctx context.Context, id, status, date string) (S
 }
 
 func (s *Service) loadSupplements(ctx context.Context, today time.Time) (Data, SupplementData, error) {
-	data, err := s.store.Load(ctx, today.Add(-regularityDays*day))
+	data, err := s.load(ctx, today.Add(-regularityDays*day))
 	if err != nil {
 		return Data{}, SupplementData{}, err
 	}
@@ -214,13 +224,18 @@ func sumKm(byDay map[time.Time]float64, from, to time.Time) float64 {
 
 func BuildToday(data Data, today, now time.Time) TodayResponse {
 	series := loadSeries(data, today)
-	return TodayResponse{
+	resp := TodayResponse{
 		Date:      iso(today),
 		Sync:      BuildSync(data.Sync, now),
 		Week:      buildWeek(data, today),
 		Readiness: buildReadiness(data, today, series),
 		Weight:    buildWeight(data.Days, today),
 	}
+	if p := BuildPlan(data, today); p.Plan != nil {
+		resp.RaceWeeksLeft = ptr(p.Plan.Goal.WeeksLeft)
+		resp.ProposalsPending = p.ProposalsPending
+	}
+	return resp
 }
 
 func buildWeek(data Data, today time.Time) WeekGrid {
@@ -466,4 +481,44 @@ func strengthSessions(ws []WorkoutRow, weekStart time.Time) []StrengthRow {
 		out = append(out, r)
 	}
 	return out
+}
+
+// ---------- plan ----------
+
+func (s *Service) Plan(ctx context.Context) (PlanResponse, error) {
+	today := Today(s.now())
+	data, err := s.load(ctx, metrics.WeekStart(today))
+	if err != nil {
+		return PlanResponse{}, err
+	}
+	return BuildPlan(data, today), nil
+}
+
+func (s *Service) Proposals(ctx context.Context) (ProposalsResponse, error) {
+	today := Today(s.now())
+	st, err := s.plans.Current(ctx)
+	if err != nil {
+		return ProposalsResponse{}, err
+	}
+	blocked, err := s.plans.Blocked(ctx, today.Add(-blockedDays*day))
+	if err != nil {
+		return ProposalsResponse{}, err
+	}
+	return BuildProposals(Data{Plan: st}, blocked, today), nil
+}
+
+// Decide records the human decision on a proposal; only the dashboard calls it (docs/design.md, "Stan trenera").
+func (s *Service) Decide(ctx context.Context, id string, accept bool, comment *string) (ProposalDecision, error) {
+	if comment != nil {
+		if c := strings.TrimSpace(*comment); c == "" {
+			comment = nil
+		} else {
+			comment = &c
+		}
+	}
+	p, err := s.plans.Decide(ctx, id, accept, comment, s.now())
+	if err != nil {
+		return ProposalDecision{}, err
+	}
+	return decisionView(p), nil
 }

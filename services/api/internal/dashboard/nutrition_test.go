@@ -85,5 +85,3 @@ func TestBuildNutritionWithoutFitatu(t *testing.T) {
 		t.Errorf("unexpected: %+v", n)
 	}
 }
-
-func eqp(a, b *float64) bool { return (a == nil && b == nil) || (a != nil && b != nil && *a == *b) }

@@ -7,6 +7,9 @@
 //	GET /api/nutrition?range=14d
 //	GET /api/supplements
 //	POST /api/supplements/{id}/log   body {status: taken|skipped, date}
+//	GET /api/plan
+//	GET /api/proposals
+//	POST /api/proposals/{id}/accept|reject   body {comment}   404 unknown, 409 decided, 422 comment > 500
 //
 // /api/chat/* belongs to coach-chat (in dev Vite proxies it there directly; here it is not handled yet).
 package httpapi
@@ -28,6 +31,9 @@ type Views interface {
 	Nutrition(ctx context.Context) (dashboard.NutritionResponse, error)
 	Supplements(ctx context.Context) (dashboard.SupplementsResponse, error)
 	LogSupplement(ctx context.Context, id, status, date string) (dashboard.SupplementItem, error)
+	Plan(ctx context.Context) (dashboard.PlanResponse, error)
+	Proposals(ctx context.Context) (dashboard.ProposalsResponse, error)
+	Decide(ctx context.Context, id string, accept bool, comment *string) (dashboard.ProposalDecision, error)
 }
 
 // maxBody caps request bodies; every POST body here is a few short fields.
@@ -80,6 +86,28 @@ func New(v Views) http.Handler {
 		resp, err := v.LogSupplement(r.Context(), r.PathValue("id"), body.Status, body.Date)
 		respond(w, r, resp, err)
 	})
+	mux.HandleFunc("GET /api/plan", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := v.Plan(r.Context())
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("GET /api/proposals", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := v.Proposals(r.Context())
+		respond(w, r, resp, err)
+	})
+	decide := func(accept bool) http.HandlerFunc {
+		return func(w http.ResponseWriter, r *http.Request) {
+			var body struct {
+				Comment *string `json:"comment"`
+			}
+			if !decode(w, r, &body) {
+				return
+			}
+			resp, err := v.Decide(r.Context(), r.PathValue("id"), accept, body.Comment)
+			respond(w, r, resp, err)
+		}
+	}
+	mux.HandleFunc("POST /api/proposals/{id}/accept", decide(true))
+	mux.HandleFunc("POST /api/proposals/{id}/reject", decide(false))
 	return mux
 }
 
@@ -101,6 +129,8 @@ func respond(w http.ResponseWriter, r *http.Request, body any, err error) {
 		writeJSON(w, http.StatusOK, body)
 	case errors.Is(err, dashboard.ErrNotFound):
 		writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
+	case errors.Is(err, dashboard.ErrConflict):
+		writeJSON(w, http.StatusConflict, map[string]string{"error": "already decided"})
 	case errors.Is(err, dashboard.ErrInvalid):
 		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
 	default:

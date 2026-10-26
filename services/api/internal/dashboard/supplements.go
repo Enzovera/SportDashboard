@@ -84,17 +84,17 @@ func BuildSupplements(data Data, sd SupplementData, today time.Time) Supplements
 	from := today.Add(-regularityDays * day)
 	resp := SupplementsResponse{
 		Date:       iso(today),
-		DayType:    inferDayType(data, today, today),
+		DayType:    dayTypeOf(data, today, today),
 		Checklist:  []SupplementItem{},
 		Regularity: RegularityRange{From: iso(from), To: iso(today.Add(-day)), Items: []SupplementRegularity{}},
 		Stock:      []SupplementStock{},
-		Proposal:   sd.Proposal,
+		Proposal:   reminderProposal(data),
 	}
 	logs := latestLogs(sd.Logs)
 	lasts := map[string]float64{} // supplement id -> days the stock lasts
 	dayTypes := map[time.Time]*string{}
 	for _, d := range metrics.Days(from, today.Add(-day)) {
-		dayTypes[d] = inferDayType(data, d, today)
+		dayTypes[d] = dayTypeOf(data, d, today)
 	}
 
 	for _, s := range sd.Supplements {

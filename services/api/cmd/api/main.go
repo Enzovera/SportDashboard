@@ -19,6 +19,7 @@ import (
 
 	"forma/api/internal/dashboard"
 	"forma/api/internal/httpapi"
+	"forma/api/internal/plan"
 	"forma/api/internal/projector"
 )
 
@@ -52,6 +53,9 @@ func run() error {
 		if err != nil {
 			return err
 		}
+		if err := plan.NewStore(pool).RebuildProjections(ctx); err != nil {
+			return err
+		}
 		slog.Info("projections rebuilt", "stats", stats)
 		return nil
 	case "serve":
@@ -78,7 +82,7 @@ func serve(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 	srv := &http.Server{
 		Addr:              ":" + port,
-		Handler:           httpapi.New(dashboard.NewService(dashboard.NewPgStore(pool))),
+		Handler:           httpapi.New(dashboard.NewService(dashboard.NewPgStore(pool), plan.NewStore(pool))),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {
@@ -104,6 +108,10 @@ func projectLoop(ctx context.Context, pool *pgxpool.Pool, interval time.Duration
 			slog.Error("projection failed", "err", err)
 		} else {
 			slog.Info("projections rebuilt", "stats", stats)
+		}
+		// plan_session / plan_target are rewritten on every plan event; this only repairs them (e.g. after a seed).
+		if err := plan.NewStore(pool).RebuildProjections(ctx); err != nil {
+			slog.Error("plan projection failed", "err", err)
 		}
 		select {
 		case <-ctx.Done():

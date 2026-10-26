@@ -95,6 +95,7 @@ func BuildNutrition(data Data, today, now time.Time) NutritionResponse {
 		TargetProposals: []TargetProposal{},
 		Meals:           []Meal{},
 	}
+	resp.Targets, resp.TargetProposals = planTargets(data, today)
 	if len(data.Nutrition) == 0 {
 		return resp // Fitatu not connected yet
 	}
@@ -126,8 +127,11 @@ func BuildNutrition(data Data, today, now time.Time) NutritionResponse {
 		if target == nil {
 			target = targetAt(date)
 		}
-		nd := NutritionDay{Date: iso(date), DayType: inferDayType(data, date, today), Complete: complete,
+		nd := NutritionDay{Date: iso(date), DayType: dayTypeOf(data, date, today), Complete: complete,
 			KcalTone: "neutral", ProteinTone: "neutral"}
+		if pt := planTargetAt(data, date, nd.DayType); pt != nil {
+			target = pt // the plan's target of the day type wins over the Fitatu goal
+		}
 		if target != nil {
 			nd.KcalTarget = ptr(target.Kcal)
 		}
@@ -187,12 +191,16 @@ func BuildNutrition(data Data, today, now time.Time) NutritionResponse {
 		}
 	}
 
-	if t := targetAt(today); t != nil {
+	dt := DayRest
+	if v := dayTypeOf(data, today, today); v != nil {
+		dt = *v
+	}
+	t := targetAt(today)
+	if pt := planTargetAt(data, today, &dt); pt != nil {
+		t = pt
+	}
+	if t != nil {
 		row := byDate[today]
-		dt := DayRest
-		if v := inferDayType(data, today, today); v != nil {
-			dt = *v
-		}
 		resp.Today = &NutritionTodayDetail{
 			DayType:  dt,
 			Kcal:     NutritionRow{Eaten: row.Kcal, Target: t.Kcal},

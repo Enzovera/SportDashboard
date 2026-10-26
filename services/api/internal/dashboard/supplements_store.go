@@ -8,10 +8,17 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgconn"
+
+	"forma/api/internal/plan"
 )
 
-// ErrNotFound: the referenced record does not exist (HTTP 404).
-var ErrNotFound = errors.New("not found")
+// Domain errors, shared with the plan store so the HTTP layer maps them once:
+// ErrNotFound (404), ErrConflict (409), ErrInvalid (422).
+var (
+	ErrNotFound = plan.ErrNotFound
+	ErrConflict = plan.ErrConflict
+	ErrInvalid  = plan.ErrInvalid
+)
 
 type SupplementRuleRow struct {
 	When     string
@@ -50,7 +57,6 @@ type SupplementData struct {
 	Supplements []SupplementRow // in display order
 	Logs        []SupplementLogRow
 	Stock       []StockRow
-	Proposal    *ReminderProposal // pending reminder time proposal (plan_event), stage 3+
 }
 
 func (s *PgStore) LoadSupplements(ctx context.Context, since time.Time) (SupplementData, error) {

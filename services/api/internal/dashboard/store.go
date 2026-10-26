@@ -7,6 +7,8 @@ import (
 
 	"github.com/jackc/pgx/v5"
 	"github.com/jackc/pgx/v5/pgxpool"
+
+	"forma/api/internal/plan"
 )
 
 // Rows read from projections. Everything the views need comes from here; no raw_payload access.
@@ -93,6 +95,14 @@ type Data struct {
 	Nutrition  []NutritionDayRow // days with a logged meal, oldest first
 	Meals      []MealRow         // in Fitatu slot order
 	Sync       []SyncRow
+	Plan       *plan.State // nil before the first PlanCreated
+}
+
+// PlanStore is the event-sourced plan (internal/plan.Store).
+type PlanStore interface {
+	Current(ctx context.Context) (*plan.State, error)
+	Blocked(ctx context.Context, since time.Time) ([]plan.BlockedProposal, error)
+	Decide(ctx context.Context, id string, accept bool, comment *string, now time.Time) (plan.Proposal, error)
 }
 
 type Store interface {
