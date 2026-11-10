@@ -3,18 +3,22 @@ import { todayFull, todayStage1 } from './mocks/today'
 import { trainingFull, trainingStage1 } from './mocks/training'
 
 /**
- * Data source, chosen by `?mock=` in the URL or VITE_API_MOCK:
- *   full   - every section filled (matches design/screens)
- *   stage1 - only what Garmin + Hevy can serve today
- *   off    - real API under /api
- * Defaults to `full` in dev until services/api exists.
+ * Data source, chosen by the `mock` cookie:
+ *   mock=1              - mocks with every section filled (matches design/screens)
+ *   mock=0 or no cookie - real API under /api
+ * `?mock=1` / `?mock=0` in the URL only sets the cookie (see applyMockParam).
  */
 export type MockMode = 'full' | 'stage1' | 'off'
 
 export function mockMode(): MockMode {
-  const fromUrl = new URLSearchParams(window.location.search).get('mock')
-  const mode = fromUrl ?? import.meta.env.VITE_API_MOCK ?? (import.meta.env.DEV ? 'full' : 'off')
-  return mode === 'stage1' || mode === 'off' ? mode : 'full'
+  return /(?:^|;\s*)mock=1(?:;|$)/.test(document.cookie) ? 'full' : 'off'
+}
+
+/** Stores `?mock=1|0` from the URL in the cookie; the router guard then drops it from the address. */
+export function applyMockParam(value: unknown): void {
+  if (value === '1' || value === '0') {
+    document.cookie = `mock=${value}; path=/; max-age=31536000; SameSite=Lax`
+  }
 }
 
 async function get<T>(path: string): Promise<T> {

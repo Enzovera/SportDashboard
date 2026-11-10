@@ -143,14 +143,14 @@ services:
       migrate:
         condition: service_completed_successfully
 
-  # Dashboard (Vue + Vite) on http://localhost:5173. One-off: `run --rm web npm run build`.
+  # Dashboard (Vue + Vite) on http://localhost:5173, also exposed on the LAN (api and chat go through its proxy). One-off: `run --rm web npm run build`.
   web:
     image: node:24-alpine
     working_dir: /src/web
     command: ["sh", "-c", "npm install --no-audit --no-fund && npm run dev"]
     restart: unless-stopped
     ports:
-      - "127.0.0.1:5173:5173"
+      - "5173:5173"
     environment:
       VITE_POLL: "1"
       VITE_API_PROXY: http://api:8080
@@ -160,13 +160,13 @@ services:
       - web_node_modules:/src/web/node_modules
       - npmcache:/root/.npm
 
-  # Static mockups from design/ on http://localhost:8082 (index.html, screens/*.html).
+  # Static mockups from design/ on http://localhost:8082 (index.html, screens/*.html), also on the LAN.
   design:
     image: python:3.13-slim
     command: ["python", "-m", "http.server", "8082", "--directory", "/design"]
     restart: unless-stopped
     ports:
-      - "127.0.0.1:8082:8082"
+      - "8082:8082"
     volumes:
       - ../../design:/design:ro
 

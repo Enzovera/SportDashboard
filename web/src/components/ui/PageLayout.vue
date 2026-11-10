@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { useLayout } from '@/composables/useLayout'
+import ThemeToggle from './ThemeToggle.vue'
 
 // Frame of every view.
 // fold/cover: fixed 56 px header with title and all actions, scrolling main; the bottom nav lives in App.vue.
@@ -17,7 +18,7 @@ const layout = useLayout()
         <h1>{{ title }}</h1>
         <span v-if="meta" class="header-meta">{{ meta }}</span>
       </div>
-      <div class="actions"><slot name="global" /><slot name="actions" /></div>
+      <div class="actions"><slot name="global" /><slot name="actions" /><ThemeToggle /></div>
     </header>
     <main class="main">
       <div v-if="layout === 'desktop'" class="d-content">

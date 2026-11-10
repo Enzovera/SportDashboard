@@ -1,4 +1,5 @@
 import { createRouter, createWebHistory } from 'vue-router'
+import { applyMockParam } from '@/api/client'
 
 export const router = createRouter({
   history: createWebHistory(),
@@ -16,4 +17,12 @@ export const router = createRouter({
     { path: '/czat', name: 'chat', component: () => import('@/views/chat/ChatView.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],
+})
+
+// ?mock=1|0 only sets the cookie and disappears from the address before the view loads data.
+router.beforeEach((to) => {
+  if (!('mock' in to.query)) return
+  applyMockParam(to.query.mock)
+  const { mock: _, ...query } = to.query
+  return { path: to.path, query, hash: to.hash, replace: true }
 })

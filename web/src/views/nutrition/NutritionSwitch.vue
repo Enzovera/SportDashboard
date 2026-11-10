@@ -1,6 +1,6 @@
 <script setup lang="ts">
 // Jedzenie | Suplementy: two routes of the Żywienie tab, rendered as a segmented link pair.
-// Keeps the query (e.g. ?mock=stage1) when switching.
+// Keeps the query (e.g. ?chat=mock) when switching.
 defineProps<{ supplementsLabel: string }>()
 </script>
 

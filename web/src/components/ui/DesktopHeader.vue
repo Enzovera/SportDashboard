@@ -3,6 +3,7 @@
 // fill through <Teleport to="#d-actions"> (sync status, Trener).
 import { useRoute } from 'vue-router'
 import { isTabActive } from '@/lib/nav'
+import ThemeToggle from './ThemeToggle.vue'
 
 defineProps<{ proposalsPending?: number | null }>()
 const route = useRoute()
@@ -33,7 +34,10 @@ const tabs = [
         <span v-if="tab.badge && proposalsPending" class="count">{{ proposalsPending }}</span>
       </RouterLink>
     </nav>
-    <div id="d-actions" class="actions" />
+    <div class="end">
+      <div id="d-actions" class="actions" />
+      <ThemeToggle />
+    </div>
   </header>
 </template>
 
@@ -48,5 +52,6 @@ const tabs = [
 
 .tab.current { font-weight: 800; color: var(--ink); box-shadow: inset 0 -3px 0 var(--ink); }
 .tab:focus-visible, .brand:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.actions { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
+.actions { display: flex; align-items: center; gap: 16px; }
 </style>

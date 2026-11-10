@@ -6,6 +6,13 @@
     <meta name="theme-color" content="#F4F3EE" media="(prefers-color-scheme: light)" />
     <meta name="theme-color" content="#0E0E0C" media="(prefers-color-scheme: dark)" />
     <title>Forma</title>
+    <!-- Theme before first paint (key and values as in src/lib/theme.ts). -->
+    <script>
+      try {
+        var t = localStorage.getItem('forma.theme')
+        if (t === 'light' || t === 'dark') document.documentElement.setAttribute('data-theme', t)
+      } catch (e) {}
+    </script>
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,100..900&display=swap" />
