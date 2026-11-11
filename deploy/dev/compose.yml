@@ -55,6 +55,7 @@ services:
     environment:
       DATABASE_URL: *database-url
       HEVY_API_KEY: ${HEVY_API_KEY:-}
+      FORMA_SECRETS_KEY: ${FORMA_SECRETS_KEY:-}
       GARMIN_EMAIL: ${GARMIN_EMAIL:-}
       GARMINTOKENS: /data/garmin
       FITATU_EMAIL: ${FITATU_EMAIL:-}
@@ -87,6 +88,7 @@ services:
       DATABASE_URL: *database-url
       CLAUDE_CODE_OAUTH_TOKEN: ${CLAUDE_CODE_OAUTH_TOKEN:-}
       ANTHROPIC_API_KEY: ${ANTHROPIC_API_KEY:-}
+      FORMA_SECRETS_KEY: ${FORMA_SECRETS_KEY:-}
       COACH_MODEL: ${COACH_MODEL:-claude-opus-5-5}
       COACH_EFFORT: ${COACH_EFFORT:-medium}
       FORMA_MCP_URL: ${FORMA_MCP_URL:-http://mcp:8091/mcp}
@@ -113,6 +115,8 @@ services:
     environment:
       DATABASE_URL: *database-url
       PROJECT_INTERVAL: 5m
+      # Stores credentials from Ustawienia (/api/settings/secrets); without it the view is read-only.
+      FORMA_SECRETS_KEY: ${FORMA_SECRETS_KEY:-}
       TZ: Europe/Warsaw
     volumes:
       - ../../services/api:/src/services/api
@@ -123,7 +127,8 @@ services:
         condition: service_completed_successfully
 
   # MCP server (Go, same module as api): the coach's only way to data, http://localhost:8091/mcp with
-  # `Authorization: Bearer $FORMA_MCP_TOKEN` (min. 32 chars). Reads projections kept fresh by `api`.
+  # `Authorization: Bearer <token>`: the token from Ustawienia (checked by its sha256, no FORMA_SECRETS_KEY here)
+  # or FORMA_MCP_TOKEN (min. 32 chars). Reads projections kept fresh by `api`.
   mcp:
     image: golang:1.25
     working_dir: /src/services/api

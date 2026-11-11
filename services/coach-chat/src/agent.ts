@@ -2,6 +2,7 @@ import { mkdirSync } from 'node:fs'
 import { query, type Options, type SDKMessage } from '@anthropic-ai/claude-agent-sdk'
 import type { Config } from './config.ts'
 import { COACH_SYSTEM_PROMPT } from './prompt.ts'
+import type { Credentials } from './secrets.ts'
 
 export interface TurnInput {
   prompt: string
@@ -14,9 +15,14 @@ export interface TurnInput {
 export type TurnRunner = (input: TurnInput) => AsyncIterable<SDKMessage>
 
 /** query() options from docs/design.md ("Czat z trenerem"): MCP-only, no built-in tools, no prompts. */
-export function buildOptions(config: Config, resume: string | null, abortController: AbortController): Options {
+export function buildOptions(
+  config: Config,
+  creds: Credentials,
+  resume: string | null,
+  abortController: AbortController,
+): Options {
   const headers: Record<string, string> = {}
-  if (config.mcp?.token) headers.authorization = `Bearer ${config.mcp.token}`
+  if (creds.mcpToken) headers.authorization = `Bearer ${creds.mcpToken}`
 
   return {
     model: config.model,
@@ -35,16 +41,20 @@ export function buildOptions(config: Config, resume: string | null, abortControl
     includePartialMessages: true,
     maxTurns: config.maxTurns,
     cwd: config.workdir,
+    // Replaces the inherited environment: Claude credentials from Ustawienia or env, no database or secrets key.
+    env: creds.env,
     ...(resume ? { resume } : {}),
     abortController,
   }
 }
 
-export function sdkRunner(config: Config): TurnRunner {
+/** `credentials` is resolved on every turn, so keys changed in Ustawienia apply to the next message. */
+export function sdkRunner(config: Config, credentials: () => Promise<Credentials>): TurnRunner {
   mkdirSync(config.workdir, { recursive: true })
-  return ({ prompt, resume, signal }) => {
+  return async function* ({ prompt, resume, signal }) {
+    const creds = await credentials()
     const abortController = new AbortController()
     signal.addEventListener('abort', () => abortController.abort(), { once: true })
-    return query({ prompt, options: buildOptions(config, resume, abortController) })
+    yield* query({ prompt, options: buildOptions(config, creds, resume, abortController) })
   }
 }

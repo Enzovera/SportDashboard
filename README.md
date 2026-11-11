@@ -7,7 +7,7 @@ Sportowy dashboard + AI trener. Projekt: [docs/design.md](docs/design.md), zasad
 Produkcja to Mikrus; lokalnie wszystko stoi w [deploy/dev/compose.yml](deploy/dev/compose.yml).
 
 ```bash
-cp .env.example .env          # uzupełnij HEVY_API_KEY, GARMIN_EMAIL
+cp .env.example .env          # uzupełnij FORMA_SECRETS_KEY (openssl rand -base64 32), GARMIN_EMAIL
 docker compose -f deploy/dev/compose.yml --env-file .env up -d
 ```
 
@@ -56,13 +56,21 @@ Każdy run zapisuje się w `ingest_run` (status `ok | partial | error`, liczba n
 
 - Dashboard: http://localhost:5173 (Vite, HMR). Dane: domyślnie prawdziwe z API w Go (dziś Dziś i Trening); ciasteczko `mock=1` przełącza na wartości z makiet. Ustawia je `?mock=1` w adresie (powrót: `?mock=0`), parametr znika z URL po załadowaniu.
 - API: `api` na :8080 (`/api/today`, `/api/training?range=4w|12w|block`, `/api/body`, `/api/nutrition`, `/api/supplements` + `POST …/{id}/log`, `/api/plan`, `/api/proposals` + `POST …/{id}/accept|reject`, `/health`), przebudowuje projekcje z `raw_payload` co 5 min. Dane do dev bez trenera i bez ekranu konfiguracji: `docker exec -i forma-dev-postgres-1 sh -c 'psql -U "$POSTGRES_USER" -d "$POSTGRES_DB"' < deploy/dev/seed/supplements.sql` (i tak samo `plan.sql`: plan do maratonu, propozycje z makiet). Ręcznie: `docker compose -f deploy/dev/compose.yml --env-file .env exec api go run ./cmd/api project`. Testy: `docker compose -f deploy/dev/compose.yml --profile tools run --rm -w /src/services/api go go test ./...` (w Git Bash poprzedź `MSYS_NO_PATHCONV=1`).
-- Czat z trenerem: `coach-chat` na :8090, z dashboardu pod `/api/chat`. Wymaga `CLAUDE_CODE_OAUTH_TOKEN` (z `claude setup-token`) albo `ANTHROPIC_API_KEY` w `.env`. Dane dostaje z serwera MCP (`FORMA_MCP_URL`, domyślnie `http://mcp:8091/mcp`).
-- Serwer MCP: `mcp` na :8091 (`/mcp`, streamable HTTP, `/health`). Wymaga `FORMA_MCP_TOKEN` w `.env` (min. 32 znaki, np. `openssl rand -hex 32`); ten sam token dostaje `coach-chat`. Po zmianach w Go: `docker compose -f deploy/dev/compose.yml restart mcp`.
+- Czat z trenerem: `coach-chat` na :8090, z dashboardu pod `/api/chat`. Wymaga `CLAUDE_CODE_OAUTH_TOKEN` (z `claude setup-token`) albo `ANTHROPIC_API_KEY`, w Ustawieniach albo w `.env`. Dane dostaje z serwera MCP (`FORMA_MCP_URL`, domyślnie `http://mcp:8091/mcp`).
+- Serwer MCP: `mcp` na :8091 (`/mcp`, streamable HTTP, `/health`). Wymaga tokenu: „Wygeneruj” w Ustawieniach albo `FORMA_MCP_TOKEN` w `.env` (min. 32 znaki, np. `openssl rand -hex 32`); bez tokenu odpowiada 503. Ten sam token dostaje `coach-chat`. Po zmianach w Go: `docker compose -f deploy/dev/compose.yml restart mcp`.
 
 ```bash
 docker compose -f deploy/dev/compose.yml --env-file .env run --rm --no-deps web npm test
 docker compose -f deploy/dev/compose.yml --env-file .env run --rm --no-deps coach-chat npm test
 ```
+
+### Ustawienia (klucze z poziomu aplikacji)
+
+http://localhost:5173/ustawienia (na desktopie link w nagłówku, na Foldzie na dole Dziś): klucz Hevy, token subskrypcji Claude, klucz API Claude i token MCP („Wygeneruj” pokazuje nowy token raz). Wartość zapisana w aplikacji wygrywa ze zmienną z `.env`; „Usuń” wraca do zmiennej. Zmiana działa bez restartu: ingest czyta klucz przy każdym runie, czat przy każdej wiadomości, MCP odświeża token co minutę.
+
+Wartości leżą w tabeli `app_secret` zaszyfrowane AES-256-GCM kluczem `FORMA_SECRETS_KEY` (dostają go `api`, `ingest`/`scheduler` i `coach-chat`, nie `mcp`). Bez tego klucza widok jest tylko do odczytu. Zgubiony klucz = sekrety z aplikacji do wpisania od nowa. Garmin i Fitatu nadal logują się przez `ingest garmin-login` / `fitatu-login`.
+
+Po aktualizacji przebuduj obraz ingestu (nowa zależność `cryptography`): `docker compose -f deploy/dev/compose.yml build ingest scheduler`.
 
 ### Toolchainy
 

@@ -9,7 +9,7 @@ from datetime import datetime, timezone
 
 import psycopg
 
-from . import TZ, fitatu, garmin, hevy, hevy_garmin, scheduler
+from . import TZ, fitatu, garmin, hevy, hevy_garmin, scheduler, secrets
 from .store import PgStore
 
 log = logging.getLogger("ingest")
@@ -19,6 +19,15 @@ def env(name: str) -> str:
     value = os.environ.get(name)
     if not value:
         sys.exit(f"missing environment variable {name}")
+    return value
+
+
+def secret(name: str) -> str:
+    """Credential set in the dashboard (app_secret) or, failing that, the environment variable."""
+    with psycopg.connect(env("DATABASE_URL")) as conn:
+        value = secrets.resolve(conn, name)
+    if not value:
+        sys.exit(f"missing {name}: set it in Ustawienia or as an environment variable")
     return value
 
 
@@ -61,7 +70,7 @@ def main() -> int:
     now = datetime.now(timezone.utc)
     match args.cmd:
         case "hevy":
-            client = hevy.HevyClient(env("HEVY_API_KEY"))
+            client = hevy.HevyClient(secret("HEVY_API_KEY"))
             return run("hevy", {"full": args.full}, lambda store: hevy.sync(client, store, now, args.full))
         case "garmin":
             tokenstore = env("GARMINTOKENS")

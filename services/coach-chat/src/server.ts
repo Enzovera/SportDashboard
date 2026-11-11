@@ -19,7 +19,8 @@ const HEARTBEAT_MS = 15_000
 export interface ServerDeps {
   store: ChatStore
   runner: TurnRunner
-  ready: { auth: boolean; mcp: boolean }
+  /** Checked on every turn and health call: credentials can change in Ustawienia at any time. */
+  ready: () => Promise<{ auth: boolean; mcp: boolean }>
 }
 
 class HttpError extends Error {
@@ -73,7 +74,7 @@ export function createChatServer(deps: ServerDeps): Server {
   const busy = new Set<string>()
 
   async function streamTurn(req: IncomingMessage, res: ServerResponse, sessionId: string) {
-    if (!deps.ready.auth) throw new HttpError(503, 'Claude credentials are not configured')
+    if (!(await deps.ready()).auth) throw new HttpError(503, 'Claude credentials are not configured')
     const input = parseTurnBody(await readJson(req))
     if (!(await deps.store.getSession(sessionId))) throw new HttpError(404, 'session not found')
     if (busy.has(sessionId)) throw new HttpError(409, 'previous message is still being answered')
@@ -104,7 +105,7 @@ export function createChatServer(deps: ServerDeps): Server {
     const parts = url.pathname.split('/').filter(Boolean)
 
     if (req.method === 'GET' && url.pathname === '/health') {
-      return json(res, 200, { ok: true, ...deps.ready })
+      return json(res, 200, { ok: true, ...(await deps.ready()) })
     }
     if (parts[0] !== 'api' || parts[1] !== 'chat' || parts[2] !== 'sessions') throw new HttpError(404, 'not found')
 

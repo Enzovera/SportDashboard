@@ -9,12 +9,15 @@ import (
 	"errors"
 	"log/slog"
 	"net/http"
+	"strings"
+	"sync"
 	"time"
 
 	"github.com/google/jsonschema-go/jsonschema"
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"forma/api/internal/dashboard"
+	"forma/api/internal/secrets"
 )
 
 // Version is reported to MCP clients.
@@ -92,14 +95,68 @@ func schemaFor[T any](enums map[string][]any) *jsonschema.Schema {
 	return s
 }
 
+// TokenDigest returns the sha256 of the bearer token clients must send, or nil when none is configured.
+type TokenDigest func(ctx context.Context) ([]byte, error)
+
+// StaticToken is a TokenDigest for a fixed token (tests, env-only setups).
+func StaticToken(token string) TokenDigest {
+	d := secrets.Digest(token)
+	return func(context.Context) ([]byte, error) { return d, nil }
+}
+
+// CachedToken prefers the token stored from the dashboard (load: digest from app_secret, nil = none) and falls
+// back to the env token. A loaded digest is kept for ttl, so a new token works within a minute without a restart;
+// when the database is unreachable the last known digest is used.
+func CachedToken(load TokenDigest, envToken string, ttl time.Duration, now func() time.Time) TokenDigest {
+	var fallback []byte
+	if envToken != "" {
+		fallback = secrets.Digest(envToken)
+	}
+	var (
+		mu      sync.Mutex
+		cached  []byte
+		fetched time.Time
+	)
+	return func(ctx context.Context) ([]byte, error) {
+		mu.Lock()
+		defer mu.Unlock()
+		if fetched.IsZero() || now().Sub(fetched) >= ttl {
+			d, err := load(ctx)
+			if err != nil && fetched.IsZero() {
+				return nil, err
+			}
+			if err != nil {
+				slog.Error("mcp token reload failed, keeping the previous one", "err", err)
+			} else {
+				cached, fetched = d, now()
+			}
+		}
+		if cached != nil {
+			return cached, nil
+		}
+		return fallback, nil
+	}
+}
+
 // Handler serves MCP over streamable HTTP. Stateless: every request is self-contained, so restarts and
-// several clients (cron run and chat at once) need no session bookkeeping. Requests need `Bearer <token>`.
-func Handler(s *mcp.Server, token string) http.Handler {
+// several clients (cron run and chat at once) need no session bookkeeping. Requests need `Bearer <token>`;
+// without a configured token every request gets 503.
+func Handler(s *mcp.Server, token TokenDigest) http.Handler {
 	h := mcp.NewStreamableHTTPHandler(func(*http.Request) *mcp.Server { return s },
 		&mcp.StreamableHTTPOptions{Stateless: true, JSONResponse: true})
-	want := []byte("Bearer " + token)
 	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
-		if subtle.ConstantTimeCompare([]byte(r.Header.Get("Authorization")), want) != 1 {
+		want, err := token(r.Context())
+		if err != nil {
+			slog.Error("mcp token lookup failed", "err", err)
+			http.Error(w, "unavailable", http.StatusServiceUnavailable)
+			return
+		}
+		if want == nil {
+			http.Error(w, "FORMA_MCP_TOKEN is not configured", http.StatusServiceUnavailable)
+			return
+		}
+		bearer, ok := strings.CutPrefix(r.Header.Get("Authorization"), "Bearer ")
+		if !ok || subtle.ConstantTimeCompare(secrets.Digest(bearer), want) != 1 {
 			http.Error(w, "unauthorized", http.StatusUnauthorized)
 			return
 		}

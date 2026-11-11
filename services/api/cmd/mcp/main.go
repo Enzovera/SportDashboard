@@ -1,5 +1,7 @@
 // Command mcp serves the forma MCP server over streamable HTTP on :8091 (PORT) at /mcp.
-// Needs DATABASE_URL and FORMA_MCP_TOKEN (clients send `Authorization: Bearer <token>`).
+// Needs DATABASE_URL. Clients send `Authorization: Bearer <token>`: the token set in the dashboard (checked
+// against its sha256 in app_secret, re-read every minute) or else FORMA_MCP_TOKEN from the env. Without either,
+// requests get 503 until a token is set. The server never gets FORMA_SECRETS_KEY.
 // It reads projections maintained by `api serve`; it never rebuilds them itself.
 package main
 
@@ -17,6 +19,7 @@ import (
 	"github.com/jackc/pgx/v5/pgxpool"
 
 	"forma/api/internal/mcpserver"
+	"forma/api/internal/secrets"
 )
 
 func main() {
@@ -31,11 +34,11 @@ func run() error {
 	defer stop()
 
 	dsn, token := os.Getenv("DATABASE_URL"), os.Getenv("FORMA_MCP_TOKEN")
-	if dsn == "" || token == "" {
-		return errors.New("missing environment variable DATABASE_URL or FORMA_MCP_TOKEN")
+	if dsn == "" {
+		return errors.New("missing environment variable DATABASE_URL")
 	}
-	if len(token) < 32 {
-		return errors.New("FORMA_MCP_TOKEN must have at least 32 characters")
+	if token != "" && len(token) < secrets.MinMCPToken {
+		return fmt.Errorf("FORMA_MCP_TOKEN must have at least %d characters", secrets.MinMCPToken)
 	}
 	pool, err := pgxpool.New(ctx, dsn)
 	if err != nil {
@@ -45,7 +48,9 @@ func run() error {
 
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) { _, _ = w.Write([]byte("ok")) })
-	mux.Handle("/mcp", mcpserver.Handler(mcpserver.New(mcpserver.NewPgStore(pool), time.Now), token))
+	stored := func(ctx context.Context) ([]byte, error) { return secrets.LoadDigest(ctx, pool, secrets.MCPToken) }
+	auth := mcpserver.CachedToken(stored, token, time.Minute, time.Now)
+	mux.Handle("/mcp", mcpserver.Handler(mcpserver.New(mcpserver.NewPgStore(pool), time.Now), auth))
 
 	port := os.Getenv("PORT")
 	if port == "" {

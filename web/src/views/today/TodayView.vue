@@ -49,6 +49,8 @@ const cells = computed(() => (data.value && layout.value === 'desktop' ? desktop
       <div v-else class="page" :class="{ cover }">
         <div v-for="(col, i) in columns" :key="i" class="col">
           <TodaySection v-for="key in col" :key="key" :name="key" :data="data" :layout="layout" />
+          <!-- Fold/cover have no header link: Ustawienia close the last column of Dziś. -->
+          <RouterLink v-if="i === columns.length - 1" to="/ustawienia" class="link-row">Ustawienia</RouterLink>
         </div>
       </div>
     </template>

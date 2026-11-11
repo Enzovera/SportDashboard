@@ -234,7 +234,7 @@ Serwer MCP jest jedyną drogą AI do danych: czyta projekcje i zapisuje tylko no
 
 Ten sam serwer obsługuje runy z crona i czat ad hoc w aplikacji Claude; w czacie warto wyłączyć `save_coach_note`, żeby luźne pytania nie zaśmiecały dziennika.
 
-Implementacja: `services/api/cmd/mcp` + `internal/mcpserver`, w tym samym module Go co API, bo korzysta z `internal/metrics` i loadera projekcji (`dashboard.PgStore`), a pakietów `internal` nie da się importować z innego modułu. Osobna binarka i kontener. Oficjalny `modelcontextprotocol/go-sdk`, streamable HTTP w trybie stateless pod `/mcp`, `Authorization: Bearer $FORMA_MCP_TOKEN`. Serwer tylko czyta projekcje (przebudowuje je `api serve`).
+Implementacja: `services/api/cmd/mcp` + `internal/mcpserver`, w tym samym module Go co API, bo korzysta z `internal/metrics` i loadera projekcji (`dashboard.PgStore`), a pakietów `internal` nie da się importować z innego modułu. Osobna binarka i kontener. Oficjalny `modelcontextprotocol/go-sdk`, streamable HTTP w trybie stateless pod `/mcp`, `Authorization: Bearer <token>` (token z Ustawień albo `FORMA_MCP_TOKEN`, sekcja „Bezpieczeństwo”). Serwer tylko czyta projekcje (przebudowuje je `api serve`).
 
 - Rejestrowane są tylko narzędzia, które mają dane: `get_day_summary`, `get_activities`, `get_strength_volume` (`group_by`: `week | muscle | session`), `get_trends`, `get_coach_log`, `save_coach_note`. Pozostałe dochodzą razem z projekcjami (żywienie, suplementy, plan, profil, `propose_plan_change`).
 - `get_trends`, metryki dzienne: `training_load`, `atl`, `ctl`, `tsb`, `hrv`, `hrv_7d`, `resting_hr`, `sleep_h`, `weight`, `weight_7d`. Tygodniowe (całe tygodnie ISO): `run_km_week`, `long_run_km_week`, `strength_sets_week`, każdy punkt z `change_pct` (zmiana tydzień do tygodnia w %, `null` gdy poprzedni tydzień miał 0), żeby model nie liczył procentów sam. Okna takie same jak w widoku Dziś; `null` oznacza brak danych.
@@ -266,7 +266,7 @@ Czat w dashboardzie działa przez Claude Agent SDK zalogowany twoją subskrypcj�
 
 Implementacja: `services/coach-chat` (Node 24, TypeScript uruchamiany bez kompilacji, `@anthropic-ai/claude-agent-sdk` przypięty do wersji). Endpointy pod `/api/chat/sessions` (tworzenie sesji, historia, wiadomość jako strumień SSE ze zdarzeniami `delta`, `tool`, `done`, `error`); jedna wiadomość naraz na rozmowę. Historia do UI leży w `chat_session` / `chat_message`, transkrypt modelu w `CLAUDE_CONFIG_DIR` (wolumen), z którego korzysta `resume`. `total_cost_usd` z SDK jest skumulowany dla sesji, więc koszt trzymamy przy `chat_session`. Na dev Vite proxuje `/api/chat` wprost do `coach-chat`; docelowo robi to API w Go.
 
-Logowanie: `claude setup-token` generuje roczny token OAuth subskrypcji (Pro lub Max), trzymany jako sekret `CLAUDE_CODE_OAUTH_TOKEN` w kontenerze `coach-chat`. Ustawiony `ANTHROPIC_API_KEY` ma pierwszeństwo przed tokenem, więc przejście na API to jedna zmienna. Czat jest tylko do twojego użytku; subskrypcja nie może obsługiwać innych osób.
+Logowanie: `claude setup-token` generuje roczny token OAuth subskrypcji (Pro lub Max), trzymany jako `CLAUDE_CODE_OAUTH_TOKEN` w Ustawieniach (zaszyfrowany w bazie) albo w zmiennej kontenera `coach-chat`. Ustawiony `ANTHROPIC_API_KEY` ma pierwszeństwo przed tokenem, więc przejście na API to jedna zmienna. Czat jest tylko do twojego użytku; subskrypcja nie może obsługiwać innych osób.
 
 Źródła: [Agent SDK — MCP](https://code.claude.com/docs/en/agent-sdk/mcp), [Agent SDK — TypeScript](https://code.claude.com/docs/en/agent-sdk/typescript), [Uwierzytelnianie](https://code.claude.com/docs/en/authentication.md).
 
@@ -326,7 +326,11 @@ W kodzie (`internal/plan/validate.go`) każda reguła ma klucz (`km_increase`, `
 
 Bezpieczeństwo:
 
-- Token Garmina i sesja Fitatu dają trwały dostęp do kont — plik z prawami 0600 albo menedżer sekretów; klucz Hevy w zmiennej środowiskowej.
+- Token Garmina i sesja Fitatu dają trwały dostęp do kont — plik z prawami 0600 albo menedżer sekretów.
+- Klucz Hevy, tokeny Claude (`CLAUDE_CODE_OAUTH_TOKEN`, `ANTHROPIC_API_KEY`) i token MCP ustawia się w widoku Ustawienia albo w zmiennych środowiskowych; wartość z aplikacji wygrywa, „Usuń” wraca do zmiennej. Tabela `app_secret` trzyma je zaszyfrowane AES-256-GCM (nonce 12 B, tag dopięty do szyfrogramu, nazwa sekretu jako AAD, więc wiersza nie da się podmienić pod inną nazwę) kluczem `FORMA_SECRETS_KEY` z env; nocny `pg_dump` wynosi poza serwer tylko szyfrogramy. Kod: `services/api/internal/secrets` (zapis), `services/ingest/ingest/secrets.py`, `services/coach-chat/src/secrets.ts` (odczyt, wspólny wektor testowy).
+- API sekretów (`/api/settings/secrets`) tylko zapisuje i pokazuje status (ustawiony, 4 ostatnie znaki, data); wartości nie zwraca nigdy, poza świeżo wygenerowanym tokenem MCP, jednorazowo. Lista nazw jest zamknięta (CHECK w tabeli). Bez `FORMA_SECRETS_KEY` w API widok jest tylko do odczytu.
+- Klucz dostają `api`, `ingest` i `coach-chat`. Serwer MCP go nie dostaje: token sprawdza po sha256 (`app_secret.digest`), odświeżanym co minutę. `coach-chat` przekazuje procesowi Claude Code środowisko bez `FORMA_SECRETS_KEY`, `DATABASE_URL` i tokenu MCP. Para poświadczeń Claude pochodzi z jednego miejsca: gdy którekolwiek jest w aplikacji, zmienne środowiskowe Claude są pomijane.
+- Klucze czytane są przy każdym użyciu (run ingestu, wiadomość w czacie), więc zmiana nie wymaga restartu. Zgubiony `FORMA_SECRETS_KEY` oznacza ponowne wpisanie sekretów z aplikacji; dane treningowe nie ucierpią.
 - Workery ingest mają poświadczenia do źródeł, serwer MCP ich nie ma i nie może pisać do Garmina, Hevy ani Fitatu.
 - Serwer MCP wystawiony do aplikacji Claude stoi za HTTPS i uwierzytelnieniem, nigdy otwarty.
 - Akceptacja zmian planu tylko przez człowieka w dashboardzie.

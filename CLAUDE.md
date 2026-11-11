@@ -35,7 +35,7 @@ Runy AI: dzienny 6:30 i tygodniowy niedziela 20:00 przez `claude -p` z podpięty
 - Metryki (ATL/CTL/TSB, kilometraż, objętość siłowa, gotowość, bilans żywienia, średnia wagi 7 dni) liczy kod. Model dostaje gotowe agregaty i nigdy sam nie liczy.
 - AI nie pisze do Garmina, Hevy ani Fitatu. Serwer MCP czyta projekcje i zapisuje tylko notatki trenera i propozycje.
 - Suplementy: trener może tylko proponować pory przypomnień; nie dodaje suplementów i nie zmienia dawek. Białko serwatkowe liczy się wyłącznie w Fitatu (bez podwójnego liczenia).
-- Sekrety (token Garmina, sesja Fitatu, klucz Hevy, tokeny Claude) tylko w zmiennych środowiskowych / menedżerze sekretów, nigdy w repo.
+- Sekrety (token Garmina, sesja Fitatu, klucz Hevy, tokeny Claude) nigdy w repo. Klucz Hevy, tokeny Claude i token MCP można ustawić w dashboardzie (Ustawienia): w bazie tylko zaszyfrowane AES-256-GCM (`app_secret`), klucz `FORMA_SECRETS_KEY` wyłącznie w zmiennej środowiskowej; API nigdy nie zwraca wartości. Wartość z aplikacji wygrywa ze zmienną. Serwer MCP nie dostaje `FORMA_SECRETS_KEY`. Tokeny Garmina i sesja Fitatu zostają w wolumenach.
 
 ## Konwencje
 

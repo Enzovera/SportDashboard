@@ -1,8 +1,10 @@
 package mcpserver
 
 import (
+	"bytes"
 	"context"
 	"encoding/json"
+	"errors"
 	"net/http"
 	"net/http/httptest"
 	"sort"
@@ -13,6 +15,7 @@ import (
 	"github.com/modelcontextprotocol/go-sdk/mcp"
 
 	"forma/api/internal/dashboard"
+	"forma/api/internal/secrets"
 )
 
 type fakeStore struct {
@@ -136,7 +139,7 @@ func TestCoachNotes(t *testing.T) {
 
 func TestHandlerAuth(t *testing.T) {
 	token := strings.Repeat("x", 32)
-	srv := httptest.NewServer(Handler(New(&fakeStore{}, time.Now), token))
+	srv := httptest.NewServer(Handler(New(&fakeStore{}, time.Now), StaticToken(token)))
 	defer srv.Close()
 
 	body := `{"jsonrpc":"2.0","id":1,"method":"tools/list"}`
@@ -162,5 +165,50 @@ func TestHandlerAuth(t *testing.T) {
 		if res.StatusCode != c.want {
 			t.Errorf("auth %q: status %d, want %d", c.auth, res.StatusCode, c.want)
 		}
+	}
+}
+
+func TestCachedToken(t *testing.T) {
+	envTok, appTok := strings.Repeat("e", 32), strings.Repeat("a", 32)
+	now := time.Date(2026, 11, 11, 10, 0, 0, 0, time.UTC)
+	var stored []byte
+	var loadErr error
+	loads := 0
+	load := func(context.Context) ([]byte, error) { loads++; return stored, loadErr }
+	tok := CachedToken(load, envTok, time.Minute, func() time.Time { return now })
+
+	steps := []struct {
+		name    string
+		advance time.Duration
+		stored  []byte
+		loadErr error
+		want    []byte
+		loads   int
+	}{
+		{"env fallback", 0, nil, nil, secrets.Digest(envTok), 1},
+		{"cached within ttl", 30 * time.Second, secrets.Digest(appTok), nil, secrets.Digest(envTok), 1},
+		{"app token after ttl", 31 * time.Second, secrets.Digest(appTok), nil, secrets.Digest(appTok), 2},
+		{"db down keeps last", 2 * time.Minute, nil, errors.New("down"), secrets.Digest(appTok), 3},
+		{"deleted in app", 0, nil, nil, secrets.Digest(envTok), 4},
+	}
+	for _, s := range steps {
+		now = now.Add(s.advance)
+		stored, loadErr = s.stored, s.loadErr
+		got, err := tok(context.Background())
+		if err != nil || !bytes.Equal(got, s.want) || loads != s.loads {
+			t.Fatalf("%s: got %x, %v, loads %d", s.name, got, err, loads)
+		}
+	}
+
+	none := CachedToken(func(context.Context) ([]byte, error) { return nil, nil }, "", time.Minute, time.Now)
+	srv := httptest.NewServer(Handler(New(&fakeStore{}, time.Now), none))
+	defer srv.Close()
+	res, err := http.Post(srv.URL, "application/json", strings.NewReader("{}"))
+	if err != nil {
+		t.Fatal(err)
+	}
+	res.Body.Close()
+	if res.StatusCode != http.StatusServiceUnavailable {
+		t.Fatalf("no token: status %d", res.StatusCode)
 	}
 }

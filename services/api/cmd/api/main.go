@@ -1,6 +1,7 @@
 // Command api serves the dashboard API and maintains projections built from raw_payload.
 //
-//	api serve    HTTP on :8080 (PORT), re-projects every PROJECT_INTERVAL (default 5m)
+//	api serve    HTTP on :8080 (PORT), re-projects every PROJECT_INTERVAL (default 5m);
+//	             FORMA_SECRETS_KEY (optional) lets the dashboard store credentials (internal/secrets)
 //	api project  rebuild all projections once and exit
 package main
 
@@ -21,6 +22,7 @@ import (
 	"forma/api/internal/httpapi"
 	"forma/api/internal/plan"
 	"forma/api/internal/projector"
+	"forma/api/internal/secrets"
 	"forma/api/internal/syncreq"
 )
 
@@ -75,6 +77,16 @@ func serve(ctx context.Context, pool *pgxpool.Pool) error {
 		}
 		interval = d
 	}
+	var cipher *secrets.Cipher
+	if v := os.Getenv("FORMA_SECRETS_KEY"); v != "" {
+		c, err := secrets.ParseKey(v)
+		if err != nil {
+			return err
+		}
+		cipher = c
+	} else {
+		slog.Warn("FORMA_SECRETS_KEY not set: credentials cannot be stored from the dashboard")
+	}
 	syncs := syncreq.NewStore(pool)
 	go projectLoop(ctx, pool, syncs, interval)
 
@@ -84,7 +96,7 @@ func serve(ctx context.Context, pool *pgxpool.Pool) error {
 	}
 	srv := &http.Server{
 		Addr:              ":" + port,
-		Handler:           httpapi.New(dashboard.NewService(dashboard.NewPgStore(pool), plan.NewStore(pool)), syncs),
+		Handler:           httpapi.New(dashboard.NewService(dashboard.NewPgStore(pool), plan.NewStore(pool)), syncs, secrets.NewStore(pool, cipher)),
 		ReadHeaderTimeout: 5 * time.Second,
 	}
 	go func() {

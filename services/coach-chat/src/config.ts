@@ -1,3 +1,4 @@
+import { parseKey } from './secrets.ts'
 import type { EffortLevel } from '@anthropic-ai/claude-agent-sdk'
 
 export interface Config {
@@ -6,12 +7,12 @@ export interface Config {
   model: string
   effort: EffortLevel
   maxTurns: number
-  /** Forma MCP server (services/mcp). Without it the coach has no data tools and must say so. */
-  mcp: { url: string; token: string | null } | null
+  /** Forma MCP server (services/mcp). Without it the coach has no data tools and must say so. Token: secrets.ts. */
+  mcp: { url: string } | null
   /** Empty working directory for the Claude Code process; the chat never touches files. */
   workdir: string
-  /** CLAUDE_CODE_OAUTH_TOKEN (subscription) or ANTHROPIC_API_KEY (API key wins when both are set). */
-  authConfigured: boolean
+  /** FORMA_SECRETS_KEY: decrypts credentials set in the dashboard (secrets.ts); null = env only. */
+  secretsKey: Buffer | null
 }
 
 const EFFORTS = ['low', 'medium', 'high', 'xhigh', 'max'] as const
@@ -31,8 +32,8 @@ export function loadConfig(env: NodeJS.ProcessEnv = process.env): Config {
     model: env.COACH_MODEL ?? 'claude-opus-5-5',
     effort: effort as EffortLevel,
     maxTurns: Number(env.COACH_MAX_TURNS ?? 8),
-    mcp: env.FORMA_MCP_URL ? { url: env.FORMA_MCP_URL, token: env.FORMA_MCP_TOKEN || null } : null,
+    mcp: env.FORMA_MCP_URL ? { url: env.FORMA_MCP_URL } : null,
     workdir: env.COACH_WORKDIR ?? '/tmp/coach',
-    authConfigured: Boolean(env.CLAUDE_CODE_OAUTH_TOKEN || env.ANTHROPIC_API_KEY),
+    secretsKey: parseKey(env.FORMA_SECRETS_KEY),
   }
 }
