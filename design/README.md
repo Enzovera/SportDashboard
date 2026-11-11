@@ -17,6 +17,7 @@ Makiety w `screens/` to statyczny eksport z makiet interaktywnych (https://claud
 | `CoverDzis` | Dziś na ekranie zewnętrznym, z checklistą suplementów | 369 × 1400 |
 | `CoverPropozycje` | Propozycje na ekranie zewnętrznym | 369 × 1650 |
 | `CoverCzat` | Czat z trenerem na ekranie zewnętrznym | 369 × 905 |
+| `CoverWiecej` | Dziś z otwartym arkuszem „Więcej” (Propozycje, Ciało, motyw) | 369 × 800 |
 
 Wysokość powyżej 823 (lub 905 na zewnętrznym) oznacza przewijanie.
 
@@ -28,10 +29,10 @@ Wysokość powyżej 823 (lub 905 na zewnętrznym) oznacza przewijanie.
 - **Kolor:** interfejs czarno-biały. `signal` (czerwień) wyłącznie dla „dziś / teraz / wymaga decyzji”: dzisiejszy dystans, dzisiejsza kolumna, licznik propozycji, wiersze do decyzji. Ostrzeżenia i błędy na `warn` (bursztyn), stan w normie na `good`. Akcja główna: tło `ink`, tekst `surface`.
 - **Dane:** tabele zamiast pasków postępu, gdy liczba wystarcza. Wykresy: seria główna `ink`, wtórna `chartMid`, tło/odciążenie `chartSoft`, punkty kwadratowe, „dziś” na czerwono.
 - **Tekst:** bez mikrotekstów tłumaczących działanie aplikacji („trener zmienia tylko…”, „Agent SDK…”). Zamiast objaśnień — przyciski akcji. Proza trenera (LLM) jest w porządku.
-- **Nawigacja:** ikona nad etykietą; aktywna zakładka pogrubiona z kreską 3 px u góry, licznik propozycji na ikonie. Te same sześć zakładek na obu ekranach: na Fold6 dwie grupy 3 | 3, na zewnętrznym jeden rząd.
-- **Ikony:** liniowe na siatce 24 px, kreska 1,75 px, kwadratowe zakończenia i ostre narożniki (`web/src/components/ui/Icon.vue`). Akcje nagłówka na Fold6 i ekranie zewnętrznym to same ikony 44 × 44 px (Odśwież, Trener, motyw) z nazwą w `aria-label`; na desktopie ikona z etykietą. Strzałki w wierszach-linkach też są ikonami.
-- **Nagłówek na ekranie zewnętrznym:** tytuł nad linią meta (tam też status syncu), ikony po prawej. Przełączniki widoku (zakres w Treningu, Jedzenie | Suplementy) schodzą do paska zakładek pod nagłówkiem: równe kolumny, aktywna z kreską 3 px u dołu.
-- **Fold6:** ekran wewnętrzny 707 × 823, dwie kolumny (margines 16, odstęp 24 — zgięcie wypada w odstępie), pasek górny 56 px, nawigacja 58 px (plus `safe-area-inset`). Ekran zewnętrzny 369 px, jedna kolumna, margines 12.
+- **Nawigacja:** ikona nad etykietą; aktywna zakładka pogrubiona z kreską 3 px u góry, licznik propozycji na ikonie. Na Fold6 wszystkie zakładki w dwóch grupach 3 | 3. Na ekranie zewnętrznym cztery codzienne widoki (Dziś, Trening, Żywienie, Plan) i „Więcej”: arkusz nad nawigacją z pozostałymi widokami (najpierw to, co wymaga decyzji) i przełącznikiem motywu; licznik propozycji siedzi wtedy na „Więcej”. Nowy widok to wpis w `web/src/lib/nav.ts` (`primary: false` → arkusz), nigdy szósta zakładka na telefonie.
+- **Ikony:** liniowe na siatce 24 px, kreska 1,75 px, kwadratowe zakończenia i ostre narożniki (`web/src/components/ui/Icon.vue`). Akcje nagłówka na Fold6 i ekranie zewnętrznym to same ikony 44 × 44 px (Odśwież, Trener; motyw na Fold6, na zewnętrznym w „Więcej”) z nazwą w `aria-label`; na desktopie ikona z etykietą, poniżej 1200 px sama ikona. Strzałki w wierszach-linkach też są ikonami.
+- **Nagłówek na ekranie zewnętrznym:** tytuł nad linią meta (status syncu za nią), ikony po prawej. Przełączniki widoku (zakres w Treningu, Jedzenie | Suplementy) schodzą do paska zakładek pod nagłówkiem: równe kolumny, aktywna z kreską 3 px u dołu.
+- **Fold6:** ekran wewnętrzny 707 × 823, dwie kolumny (margines 16, odstęp 24 — zgięcie wypada w odstępie), pasek górny 56 px, nawigacja 58 px + ramka (plus `safe-area-inset`). Ekran zewnętrzny 369 px, jedna kolumna, margines 12.
 - **Dostępność:** cele dotykowe ≥ 44 px, kontrast tekstu ≥ 4.5:1 w obu motywach, statusy zawsze także słowem (nie tylko kolorem).
 
 Tokeny: `tokens.css` (zmienne CSS, motyw przez `prefers-color-scheme` lub `data-theme`) i `tokens.json` (te same wartości z opisem użycia).

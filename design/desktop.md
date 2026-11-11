@@ -33,7 +33,9 @@ Desktop czyta się z większej odległości niż telefon w dłoni, więc wszystk
 - Jeden dominujący blok (`hero`) na ekran, jak na Fold6.
 - Szerokość daje miejsce, nie powód do dokładania treści: te same sekcje co na Fold6, ułożone tak, żeby **najważniejsze było w pierwszym ekranie (900 px) bez przewijania**.
 - Wykresy mogą być szersze (6–8 kolumn) i wyższe (240–280 px), ale z tymi samymi kolorami serii, kwadratowymi punktami i „dziś” na czerwono.
-- Siatka reaguje na szerokość kolumny treści (container query na `.d-main`): przy ≤ 1100 px, czyli z otwartym czatem albo w wąskim oknie, każdy boks zajmuje 6 kolumn.
+- Siatka reaguje na szerokość kolumny treści (container query na `.d-main`): przy ≤ 1100 px, czyli z otwartym czatem albo w wąskim oknie, każdy boks zajmuje 6 kolumn, a pasek czterech metryk wraca do 2 × 2; przy ≤ 700 px (czat w oknie ok. 1024 px) zostaje jedna kolumna. Plan przechodzi wtedy na układ z Fold6 (kompaktowe tabele tygodni, pionowa oś), bo szerokie tabele nie mieszczą się w połowie siatki.
+- Nagłówek poniżej 1200 px: przyciski Odśwież i Trener bez etykiet, ciaśniejsza nawigacja. Nagłówek strony ma stałą wysokość, żeby tytuł nie skakał między widokami.
+- Dziś: suplementy są wierszem w boksie Żywienia (jak na Fold6), Żywienie i Gotowość dzielą wiersz 6 | 6. Makieta `DesktopDzis` pokazuje jeszcze osobny boks z checklistą: wróci, gdy `/api/today` zacznie zwracać pozycje checklisty.
 - Hero tylko tam, gdzie jedna rzecz dominuje: Dziś (sesja), Plan (cel), Żywienie (dziś vs cel), Suplementy (checklista), Czat (jak Dziś). Trening, Ciało i Propozycje nie mają hero: tam kotwicą jest szeroki wykres albo równorzędne karty do decyzji. Na tle hero stany w normie i ostrzeżenia mają własne tokeny `--hero-good` i `--hero-warn`.
 - Wiersze „do decyzji” (`tr.row-decide`: tło `signal-tint` + pasek 3 px `signal`) znaczą to samo w Planie, w diffie tygodnia w Propozycjach i w karcie propozycji w czacie.
 - Wykresy z tej samej osi czasu, ustawione jeden pod drugim, dzielą pozycje X (np. kcal i białko dzień po dniu). Wykres w s-8 rysuj w viewBox 840 × 240–280 (skala 1:1 przy 1440); etykiety końcowe serii w prawym marginesie.
