@@ -5,6 +5,7 @@ export const SOURCE_LABEL: Record<Source, string> = {
   garmin: 'Garmin',
   hevy: 'Hevy',
   fitatu: 'Fitatu',
+  hevy_garmin: 'Hevy → Garmin',
 }
 
 export const FORM_LABEL: Record<FormState, string> = {

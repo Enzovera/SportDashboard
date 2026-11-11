@@ -2,7 +2,7 @@
 
 Osobista aplikacja jednego użytkownika (Patryk). Zbiera dane z Garmina, Hevy, Fitatu i wagi Xiaomi do jednej bazy, pokazuje je na dashboardzie zoptymalizowanym pod Galaxy Z Fold6 i daje AI trenera (Claude), który codziennie podsumowuje dzień, pilnuje planu do maratonu i układa żywienie pod trening.
 
-Stan: **etap 1 w toku, czat z etapu 3 równolegle.** Jest środowisko dev (`deploy/dev/compose.yml`), migracje, ingest Garmina i Hevy ze schedulerem (`services/ingest`), front w Vue 3 + ECharts (`web/`, kontrakt API w `web/src/api/types.ts`), API w Go z projektorami i metrykami (`services/api`: `/api/today`, `/api/training` na prawdziwych danych Garmina i Hevy), backend czatu na Agent SDK (`services/coach-chat`) i serwer MCP v1 (`services/api/cmd/mcp`: odczyt + `save_coach_note`). Brakuje: endpointów dla pozostałych widoków (żywienie, plan, propozycje), narzędzi MCP dla żywienia, suplementów, planu i profilu oraz runów AI. Komendy dev w `README.md`.
+Stan: **etap 1 w toku, czat z etapu 3 równolegle.** Jest środowisko dev (`deploy/dev/compose.yml`), migracje, ingest Garmina i Hevy ze schedulerem (`services/ingest`), eksport serii Hevy do aktywności siłowych w Garminie (`hevy-garmin`), front w Vue 3 + ECharts (`web/`, kontrakt API w `web/src/api/types.ts`), API w Go z projektorami i metrykami (`services/api`: `/api/today`, `/api/training` na prawdziwych danych Garmina i Hevy), backend czatu na Agent SDK (`services/coach-chat`) i serwer MCP v1 (`services/api/cmd/mcp`: odczyt + `save_coach_note`). Brakuje: endpointów dla pozostałych widoków (żywienie, plan, propozycje), narzędzi MCP dla żywienia, suplementów, planu i profilu oraz runów AI. Komendy dev w `README.md`.
 
 ## Gdzie co jest
 

@@ -30,11 +30,13 @@ class Job:
         return t.minute == self.minute and (self.hour is None or t.hour == self.hour)
 
 
-# Schedule from docs/design.md: Garmin and Hevy hourly, Fitatu 3 times a day, 7-day backfill of all sources at 3:00.
+# Schedule from docs/design.md: Garmin and Hevy hourly, Hevy -> Garmin export after them, Fitatu 3 times a day, 7-day backfill of all sources at 3:00.
 JOBS = (
     Job("hevy", ("hevy",), minute=5),
     Job("garmin", ("garmin", "--days", "2"), minute=10),
     Job("garmin-backfill", ("garmin", "--days", "7"), minute=0, hour=3),
+    # After both syncs: Hevy sets go into the watch activity (or a manual one after the grace period).
+    Job("hevy-garmin", ("hevy-garmin", "--days", "3"), minute=25),
     # After breakfast, lunch and dinner are usually logged; 2 days catch meals added the next morning.
     Job("fitatu-morning", ("fitatu", "--days", "2"), minute=15, hour=10),
     Job("fitatu-afternoon", ("fitatu", "--days", "2"), minute=15, hour=16),
@@ -46,6 +48,7 @@ JOBS = (
 SYNC_NOW = (
     Job("manual-hevy", ("hevy",), minute=-1),
     Job("manual-garmin", ("garmin", "--days", "2"), minute=-1),
+    Job("manual-hevy-garmin", ("hevy-garmin", "--days", "3"), minute=-1),
     Job("manual-fitatu", ("fitatu", "--days", "2"), minute=-1),
 )
 

@@ -5,7 +5,7 @@
 // - `null` = not available yet (stage not built, or no data that day); the UI hides or dashes it
 // - enums are English keys; Polish labels live in src/lib/labels.ts
 
-export type Source = 'garmin' | 'hevy' | 'fitatu'
+export type Source = 'garmin' | 'hevy' | 'fitatu' | 'hevy_garmin'
 
 export interface SyncStatus {
   source: Source
