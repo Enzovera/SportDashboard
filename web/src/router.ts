@@ -1,8 +1,9 @@
-import { createRouter, createWebHistory } from 'vue-router'
+import { createMemoryHistory, createRouter, createWebHistory } from 'vue-router'
 import { applyMockParam } from '@/api/client'
 
 export const router = createRouter({
-  history: createWebHistory(),
+  // VITE_ROUTER=memory: an embedded preview has no address of its own to route on.
+  history: import.meta.env.VITE_ROUTER === 'memory' ? createMemoryHistory() : createWebHistory(),
   // /propozycje#<id> (links from Plan) scrolls to the card; other navigations start at the top.
   scrollBehavior: (to) => (to.hash ? { el: to.hash } : { top: 0 }),
   routes: [

@@ -75,7 +75,9 @@ h1 { font-size: 24px; font-weight: 800; font-stretch: 78%; line-height: 1; white
 .meta-text { min-width: 0; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .actions { flex: none; display: flex; align-items: center; gap: 12px; min-width: 0; }
 .icons { display: flex; align-items: center; }
-.main { flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; }
+/* position: relative keeps absolutely placed children (.sr-only) inside the scroller; without it they
+   escape its clipping and make the whole document scroll behind the app. */
+.main { position: relative; flex: 1; min-height: 0; overflow-y: auto; overscroll-behavior-y: contain; }
 
 /* cover: title over meta on the left, icons on the right; view controls move to the strip below */
 .cover .bar { padding: 0 2px 0 12px; gap: 4px; }
