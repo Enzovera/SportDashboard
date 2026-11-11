@@ -6,7 +6,8 @@ import Icon from './Icon.vue'
 import ThemeToggle from './ThemeToggle.vue'
 
 // Frame of every view.
-// cover:   56 px bar (title over meta, icon actions) and, when the view has controls, a tab strip below it
+// cover:   56 px bar (title over meta, icon actions) and, when the view has controls, a tab strip below it;
+//          the theme toggle lives in the nav's "Więcej" sheet (kept here only on the nav-less chat screen)
 // fold:    one 56 px bar: title and meta, then the view controls and the icon actions
 // desktop: the app header (DesktopHeader) holds the nav; the title becomes a page head above the grid
 // Slots: `status`  = sync problems of this view's sources
@@ -33,13 +34,13 @@ const layout = useLayout()
         <div class="title">
           <h1>{{ title }}</h1>
           <div v-if="meta || (layout === 'cover' && $slots.status)" class="header-meta">
-            <slot v-if="layout === 'cover'" name="status" />
             <span v-if="meta" class="meta-text">{{ meta }}</span>
+            <slot v-if="layout === 'cover'" name="status" />
           </div>
         </div>
         <div class="actions">
           <template v-if="layout === 'fold'"><slot name="status" /><slot name="actions" /></template>
-          <div class="icons"><slot name="global" /><TrainerButton v-if="!plain" /><ThemeToggle /></div>
+          <div class="icons"><slot name="global" /><TrainerButton v-if="!plain" /><ThemeToggle v-if="layout === 'fold' || plain" /></div>
         </div>
       </div>
       <div v-if="layout === 'cover' && $slots.actions" class="toolbar"><slot name="actions" /></div>

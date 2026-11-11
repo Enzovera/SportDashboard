@@ -30,7 +30,7 @@ const kcal = (t: PlanWeek['days'][number]['target']) => (t ? num(t.kcal) : '–'
     :title="weekTitle(week, today)"
     :label="current ? 'Ten tydzień' : 'Następny tydzień'"
     class="week"
-    :class="{ wide }"
+    :class="{ wide, current }"
   >
     <template #meta>
       <span class="meta">
@@ -170,8 +170,20 @@ tbody td, tbody th { padding-top: 7px; padding-bottom: 7px; }
 .prop-link::before { content: ''; width: 7px; height: 7px; background: var(--signal); flex: none; }
 .prop-link .go { vertical-align: -2px; }
 .prop-link:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
-.wide .prop-link { display: inline-flex; font-size: 13.5px; margin: -8px 0 -12px; }
+/* One line: the cells next to it hold a single line at the top, so the link may run under them. */
+.wide .prop-link { display: inline-flex; font-size: 13.5px; margin: -8px 0 -12px; white-space: nowrap; }
 .wide .prop-link::before { width: 8px; height: 8px; }
+
+/* Narrow desktop box (chat docked, small window): the detail drops under the session name instead of
+   breaking the name in two. Thresholds (content width of the box) = fixed columns of each table + room
+   for the longest session. */
+.week { container: week / inline-size; }
+@container week (max-width: 480px) {
+  .current .inline .s-sub { display: block; margin-left: 0; font-size: 12.5px; }
+}
+@container week (max-width: 640px) {
+  .week:not(.current) .inline .s-sub { display: block; margin-left: 0; font-size: 12.5px; }
+}
 
 .wk tfoot tr { border-top: 1px solid var(--rule); }
 .wk tfoot th, .wk tfoot td { font-weight: 700; padding-top: 10px; text-align: left; }

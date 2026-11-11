@@ -34,8 +34,8 @@ const title = computed(() => {
             <span v-for="(s, i) in b.segments" :key="i" :class="s" />
           </div>
           <div class="text">
-            <div class="name">{{ b.label }}</div>
-            <div class="dates">{{ b.dates }}</div>
+            <div class="name">{{ b.label }}<span v-if="horizontal" class="weeks">{{ b.block.weeks }} tyg.</span></div>
+            <div class="dates">{{ horizontal ? b.range : b.dates }}</div>
             <div v-if="b.block.summary" class="desc">{{ b.block.summary }}</div>
           </div>
         </li>
@@ -86,7 +86,9 @@ const title = computed(() => {
 .h .block { min-width: 0; display: flex; flex-direction: column; gap: 10px; }
 .h .bar { height: 36px; }
 .h .name { font-size: 15.5px; }
-.h .dates { font-size: 13px; }
+.h .name { white-space: nowrap; }
+.h .weeks { margin-left: 8px; font-size: 13px; font-weight: 500; color: var(--ink3); }
+.h .dates { font-size: 13px; white-space: nowrap; }
 .h .desc { font-size: 13.5px; margin-top: 4px; }
 .h .end { flex: none; width: 76px; display: flex; flex-direction: column; gap: 10px; }
 .h .end .mark { height: 36px; display: flex; align-items: center; padding-left: 4px; }

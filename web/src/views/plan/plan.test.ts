@@ -89,6 +89,7 @@ describe('timeline', () => {
     expect(tl.blocks.map((b) => b.current)).toEqual([true, false, false, false])
     expect(tl.blocks[0]!.segments).toEqual(Array(6).fill('block'))
     expect(tl.blocks[3]!.dates).toBe('3 tyg. · 22.02–14.03')
+    expect(tl.blocks[3]!.range).toBe('22.02–14.03')
   })
   it('inside a block: past weeks, the red week, rest of the block', () => {
     const tl = timeline(plan.blocks, '2026-11-12')

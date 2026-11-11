@@ -60,4 +60,14 @@ const table = computed(() => weekTable(props.week, props.today))
 .grid td { padding: 0; }
 .grid td.signal { background: var(--signal); color: var(--signal-ink); font-weight: 800; }
 .totals { font-size: 12.5px; color: var(--ink3); padding-top: 6px; }
+@media (min-width: 1024px) {
+  .week { padding: 10px 18px 14px; gap: 4px; }
+  .grid { font-size: 14px; font-stretch: 100%; }
+  .grid thead tr { font-size: 12.5px; }
+  .grid thead th { padding-bottom: 7px; }
+  .grid thead th.kind { width: 56px; }
+  .grid tbody th, .grid td { padding-top: 9px; padding-bottom: 9px; }
+  .grid tbody th { padding-left: 0; padding-right: 0; }
+  .totals { font-size: 13px; padding-top: 8px; }
+}
 </style>

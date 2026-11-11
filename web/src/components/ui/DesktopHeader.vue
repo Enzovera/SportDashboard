@@ -2,20 +2,11 @@
 // Desktop app header (design/screens/DesktopTemplate.html): brand, text nav, and a slot that views
 // fill through <Teleport to="#d-actions"> (sync status, Trener).
 import { useRoute } from 'vue-router'
-import { isTabActive } from '@/lib/nav'
+import { TABS, isTabActive } from '@/lib/nav'
 import ThemeToggle from './ThemeToggle.vue'
 
 defineProps<{ proposalsPending?: number | null }>()
 const route = useRoute()
-
-const tabs = [
-  { to: '/', label: 'Dziś' },
-  { to: '/trening', label: 'Trening' },
-  { to: '/zywienie', label: 'Żywienie' },
-  { to: '/cialo', label: 'Ciało' },
-  { to: '/plan', label: 'Plan' },
-  { to: '/propozycje', label: 'Propozycje', badge: true },
-]
 </script>
 
 <template>
@@ -23,7 +14,7 @@ const tabs = [
     <RouterLink to="/" class="brand">Forma</RouterLink>
     <nav aria-label="Główna nawigacja" class="nav">
       <RouterLink
-        v-for="tab in tabs"
+        v-for="tab in TABS"
         :key="tab.to"
         :to="tab.to"
         class="tab"

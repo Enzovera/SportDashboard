@@ -133,13 +133,12 @@ describe('proposalsText', () => {
 describe('desktopCells', () => {
   const shape = (d: Parameters<typeof desktopCells>[0]) => desktopCells(d).map((c) => [c.keys.join('+'), c.span])
 
-  it('full: hero and coach, then nutrition / supplements / readiness, then week and link rows', () => {
+  it('full: hero and coach, then nutrition (with supplements inside) and readiness, then week and link rows', () => {
     expect(shape(todayFull)).toEqual([
       ['session', 6],
       ['coach', 6],
-      ['nutrition', 4],
-      ['supplements', 4],
-      ['readiness', 4],
+      ['nutrition', 6],
+      ['readiness', 6],
       ['week', 8],
       ['tomorrow+proposals+weight', 4],
     ])
@@ -155,7 +154,14 @@ describe('desktopCells', () => {
   it('a lone hero takes the whole row', () => {
     expect(shape({ ...todayFull, coach: null }).slice(0, 2)).toEqual([
       ['session', 12],
-      ['nutrition', 4],
+      ['nutrition', 6],
+    ])
+  })
+
+  it('supplements stand alone only without nutrition', () => {
+    expect(shape({ ...todayFull, nutrition: null }).slice(2, 4)).toEqual([
+      ['supplements', 4],
+      ['readiness', 4],
     ])
   })
 })

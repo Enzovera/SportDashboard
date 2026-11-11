@@ -31,7 +31,7 @@ defineProps<{ name: SectionKey; data: TodayResponse; layout: Layout }>()
   <NutritionSection
     v-else-if="name === 'nutrition' && data.nutrition"
     :nutrition="data.nutrition"
-    :supplements="layout === 'fold' ? data.supplements : null"
+    :supplements="layout !== 'cover' ? data.supplements : null"
     :compact="layout === 'cover'"
   />
   <SupplementsSection v-else-if="name === 'supplements' && data.supplements" :supplements="data.supplements" />

@@ -11,6 +11,8 @@ export type IconName =
   | 'sync'
   | 'chat'
   | 'history'
+  | 'more'
+  | 'theme'
   | 'arrow-right'
   | 'arrow-left'
   | 'close'
@@ -33,6 +35,9 @@ const PATHS: Record<IconName, string> = {
   sync: 'M3 12a9 9 0 0 1 15.7-6L21 8M21 3v5h-5M21 12a9 9 0 0 1-15.7 6L3 16M3 21v-5h5',
   chat: 'M4 4h16v12H10l-5 4v-4H4z',
   history: 'M12 4a8 8 0 1 1-8 8M4 5v4h4M12 8v4l3 2',
+  more: 'M4 6h16M4 12h16M4 18h16',
+  // half-filled disc; the filled half is drawn separately
+  theme: 'M12 4a8 8 0 1 0 0 16a8 8 0 1 0 0-16z',
   'arrow-right': 'M5 12h14M13 6l6 6-6 6',
   'arrow-left': 'M19 12H5M11 6l-6 6 6 6',
   close: 'M5 5l14 14M19 5L5 19',
@@ -43,6 +48,7 @@ const PATHS: Record<IconName, string> = {
   <svg class="icon" viewBox="0 0 24 24" :width="size" :height="size" aria-hidden="true" focusable="false">
     <path :d="PATHS[name]" />
     <rect v-if="name === 'today'" x="7.5" y="13" width="4" height="4" class="fill" />
+    <path v-else-if="name === 'theme'" d="M12 4a8 8 0 0 1 0 16z" class="fill" />
   </svg>
 </template>
 

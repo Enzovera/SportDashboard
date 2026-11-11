@@ -114,7 +114,10 @@ export type SegmentState = 'past' | 'now' | 'block' | 'future'
 export interface TimelineBlock {
   block: PlanBlock
   label: string
+  /** "3 tyg. · 22.02–14.03" */
   dates: string
+  /** "22.02–14.03": the horizontal axis shows the weeks next to the name, so a narrow block never wraps mid-date. */
+  range: string
   current: boolean
   /** One entry per week of the block. */
   segments: SegmentState[]
@@ -160,6 +163,7 @@ export function timeline(blocks: PlanBlock[], today: string): Timeline {
       block: b,
       label: BLOCK_LABEL[b.kind],
       dates: `${b.weeks} tyg. · ${dateRange(b.from, b.to)}`,
+      range: dateRange(b.from, b.to),
       current: i === currentIdx,
       segments,
     }

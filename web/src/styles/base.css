@@ -111,11 +111,19 @@ button { font: inherit; color: inherit; }
 /* With the chat panel open (or a narrow window) the content column shrinks: every grid item takes half the row. */
 .d-content { container-type: inline-size; container-name: main; }
 @container main (max-width: 1100px) { .d-grid > * { grid-column: span 6; } }
+/* Chat docked in a small window: one column. */
+@container main (max-width: 700px) { .d-grid > * { grid-column: 1 / -1; } }
 .stack.stretch { align-self: stretch; }
 .stack.stretch > :only-child { flex: 1; }
 .metric-grid.four { grid-template-columns: repeat(4, minmax(0, 1fr)); }
 .metric-grid.four > :nth-child(n) { border-top: 0; }
 .metric-grid.four > * + * { border-left: 1px solid var(--rule); padding-left: 20px; }
+/* In a halved grid the strip of four has no room: back to 2 x 2. */
+@container main (max-width: 1100px) {
+  .metric-grid.four { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  .metric-grid.four > :nth-child(n) { border-left: 0; padding-left: 0; }
+  .metric-grid.four > :nth-child(n + 3) { border-top: 1px solid var(--rule); }
+}
 
 @media (min-width: 1024px) {
   .box { padding: 16px 18px; gap: 10px; }
