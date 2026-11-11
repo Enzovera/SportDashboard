@@ -1,4 +1,5 @@
-"""CLI: python -m ingest {hevy [--full] | garmin [--days N] | garmin-login | fitatu [--days N] | fitatu-login | schedule}"""
+"""CLI: python -m ingest {hevy [--full] | garmin [--days N] | garmin-login | hevy-garmin [--days N] [--dry-run]
+| fitatu [--days N] | fitatu-login | schedule}"""
 
 import argparse
 import logging
@@ -8,7 +9,7 @@ from datetime import datetime, timezone
 
 import psycopg
 
-from . import TZ, fitatu, garmin, hevy, scheduler, secrets
+from . import TZ, fitatu, garmin, hevy, hevy_garmin, scheduler, secrets
 from .store import PgStore
 
 log = logging.getLogger("ingest")
@@ -57,6 +58,9 @@ def main() -> int:
     p_garmin = sub.add_parser("garmin", help="sync Garmin days and activities")
     p_garmin.add_argument("--days", type=int, default=2, help="days back including today (nightly backfill: 7)")
     sub.add_parser("garmin-login", help="first Garmin login with password and MFA")
+    p_hg = sub.add_parser("hevy-garmin", help="write Hevy sets into the matching Garmin strength activities")
+    p_hg.add_argument("--days", type=int, default=3, help="Hevy workouts of the last N days (today included)")
+    p_hg.add_argument("--dry-run", action="store_true", help="log what would be written to Garmin, change nothing")
     p_fitatu = sub.add_parser("fitatu", help="sync Fitatu meals, targets and water")
     p_fitatu.add_argument("--days", type=int, default=2, help="days back including today (nightly backfill: 7)")
     sub.add_parser("fitatu-login", help="first Fitatu login with e-mail and password")
@@ -80,6 +84,19 @@ def main() -> int:
                     garmin.save_tokens(api, tokenstore)
 
             return run("garmin", {"days": args.days}, work)
+        case "hevy-garmin":
+            tokenstore = env("GARMINTOKENS")
+
+            def work_hg(store):
+                api = garmin.connect(tokenstore)
+                try:
+                    if args.dry_run:
+                        return hevy_garmin.sync(hevy_garmin.DryRun(api), hevy_garmin.NoSave(store.conn), now, args.days)
+                    return hevy_garmin.sync(api, hevy_garmin.PgRepo(store.conn), now, args.days)
+                finally:
+                    garmin.save_tokens(api, tokenstore)
+
+            return run(hevy_garmin.SOURCE, {"days": args.days, "dry_run": args.dry_run}, work_hg)
         case "garmin-login":
             garmin.interactive_login(os.environ.get("GARMIN_EMAIL"), env("GARMINTOKENS"))
             return 0

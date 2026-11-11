@@ -23,6 +23,7 @@ def at(hour, minute):
         (at(16, 15), ["fitatu-afternoon"]),
         (at(22, 15), ["fitatu-evening"]),
         (at(22, 10), ["garmin"]),
+        (at(14, 25), ["hevy-garmin"]),
     ],
 )
 def test_due_jobs(t, expected):
@@ -85,7 +86,7 @@ def test_loop_serves_sync_request_between_minutes_and_still_runs_due_jobs():
     scheduler.loop(run=run, now=clock.now, sleep=clock.sleep, ticks=1, requests=requests)
     assert requests.recovered
     assert requests.finished == [7]
-    assert [name for _, name in ran] == ["manual-hevy", "manual-garmin", "manual-fitatu", "hevy"]
+    assert [name for _, name in ran] == ["manual-hevy", "manual-garmin", "manual-hevy-garmin", "manual-fitatu", "hevy"]
 
 
 def test_loop_skips_minutes_after_long_stall():

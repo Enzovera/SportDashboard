@@ -11,7 +11,7 @@ cp .env.example .env          # uzupełnij FORMA_SECRETS_KEY (openssl rand -base
 docker compose -f deploy/dev/compose.yml --env-file .env up -d
 ```
 
-`up` startuje Postgresa (127.0.0.1:5432), adminera (http://localhost:8081), uruchamia migracje z `migrations/` i startuje `scheduler`: Hevy co godzinę o :05, Garmin (2 dni) o :10, backfill Garmina 7 dni o 3:00. Harmonogram jest w [scheduler.py](services/ingest/ingest/scheduler.py), logi: `docker compose -f deploy/dev/compose.yml logs -f scheduler`. Przycisk „Odśwież” w dashboardzie kolejkuje sync wszystkich źródeł (`POST /api/sync`), który scheduler wykonuje w ciągu kilku sekund.
+`up` startuje Postgresa (127.0.0.1:5432), adminera (http://localhost:8081), uruchamia migracje z `migrations/` i startuje `scheduler`: Hevy co godzinę o :05, Garmin (2 dni) o :10, eksport serii Hevy → Garmin o :25, backfill Garmina 7 dni o 3:00. Harmonogram jest w [scheduler.py](services/ingest/ingest/scheduler.py), logi: `docker compose -f deploy/dev/compose.yml logs -f scheduler`. Przycisk „Odśwież” w dashboardzie kolejkuje sync wszystkich źródeł (`POST /api/sync`), który scheduler wykonuje w ciągu kilku sekund.
 
 Na dev sync działa tylko, gdy komputer nie śpi i Docker Desktop jest uruchomiony (warto włączyć „Start Docker Desktop when you sign in”). Przerwy do 7 dni nadrabia nocny backfill.
 
@@ -38,6 +38,8 @@ $C run --rm ingest garmin            # dziś i wczoraj (co godzinę)
 $C run --rm ingest garmin --days 7   # nocny backfill
 $C run --rm ingest hevy              # pierwszy raz pełny sync, potem zdarzenia od kursora
 $C run --rm ingest hevy --full       # pełny resync
+$C run --rm ingest hevy-garmin --dry-run   # co zostałoby zapisane w Garminie (serie Hevy w aktywności z zegarka)
+$C run --rm ingest hevy-garmin --days 14  # eksport serii Hevy -> Garmin, ręcznie dłuższe okno
 $C run --rm ingest fitatu-login     # raz: e-mail + hasło, sesja ląduje w wolumenie fitatu_session
 # konto bez hasła (logowanie Google/Apple/Facebook): w https://www.fitatu.com/app/ w konsoli przeglądarki
 #   copy(JSON.stringify((u => ({token: u.token, refresh_token: u.refresh_token, id: u.id}))(JSON.parse(localStorage.user))))
