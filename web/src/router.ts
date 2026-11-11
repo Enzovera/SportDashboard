@@ -14,6 +14,7 @@ export const router = createRouter({
     { path: '/plan', name: 'plan', component: () => import('@/views/plan/PlanView.vue') },
     { path: '/propozycje', name: 'proposals', component: () => import('@/views/proposals/ProposalsView.vue') },
     // Full-screen chat on the cover screen; on fold/desktop the chat is a panel next to the current view.
+    { path: '/ustawienia', name: 'settings', component: () => import('@/views/settings/SettingsView.vue') },
     { path: '/czat', name: 'chat', component: () => import('@/views/chat/ChatView.vue') },
     { path: '/:pathMatch(.*)*', redirect: '/' },
   ],

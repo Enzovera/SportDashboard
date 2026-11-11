@@ -12,6 +12,10 @@
 //	POST /api/proposals/{id}/accept|reject   body {comment}   404 unknown, 409 decided, 422 comment > 500
 //	POST /api/sync        queue an on-demand sync of all sources; 202, or 429 + Retry-After within the cooldown
 //	GET /api/sync/{id}    request status and per-source results
+//	GET /api/settings/secrets                       status of every secret, never values
+//	PUT /api/settings/secrets/{name}   body {value}  store (wins over env); 404 unknown, 422 invalid, 503 no key
+//	DELETE /api/settings/secrets/{name}             back to the env variable
+//	POST /api/settings/secrets/FORMA_MCP_TOKEN/generate   random token, returned once
 //
 // /api/chat/* belongs to coach-chat (in dev Vite proxies it there directly; here it is not handled yet).
 package httpapi
@@ -26,6 +30,7 @@ import (
 	"time"
 
 	"forma/api/internal/dashboard"
+	"forma/api/internal/secrets"
 	"forma/api/internal/syncreq"
 )
 
@@ -47,10 +52,18 @@ type Syncer interface {
 	Get(ctx context.Context, id int64) (syncreq.Request, error)
 }
 
+// Secrets manages credentials set from the dashboard (secrets.Store).
+type Secrets interface {
+	List(ctx context.Context) (secrets.Settings, error)
+	Put(ctx context.Context, name, value string) (secrets.Status, error)
+	Delete(ctx context.Context, name string) (secrets.Status, error)
+	Generate(ctx context.Context, name string) (secrets.Generated, error)
+}
+
 // maxBody caps request bodies; every POST body here is a few short fields.
 const maxBody = 4 << 10
 
-func New(v Views, s Syncer) http.Handler {
+func New(v Views, s Syncer, sec Secrets) http.Handler {
 	mux := http.NewServeMux()
 	mux.HandleFunc("GET /health", func(w http.ResponseWriter, r *http.Request) {
 		writeJSON(w, http.StatusOK, map[string]bool{"ok": true})
@@ -124,7 +137,7 @@ func New(v Views, s Syncer) http.Handler {
 		var tooSoon syncreq.TooSoonError
 		switch {
 		case errors.As(err, &tooSoon):
-			w.Header().Set("Retry-After", strconv.Itoa(int(tooSoon.RetryAfter / time.Second)))
+			w.Header().Set("Retry-After", strconv.Itoa(int(tooSoon.RetryAfter/time.Second)))
 			writeJSON(w, http.StatusTooManyRequests, map[string]string{"error": err.Error()})
 		case err == nil:
 			writeJSON(w, http.StatusAccepted, resp)
@@ -139,6 +152,28 @@ func New(v Views, s Syncer) http.Handler {
 			return
 		}
 		resp, err := s.Get(r.Context(), id)
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("GET /api/settings/secrets", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := sec.List(r.Context())
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("PUT /api/settings/secrets/{name}", func(w http.ResponseWriter, r *http.Request) {
+		var body struct {
+			Value string `json:"value"`
+		}
+		if !decode(w, r, &body) {
+			return
+		}
+		resp, err := sec.Put(r.Context(), r.PathValue("name"), body.Value)
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("DELETE /api/settings/secrets/{name}", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := sec.Delete(r.Context(), r.PathValue("name"))
+		respond(w, r, resp, err)
+	})
+	mux.HandleFunc("POST /api/settings/secrets/{name}/generate", func(w http.ResponseWriter, r *http.Request) {
+		resp, err := sec.Generate(r.Context(), r.PathValue("name"))
 		respond(w, r, resp, err)
 	})
 	return mux
@@ -160,12 +195,14 @@ func respond(w http.ResponseWriter, r *http.Request, body any, err error) {
 	switch {
 	case err == nil:
 		writeJSON(w, http.StatusOK, body)
-	case errors.Is(err, dashboard.ErrNotFound), errors.Is(err, syncreq.ErrNotFound):
+	case errors.Is(err, dashboard.ErrNotFound), errors.Is(err, syncreq.ErrNotFound), errors.Is(err, secrets.ErrUnknown):
 		writeJSON(w, http.StatusNotFound, map[string]string{"error": "not found"})
 	case errors.Is(err, dashboard.ErrConflict):
 		writeJSON(w, http.StatusConflict, map[string]string{"error": "already decided"})
-	case errors.Is(err, dashboard.ErrInvalid):
+	case errors.Is(err, dashboard.ErrInvalid), errors.Is(err, secrets.ErrInvalid):
 		writeJSON(w, http.StatusUnprocessableEntity, map[string]string{"error": err.Error()})
+	case errors.Is(err, secrets.ErrNoKey):
+		writeJSON(w, http.StatusServiceUnavailable, map[string]string{"error": err.Error()})
 	default:
 		slog.Error("request failed", "path", r.URL.Path, "err", err)
 		writeJSON(w, http.StatusInternalServerError, map[string]string{"error": "internal error"})

@@ -2,21 +2,28 @@ import pg from 'pg'
 import { sdkRunner } from './agent.ts'
 import { loadConfig } from './config.ts'
 import { createChatServer } from './server.ts'
+import { pgSecretSource, resolveCredentials } from './secrets.ts'
 import { PgChatStore } from './store.ts'
 
 const config = loadConfig()
 const pool = new pg.Pool({ connectionString: config.databaseUrl, max: 4 })
 
+const stored = pgSecretSource(pool, config.secretsKey)
+const credentials = async () => resolveCredentials(process.env, await stored())
+
 const server = createChatServer({
   store: new PgChatStore(pool),
-  runner: sdkRunner(config),
-  ready: { auth: config.authConfigured, mcp: config.mcp !== null },
+  runner: sdkRunner(config, credentials),
+  ready: async () => {
+    const c = await credentials()
+    return { auth: c.auth, mcp: config.mcp !== null && c.mcpToken !== null }
+  },
 })
 
 server.listen(config.port, () => {
   console.log(
     `coach-chat: listening on :${config.port}, model ${config.model}, effort ${config.effort}, ` +
-      `mcp ${config.mcp ? config.mcp.url : 'off'}, auth ${config.authConfigured ? 'ok' : 'missing'}`,
+      `mcp ${config.mcp ? config.mcp.url : 'off'}, secrets key ${config.secretsKey ? 'set' : 'missing'}`,
   )
 })
 

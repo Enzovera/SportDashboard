@@ -48,7 +48,7 @@ func TestSyncRoutes(t *testing.T) {
 		t.Run(tt.name, func(t *testing.T) {
 			s := tt.syncer
 			rec := httptest.NewRecorder()
-			New(nil, &s).ServeHTTP(rec, httptest.NewRequest(tt.method, tt.path, nil))
+			New(nil, &s, nil).ServeHTTP(rec, httptest.NewRequest(tt.method, tt.path, nil))
 			if rec.Code != tt.wantStatus {
 				t.Fatalf("status = %d, want %d (%s)", rec.Code, tt.wantStatus, rec.Body)
 			}

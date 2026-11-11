@@ -36,6 +36,12 @@ const tabs = [
     </nav>
     <div class="end">
       <div id="d-actions" class="actions" />
+      <RouterLink
+        to="/ustawienia"
+        class="settings"
+        :class="{ current: route.path === '/ustawienia' }"
+        :aria-current="route.path === '/ustawienia' ? 'page' : undefined"
+      >Ustawienia</RouterLink>
       <ThemeToggle />
     </div>
   </header>
@@ -54,4 +60,7 @@ const tabs = [
 .tab:focus-visible, .brand:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
 .actions { display: flex; align-items: center; gap: 16px; }
+.settings { display: flex; align-items: center; min-height: 44px; font-size: 14px; font-weight: 500; color: var(--ink2); text-decoration: none; }
+.settings.current { font-weight: 800; color: var(--ink); }
+.settings:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 </style>
