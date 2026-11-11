@@ -81,6 +81,8 @@ const date = (d: ProposalDecision) => dayMonth(localDate(d.decidedAt))
 .history:not(.compact) .c-src { width: 140px; }
 .history:not(.compact) .c-comment { width: 220px; }
 .history:not(.compact) .c-dec { width: 90px; }
+/* Gutter between text columns, so a long change title never touches the source. */
+.wide th:not(.r), .wide td:not(.r) { padding-right: 16px; }
 
 /* Fixed columns of the wide table take 514px; below 680px the change column has no room left. */
 .history-box { container: history / inline-size; }

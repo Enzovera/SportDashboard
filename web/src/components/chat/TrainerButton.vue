@@ -25,11 +25,15 @@ const chat = useChat()
     @click="chat.toggle"
   >
     <Icon :name="chat.state.open && layout !== 'desktop' ? 'close' : 'chat'" :size="layout === 'desktop' ? 18 : 22" />
-    <template v-if="layout === 'desktop'">Trener</template>
+    <span v-if="layout === 'desktop'" class="lbl">Trener</span>
   </button>
 </template>
 
 <style scoped>
 .trainer { gap: 8px; white-space: nowrap; }
 .icon-btn.on { background: var(--ink); color: var(--surface); }
+@media (max-width: 1199px) {
+  .btn { width: 44px; padding: 0; justify-content: center; }
+  .lbl { display: none; }
+}
 </style>

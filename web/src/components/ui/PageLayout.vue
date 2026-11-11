@@ -93,7 +93,8 @@ h1 { font-size: 24px; font-weight: 800; font-stretch: 78%; line-height: 1; white
 }
 
 .d-content { max-width: 1392px; margin: 0 auto; padding: 24px 32px 40px; }
-.d-pagehead { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; margin-bottom: 20px; }
+/* Fixed height: the title does not jump between views with and without controls. */
+.d-pagehead { display: flex; align-items: flex-end; justify-content: space-between; gap: 24px; min-height: 46px; margin-bottom: 20px; }
 .d-title { display: flex; align-items: baseline; gap: 14px; min-width: 0; }
 .d-title h1 { font-size: 32px; }
 .d-meta { font-size: 14px; color: var(--ink3); }

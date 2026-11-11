@@ -23,7 +23,7 @@ const layout = useLayout()
     @click="syncNow"
   >
     <Icon name="sync" :size="layout === 'desktop' ? 18 : 22" />
-    <template v-if="layout === 'desktop'">{{ syncState.busy ? 'Odświeżam…' : 'Odśwież' }}</template>
+    <span v-if="layout === 'desktop'" class="lbl">{{ syncState.busy ? 'Odświeżam…' : 'Odśwież' }}</span>
   </button>
 </template>
 
@@ -33,6 +33,11 @@ const layout = useLayout()
 .busy :deep(.icon) { animation: spin 1s linear infinite; }
 /* Cover has no room for the words: the failed refresh marks the icon (the text stays for screen readers). */
 .icon-btn.problem { color: var(--warn); }
+/* Narrow desktop: the header has no room for labels next to six tabs and a sync status. */
+@media (max-width: 1199px) {
+  .btn { width: 44px; padding: 0; justify-content: center; }
+  .lbl { display: none; }
+}
 @keyframes spin { to { transform: rotate(360deg); } }
 @media (prefers-reduced-motion: reduce) {
   .busy :deep(.icon) { animation: none; opacity: 0.45; }

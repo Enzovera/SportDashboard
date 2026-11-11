@@ -54,4 +54,9 @@ const tabs = [
 .tab:focus-visible, .brand:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .end { margin-left: auto; display: flex; align-items: center; gap: 16px; }
 .actions { display: flex; align-items: center; gap: 16px; }
+@media (max-width: 1199px) {
+  .d-header { padding: 0 20px; gap: 24px; }
+  .tab { padding: 0 10px; }
+  .end, .actions { gap: 8px; }
+}
 </style>
