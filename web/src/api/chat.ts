@@ -296,6 +296,7 @@ const MOCK_KEY = 'forma.chat.mock'
 
 /** `?chat=mock` turns the scripted conversation on for this tab, `?chat=off` turns it off. */
 export function chatMockEnabled(): boolean {
+  if (import.meta.env.VITE_MOCK === '1') return true
   const param = new URLSearchParams(window.location.search).get('chat')
   try {
     if (param === 'mock') sessionStorage.setItem(MOCK_KEY, '1')

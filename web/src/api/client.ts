@@ -7,10 +7,14 @@ import { trainingFull, trainingStage1 } from './mocks/training'
  *   mock=1              - mocks with every section filled (matches design/screens)
  *   mock=0 or no cookie - real API under /api
  * `?mock=1` / `?mock=0` in the URL only sets the cookie (see applyMockParam).
+ * A build with `VITE_MOCK=1` always uses the mocks: a preview without a backend, where cookies may be blocked.
  */
 export type MockMode = 'full' | 'stage1' | 'off'
 
+export const FORCE_MOCK = import.meta.env.VITE_MOCK === '1'
+
 export function mockMode(): MockMode {
+  if (FORCE_MOCK) return 'full'
   return /(?:^|;\s*)mock=1(?:;|$)/.test(document.cookie) ? 'full' : 'off'
 }
 
