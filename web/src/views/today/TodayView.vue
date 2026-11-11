@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { computed, watch } from 'vue'
-import TrainerButton from '@/components/chat/TrainerButton.vue'
 import { proposalsPendingCount } from '@/api/proposals'
 import PageLayout from '@/components/ui/PageLayout.vue'
 import SyncStatus from '@/components/ui/SyncStatus.vue'
@@ -27,13 +26,8 @@ const cells = computed(() => (data.value && layout.value === 'desktop' ? desktop
 
 <template>
   <PageLayout title="Dziś" :meta="meta">
-    <template #global>
-      <template v-if="data">
-        <SyncStatus :sync="data.sync" :compact="cover" />
-        <SyncButton />
-        <TrainerButton />
-      </template>
-    </template>
+    <template v-if="data" #status><SyncStatus :sync="data.sync" :compact="cover" /></template>
+    <template #global><SyncButton /></template>
 
     <template v-if="data">
       <div v-if="layout === 'desktop'" class="d-grid">
@@ -59,10 +53,6 @@ const cells = computed(() => (data.value && layout.value === 'desktop' ? desktop
 </template>
 
 <style scoped>
-.trainer { min-height: 44px; }
 .cover .col { gap: 10px; }
 .error { grid-column: 1 / -1; font-size: 14px; }
-@media (max-width: 599px) {
-  .trainer { padding: 0 12px; }
-}
 </style>

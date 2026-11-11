@@ -28,10 +28,8 @@ const todayType = computed(() => data.value?.today?.dayType ?? null)
 
 <template>
   <PageLayout title="Żywienie" :meta="meta">
-    <template #global>
-      <SyncStatus v-if="data" :sync="data.sync" :compact="layout === 'cover'" />
-      <SyncButton />
-    </template>
+    <template v-if="data" #status><SyncStatus :sync="data.sync" :compact="layout === 'cover'" /></template>
+    <template #global><SyncButton /></template>
     <template #actions>
       <NutritionSwitch :supplements-label="tabLabel" />
     </template>

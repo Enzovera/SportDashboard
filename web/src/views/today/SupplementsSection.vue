@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Icon from '@/components/ui/Icon.vue'
 import type { SupplementsToday } from '@/api/types'
 
 // Standalone supplements box (cover screen, or fold without nutrition data).
@@ -16,7 +17,7 @@ defineProps<{ supplements: SupplementsToday }>()
         <template v-if="supplements.next">Następna: {{ supplements.next }} <span class="of">· wszystkie</span></template>
         <template v-else>Wszystkie</template>
       </span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <Icon name="arrow-right" :size="18" class="arrow" />
     </RouterLink>
   </section>
 </template>
@@ -30,5 +31,5 @@ defineProps<{ supplements: SupplementsToday }>()
   border-top: 1px solid var(--rule); font-size: 13.5px; text-decoration: none; color: var(--ink);
 }
 .row:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
-.arrow { font-weight: 700; }
+.arrow { color: var(--ink2); }
 </style>

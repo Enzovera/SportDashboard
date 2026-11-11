@@ -2,6 +2,7 @@
 import { computed } from 'vue'
 import type { PlanWeek } from '@/api/plan'
 import BoxSection from '@/components/ui/BoxSection.vue'
+import Icon from '@/components/ui/Icon.vue'
 import { num, weekday } from '@/lib/format'
 import { DAY_TYPE_LABEL, dayLines, dayNumber, decideCount, doneCell, isCurrentWeek, weekMeta, weekTitle } from './planData'
 
@@ -86,7 +87,7 @@ const kcal = (t: PlanWeek['days'][number]['target']) => (t ? num(t.kcal) : '–'
               :key="p.id"
               class="prop-link"
               :to="{ path: '/propozycje', hash: `#${p.id}` }"
-            >propozycja: {{ p.summary }} →</RouterLink>
+            ><span>propozycja: {{ p.summary }} <Icon name="arrow-right" :size="14" class="go" /></span></RouterLink>
           </td>
           <template v-if="wide">
             <td class="r km" :class="{ muted: r.day.runKm === null }">{{ km(r.day.runKm) }}</td>
@@ -167,6 +168,7 @@ tbody td, tbody th { padding-top: 7px; padding-bottom: 7px; }
   font-size: 12.5px; font-weight: 700; text-decoration: none; color: var(--ink);
 }
 .prop-link::before { content: ''; width: 7px; height: 7px; background: var(--signal); flex: none; }
+.prop-link .go { vertical-align: -2px; }
 .prop-link:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .wide .prop-link { display: inline-flex; font-size: 13.5px; margin: -8px 0 -12px; }
 .wide .prop-link::before { width: 8px; height: 8px; }

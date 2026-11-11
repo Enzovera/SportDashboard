@@ -1,6 +1,6 @@
 <script setup lang="ts">
-// Theme toggle Auto -> Jasny -> Ciemny. Icon only (the one exception to text-only controls),
-// square line caps to match the zero-radius style; the mode is in aria-label and title.
+// Theme toggle Auto -> Jasny -> Ciemny. Icon only, drawn like components/ui/Icon.vue;
+// the mode is in aria-label and title.
 import { useTheme } from '@/composables/useTheme'
 import { THEME_LABEL } from '@/lib/theme'
 
@@ -10,12 +10,12 @@ const { mode, cycle } = useTheme()
 <template>
   <button
     type="button"
-    class="theme"
+    class="icon-btn theme"
     :aria-label="`Motyw: ${THEME_LABEL[mode]}`"
     :title="`Motyw: ${THEME_LABEL[mode]}`"
     @click="cycle"
   >
-    <svg viewBox="0 0 24 24" width="20" height="20" aria-hidden="true">
+    <svg viewBox="0 0 24 24" width="22" height="22" aria-hidden="true">
       <!-- auto: half-filled circle -->
       <g v-if="mode === 'auto'">
         <circle cx="12" cy="12" r="8" />
@@ -33,13 +33,6 @@ const { mode, cycle } = useTheme()
 </template>
 
 <style scoped>
-.theme {
-  display: inline-flex; align-items: center; justify-content: center;
-  min-height: 44px; min-width: 44px; padding: 0; cursor: pointer;
-  border: 0; background: transparent; color: var(--ink2);
-}
-.theme:hover { color: var(--ink); }
-.theme:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 svg { fill: none; stroke: currentColor; stroke-width: 1.75; stroke-linecap: square; stroke-linejoin: miter; }
 .fill { fill: currentColor; stroke: none; }
 </style>

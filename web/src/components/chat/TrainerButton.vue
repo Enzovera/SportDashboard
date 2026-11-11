@@ -1,29 +1,35 @@
 <script setup lang="ts">
+import Icon from '@/components/ui/Icon.vue'
 import { useLayout } from '@/composables/useLayout'
 import { useChat } from './useChat'
 
-// Header "Trener" button. Fold/desktop: toggles the chat panel (ChatHost). Cover: opens /czat.
+// Header "Trener" button, on every view. Cover: opens /czat. Fold: icon that toggles the chat panel (ChatHost).
+// Desktop: the same toggle with the label.
 const layout = useLayout()
 const chat = useChat()
 </script>
 
 <template>
-  <RouterLink v-if="layout === 'cover'" to="/czat" class="btn trainer">Trener</RouterLink>
+  <RouterLink v-if="layout === 'cover'" to="/czat" class="icon-btn" aria-label="Czat z trenerem" title="Trener">
+    <Icon name="chat" />
+  </RouterLink>
   <button
     v-else
     type="button"
-    class="btn trainer"
-    :class="{ 'btn--primary': chat.state.open }"
+    class="trainer"
+    :class="[layout === 'desktop' ? 'btn' : 'icon-btn', { on: chat.state.open, 'btn--primary': layout === 'desktop' && chat.state.open }]"
     :aria-expanded="chat.state.open"
     aria-controls="chat-panel"
-    :aria-label="chat.state.open ? 'Zamknij czat z trenerem' : undefined"
+    :aria-label="chat.state.open ? 'Zamknij czat z trenerem' : 'Czat z trenerem'"
+    :title="chat.state.open ? 'Zamknij czat' : 'Trener'"
     @click="chat.toggle"
   >
-    Trener<span v-if="chat.state.open" class="x" aria-hidden="true">✕</span>
+    <Icon :name="chat.state.open && layout !== 'desktop' ? 'close' : 'chat'" :size="layout === 'desktop' ? 18 : 22" />
+    <template v-if="layout === 'desktop'">Trener</template>
   </button>
 </template>
 
 <style scoped>
 .trainer { gap: 8px; white-space: nowrap; }
-.x { font-weight: 400; }
+.icon-btn.on { background: var(--ink); color: var(--surface); }
 </style>

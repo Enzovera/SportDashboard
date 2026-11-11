@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Icon from '@/components/ui/Icon.vue'
 import type { SupplementsToday } from '@/api/types'
 
 // Supplements as one row at the bottom of the nutrition box (fold screen).
@@ -11,7 +12,7 @@ defineProps<{ supplements: SupplementsToday }>()
       <strong>Suplementy {{ supplements.taken }} / {{ supplements.total }}</strong>
       <span v-if="supplements.next" class="next"> · następna: {{ supplements.next }}</span>
     </span>
-    <span class="arrow" aria-hidden="true">→</span>
+    <Icon name="arrow-right" :size="18" class="arrow" />
   </RouterLink>
 </template>
 
@@ -23,5 +24,5 @@ defineProps<{ supplements: SupplementsToday }>()
 .row:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 strong { font-weight: 700; }
 .next { color: var(--ink3); }
-.arrow { font-weight: 700; }
+.arrow { color: var(--ink2); }
 </style>

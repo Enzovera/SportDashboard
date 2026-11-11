@@ -1,4 +1,5 @@
 <script setup lang="ts">
+import Icon from '@/components/ui/Icon.vue'
 import type { DayTarget, DayType, TargetProposal } from '@/api/nutrition'
 import BoxSection from '@/components/ui/BoxSection.vue'
 import { num } from '@/lib/format'
@@ -36,7 +37,7 @@ defineProps<{ targets: DayTarget[]; todayType: DayType | null; proposals: Target
         <span class="mark" aria-hidden="true" />
         <span>Propozycja: <b>{{ proposalValue(p) }}</b> {{ proposalWhere(p) }}</span>
       </span>
-      <span class="arrow" aria-hidden="true">→</span>
+      <Icon name="arrow-right" :size="18" class="arrow" />
     </RouterLink>
   </BoxSection>
 </template>
@@ -58,7 +59,7 @@ defineProps<{ targets: DayTarget[]; todayType: DayType | null; proposals: Target
 .proposal:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .text { display: flex; align-items: center; gap: 10px; }
 .mark { flex: none; width: 8px; height: 8px; background: var(--signal); }
-.arrow { font-weight: 700; }
+.arrow { color: var(--ink2); }
 @media (min-width: 1024px) {
   .w-kcal { width: 64px; }
   .w-m { width: 48px; }

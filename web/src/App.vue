@@ -1,13 +1,22 @@
 <script setup lang="ts">
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import BottomNav from '@/components/ui/BottomNav.vue'
 import DesktopHeader from '@/components/ui/DesktopHeader.vue'
 import ChatHost from '@/components/chat/ChatHost.vue'
-import { proposalsPendingCount } from '@/api/proposals'
+import { getProposals, proposalsPendingCount } from '@/api/proposals'
 import { useLayout } from '@/composables/useLayout'
 
 const layout = useLayout()
 const route = useRoute()
+
+// Dziś, Plan and Propozycje report the pending count themselves; entering through any other view
+// asks once, so the nav badge does not depend on where the app was opened.
+void useRouter()
+  .isReady()
+  .then(() => {
+    if (!['today', 'plan', 'proposals'].includes(String(route.name))) return getProposals()
+  })
+  .catch(() => {})
 </script>
 
 <template>

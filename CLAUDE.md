@@ -47,9 +47,9 @@ Runy AI: dzienny 6:30 i tygodniowy niedziela 20:00 przez `claude -p` z podpięty
 
 ## Design (v2) — w skrócie
 
-Pełne zasady w `design/README.md`. Najważniejsze: zero zaokrągleń, boksy z ramką 1px, krój Archivo z wąskimi liczbami i `tabular-nums`, jeden kolor sygnałowy (czerwień) tylko dla „dziś / teraz / wymaga decyzji”, ostrzeżenia na bursztynowo, tabele zamiast pasków postępu, nawigacja tekstowa bez ikon, brak mikrotekstów tłumaczących działanie aplikacji. Teksty trenera mogą być prozą LLM.
+Pełne zasady w `design/README.md`. Najważniejsze: zero zaokrągleń, boksy z ramką 1px, krój Archivo z wąskimi liczbami i `tabular-nums`, jeden kolor sygnałowy (czerwień) tylko dla „dziś / teraz / wymaga decyzji”, ostrzeżenia na bursztynowo, tabele zamiast pasków postępu, nawigacja z ikonami liniowymi nad etykietami (akcje nagłówka na telefonie to same ikony), brak mikrotekstów tłumaczących działanie aplikacji. Teksty trenera mogą być prozą LLM.
 
-Fold6: ekran wewnętrzny 707 × 823 CSS px, dwie kolumny po obu stronach zgięcia (odstęp 24, margines 16), nawigacja 3 | 3. Ekran zewnętrzny 369 px szerokości, jedna kolumna. Cele dotykowe ≥ 44 px.
+Fold6: ekran wewnętrzny 707 × 823 CSS px, dwie kolumny po obu stronach zgięcia (odstęp 24, margines 16), nawigacja 3 | 3. Ekran zewnętrzny 369 px szerokości, jedna kolumna, te same sześć zakładek w jednym rzędzie. Cele dotykowe ≥ 44 px.
 
 ## Roadmapa
 

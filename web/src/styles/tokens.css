@@ -33,7 +33,7 @@
   --font: 'Archivo', system-ui, sans-serif;
   --radius: 0;
   --header-h: 56px;
-  --nav-h: 56px;
+  --nav-h: 58px;
 }
 
 @media (prefers-color-scheme: dark) {

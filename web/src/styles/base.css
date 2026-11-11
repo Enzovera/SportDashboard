@@ -64,7 +64,10 @@ button { font: inherit; color: inherit; }
 .link-row {
   display: flex; align-items: center; gap: 12px; min-height: 52px; padding: 0 14px;
   background: var(--surface); border: 1px solid var(--border); text-decoration: none; color: var(--ink);
+  -webkit-tap-highlight-color: transparent;
 }
+.link-row > .icon { color: var(--ink2); }
+.link-row:active { background: var(--surface2); }
 .link-row:focus-visible, .btn:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; }
 
 /* ---- buttons and segmented control ---- */
@@ -74,6 +77,16 @@ button { font: inherit; color: inherit; }
   font-size: 14px; font-weight: 700; text-decoration: none;
 }
 .btn--primary { background: var(--ink); color: var(--surface); border-color: var(--ink); }
+
+/* ---- icon-only control: 44 px square target, the label lives in aria-label/title ---- */
+.icon-btn {
+  position: relative; flex: none; display: inline-flex; align-items: center; justify-content: center;
+  width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--ink2);
+  cursor: pointer; text-decoration: none; -webkit-tap-highlight-color: transparent;
+}
+.icon-btn:hover { color: var(--ink); }
+.icon-btn:active { background: var(--surface2); }
+.icon-btn:focus-visible { outline: 2px solid var(--ink); outline-offset: -2px; }
 .segmented { display: inline-flex; border: 1px solid var(--border-strong); }
 .segmented button {
   min-height: 44px; padding: 0 12px; border: 0; background: transparent; cursor: pointer;

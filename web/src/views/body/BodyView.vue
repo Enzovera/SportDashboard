@@ -18,6 +18,8 @@ const { data, error } = useApi(getBody)
 const meta = computed(() => {
   if (!data.value) return null
   const src = data.value.device ? `${data.value.device} → Garmin` : 'Garmin'
+  // Cover has no room for the goal next to the icons: it joins the meta line.
+  if (layout.value === 'cover') return hasWeighIns.value ? `${data.value.rangeWeeks} tyg. · ${goal.value.toLowerCase()}` : src
   return `${src} · ${data.value.rangeWeeks} tygodni`
 })
 const goal = computed(() => {
@@ -30,12 +32,10 @@ const hasWeighIns = computed(() => (data.value?.composition.rangeCount ?? 0) > 0
 
 <template>
   <PageLayout title="Ciało" :meta="meta">
-    <template #global>
-      <SyncStatus v-if="data" :sync="data.sync" :compact="layout === 'cover'" />
-      <SyncButton />
-    </template>
-    <template #actions>
-      <span v-if="data && hasWeighIns" class="goal">{{ goal }}</span>
+    <template v-if="data" #status><SyncStatus :sync="data.sync" :compact="layout === 'cover'" /></template>
+    <template #global><SyncButton /></template>
+    <template v-if="layout !== 'cover' && data && hasWeighIns" #actions>
+      <span class="goal">{{ goal }}</span>
     </template>
 
     <div v-if="error && !data" class="page">

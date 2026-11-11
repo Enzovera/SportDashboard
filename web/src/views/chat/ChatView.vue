@@ -24,10 +24,13 @@ watchEffect(() => {
 </script>
 
 <template>
-  <PageLayout v-if="layout === 'cover'" title="Trener" :meta="meta">
-    <template #actions>
-      <RouterLink :to="from.path" class="btn" :aria-label="`Wróć do widoku ${backLabel}`">← {{ backLabel }}</RouterLink>
-    </template>
+  <PageLayout
+    v-if="layout === 'cover'"
+    title="Trener"
+    :meta="meta"
+    :back="{ to: from.path, label: `Wróć do widoku ${backLabel}` }"
+    plain
+  >
     <ChatPanel layout="cover" variant="screen" />
   </PageLayout>
 </template>

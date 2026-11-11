@@ -34,7 +34,8 @@ onScopeDispose(() => document.documentElement.classList.remove('chat-docked'))
   border-left: 1px solid var(--border); background: var(--surface);
 }
 .chat-host.fold {
-  top: var(--header-h); bottom: var(--nav-h); width: calc(50% - 12px);
+  top: calc(var(--header-h) + env(safe-area-inset-top) + 1px);
+  bottom: calc(var(--nav-h) + env(safe-area-inset-bottom) + 1px); width: calc(50% - 12px);
   padding: 12px 16px 12px 0; background: var(--bg);
 }
 </style>

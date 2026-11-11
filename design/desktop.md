@@ -12,7 +12,7 @@ Rozszerzenie zasad z `design/README.md` na przeglądarkę na komputerze. Wszystk
 | Element | Desktop | Fold6 (dla porównania) |
 |---|---|---|
 | Nawigacja | w nagłówku, tekstowa, 6 zakładek w jednym rzędzie, aktywna pogrubiona z kreską 3 px **u dołu** nagłówka | dolny pasek 3 \| 3, kreska u góry |
-| Nagłówek | 64 px: znak „Forma”, nawigacja, po prawej status syncu i przycisk Trener | 56 px: tytuł ekranu i akcje |
+| Nagłówek | 64 px: znak „Forma”, nawigacja, po prawej status syncu i przycisk Trener | 56 px: tytuł ekranu i akcje (ikony) |
 | Tytuł ekranu | w treści, nad siatką: h1 32 px + meta 14 px, akcje ekranu (np. zakres 4 tyg. / 12 tyg. / Blok) po prawej | w nagłówku |
 | Siatka | 12 kolumn, odstęp 24, treść max 1392 px, margines 32 | 2 kolumny, odstęp 24, margines 16 |
 | Odstęp między boksami w kolumnie | 16 | 12 |

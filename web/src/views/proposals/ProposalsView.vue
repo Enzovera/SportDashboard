@@ -72,8 +72,13 @@ const blocked = computed(() => data.value?.blocked ?? [])
 const week = computed(() => (data.value?.week && pending.value.length ? data.value.week : null))
 const queuedFor = (id: string) => queued.value.find((q) => q.id === id)
 
-const meta = computed(() => (data.value ? dayShort(data.value.date) : null))
 const status = computed(() => pendingText(waitingCount.value))
+// Cover: the pending count joins the meta line (the header has room for icons only).
+const meta = computed(() => {
+  if (!data.value) return null
+  const day = dayShort(data.value.date)
+  return layout.value === 'cover' && status.value ? `${day} · ${status.value}` : day
+})
 const cols = computed(() =>
   layout.value === 'desktop'
     ? []
@@ -84,8 +89,8 @@ const side = computed(() => week.value !== null || blocked.value.length > 0)
 
 <template>
   <PageLayout title="Propozycje" :meta="meta">
-    <template #actions>
-      <span v-if="status" role="status" class="pending-status">{{ status }}</span>
+    <template v-if="layout !== 'cover' && status" #actions>
+      <span role="status" class="pending-status">{{ status }}</span>
     </template>
 
     <template v-if="data">
